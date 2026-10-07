@@ -48,6 +48,10 @@ def main():
 
     for p in problems:
         p["code_html"] = highlight_code(p["code"])
+        if p.get("trace"):
+            # html.escape so the JSON can sit safely inside a double-quoted
+            # HTML attribute (escapes quotes/ampersands/angle brackets).
+            p["trace_json"] = html.escape(json.dumps(p["trace"]), quote=True)
 
     env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)), autoescape=False)
 

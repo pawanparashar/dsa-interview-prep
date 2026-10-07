@@ -1,6 +1,7 @@
 {
   "site": {
-    "title": "Parashar Patterns",
+    "title": "Coding Patterns",
+    "author": "Pawan Parashar",
     "tagline": "BLIND 75 \u00b7 INTERVIEW REVISION",
     "github": "https://github.com/pawanparashar/dsa-interview-prep"
   },
@@ -58,7 +59,17 @@
         "Single-element array \u2192 return False",
         "All elements identical \u2192 returns True as soon as the second element is checked",
         "Negative numbers and zero \u2192 ints are hashable as-is, no special handling needed"
-      ]
+      ],
+      "trace": {
+        "array": [1, 2, 3, 1],
+        "frames": [
+          { "idx": null, "set": [], "status": "start", "note": "Start with an empty hash set h." },
+          { "idx": 0, "set": [1], "status": "add", "note": "num = 1 \u2014 not in h, so add it. h = {1}" },
+          { "idx": 1, "set": [1, 2], "status": "add", "note": "num = 2 \u2014 not in h, so add it. h = {1, 2}" },
+          { "idx": 2, "set": [1, 2, 3], "status": "add", "note": "num = 3 \u2014 not in h, so add it. h = {1, 2, 3}" },
+          { "idx": 3, "set": [1, 2, 3], "status": "found", "note": "num = 1 \u2014 already in h! Return True immediately." }
+        ]
+      }
     }
   ]
 }
