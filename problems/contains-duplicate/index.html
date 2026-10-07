@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contains Duplicate — Parashar Patterns</title>
+<meta name="description" content="Contains Duplicate (Arrays & Hashing) — pattern, walkthrough, video, and printable one-pager.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container row">
+      <div>
+        <a class="brand" href="../../index.html">Parashar <span class="dot">Patterns</span></a>
+        <div class="tagline">BLIND 75 · INTERVIEW REVISION</div>
+      </div>
+      <nav>
+        <a href="https://github.com/pawanparashar/dsa-interview-prep">GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="p-head">
+      <a class="crumbs" href="../../index.html">← All 75</a>
+      <h1>#1 — Contains Duplicate</h1>
+      <div class="pills">
+        <span class="pill accent">Arrays & Hashing</span>
+        <span class="pill">LeetCode 217</span>
+        <span class="pill">NeetCode "Duplicate Integer"</span>
+        <span class="badge Easy">Easy</span>
+      </div>
+      <div class="p-actions">
+        <a class="linkbtn" href="contains-duplicate-onepager.pdf">Download one-pager (PDF) ↓</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Problem</h2>
+      <p>Given an integer array <code>nums</code>, return <code>true</code> if any value appears at least twice in the array, and return <code>false</code> if every element is distinct.</p>
+      <div class="examples">
+        
+        <div>nums = [1,2,3,1] → true</div>
+        
+        <div>nums = [1,2,3,4] → false</div>
+        
+        <div>nums = [1,1,1,3,3,4,3,2,4,2] → true</div>
+        
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Watch the walkthrough</h2>
+      <div class="video-frame">
+        <iframe src="https://www.youtube.com/embed/3OamzN90kPg" title="Contains Duplicate solution walkthrough" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Core idea</h2>
+      <p><strong>Goal</strong><br>Determine whether any value repeats in the array.</p>
+      <p><strong>Key insight</strong><br>A hash set gives O(1) average-case lookup and insertion, so a single pass can catch a repeat the moment it's seen, with no nested loops.</p>
+      <div class="callout">Trigger phrase: “Have I seen this value before?” → reach for a Hash Set membership check.</div>
+    </div>
+
+    <div class="section">
+      <h2>Walkthrough</h2>
+      
+      <p>Brute force compares every pair of elements, which costs O(n²) time. The moment we're willing to spend O(n) extra space, we can collapse that to a single O(n) pass.</p>
+      
+      <p>A Python <code>set</code> is backed by a hash table, so <code>num in h</code> and <code>h.add(num)</code> are both O(1) on average. We only need to know “have I seen this number before” — we never need to know where or how many times, so a set is a better fit than a dict or list.</p>
+      
+      <p>Walk the array once. For each number, check membership before inserting: if it's already there, you've found your duplicate and can short-circuit immediately rather than finishing the scan.</p>
+      
+      <p>If the loop completes with no early return, every element was unique, so the answer is <code>False</code>.</p>
+      
+    </div>
+
+    <div class="section">
+      <h2>Optimal solution</h2>
+      <p><strong>Data structure:</strong> Hash Set (Python <code>set</code>)</p>
+      <ol class="steps">
+        
+        <li>Initialize an empty set <code>h</code>.</li>
+        
+        <li>Iterate through each <code>num</code> in <code>nums</code>.</li>
+        
+        <li>If <code>num</code> is already in <code>h</code>, return <code>True</code> immediately — duplicate found.</li>
+        
+        <li>Otherwise, add <code>num</code> to <code>h</code> and continue.</li>
+        
+        <li>If the loop finishes with no match, return <code>False</code>.</li>
+        
+      </ol>
+      <div class="complexity">
+        <div class="box"><span class="v">O(n)</span><span class="k">Time</span></div>
+        <div class="box"><span class="v">O(n)</span><span class="k">Space</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Code</h2>
+      <pre><code><span class="kw">class</span> Solution:
+    <span class="kw">def</span> hasDuplicate(<span class="kw">self</span>, nums: List[int]) -&gt; bool:
+        h = set()
+        <span class="kw">for</span> num <span class="kw">in</span> nums:
+            <span class="kw">if</span> num <span class="kw">in</span> h:
+                <span class="kw">return</span> <span class="kw">True</span>
+            <span class="kw">else</span>:
+                h.add(num)
+
+        <span class="kw">return</span> <span class="kw">False</span></code></pre>
+    </div>
+
+    <div class="section">
+      <h2>Tips to remember this pattern</h2>
+      <p><strong>Mental shortcut</strong> — “Seen it before? Set it and forget it.”</p>
+      <p><strong>Common / related problems</strong></p>
+      <ul class="plain">
+        
+        <li>Contains Duplicate II (nearby-index variant)</li>
+        
+        <li>Contains Duplicate III (nearby-value variant)</li>
+        
+        <li>Longest Consecutive Sequence</li>
+        
+        <li>Single Number</li>
+        
+      </ul>
+      <div class="quote">"I'm trading O(n) space for O(n) time with a hash set, which avoids the O(n²) brute-force approach of comparing every pair."</div>
+    </div>
+
+    <div class="section">
+      <h2>Edge cases to consider</h2>
+      <ul class="edge-list">
+        
+        <li>Empty array → no duplicates possible, return False</li>
+        
+        <li>Single-element array → return False</li>
+        
+        <li>All elements identical → returns True as soon as the second element is checked</li>
+        
+        <li>Negative numbers and zero → ints are hashable as-is, no special handling needed</li>
+        
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Day-of-interview revision</h2>
+      <p class="muted">Short on time? Skim the trigger phrase, the steps above, and keep this PDF open as a fallback.</p>
+      <div class="p-actions">
+        <a class="linkbtn" href="contains-duplicate-onepager.pdf">Download one-pager (PDF) ↓</a>
+        <a class="linkbtn ghost" href="../../index.html">Back to all 75 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">Built by Pawan · generated from <a href="https://github.com/pawanparashar/dsa-interview-prep">dsa-interview-prep</a></div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ site.title }} — Blind 75 Revision</title>
+<meta name="description" content="Blind 75 interview revision: pattern-level write-ups, video walkthroughs, and printable one-pagers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container row">
+      <div>
+        <a class="brand" href="index.html">{{ site.title.split(" ")[0] }} <span class="dot">{{ site.title.split(" ")[1] }}</span></a>
+        <div class="tagline">{{ site.tagline }}</div>
+      </div>
+      <nav>
+        <a href="{{ site.github }}">GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Blind 75, revision-ready.</h1>
+      <p>One page per problem: the pattern, the walkthrough, a video, and a printable one-pager for the morning of the interview.</p>
+      <div class="progress">
+        <span>{{ solved_count }} / {{ total_count }} solved</span>
+        <div class="bar"><div class="fill" style="width: {{ (solved_count / total_count * 100) | round(1) }}%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="table-wrap">
+      <table class="problems">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Problem</th>
+            <th>Difficulty</th>
+            <th>Revise</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in problems %}
+          <tr>
+            <td class="num">{{ p.number }}</td>
+            <td class="title">
+              {{ p.title }}
+              <span class="muted-cat">{{ p.category }}</span>
+            </td>
+            <td><span class="badge {{ p.difficulty }}">{{ p.difficulty }}</span></td>
+            <td>
+              <div class="cell-links">
+                <a class="linkbtn" href="problems/{{ p.slug }}/index.html">Learn &amp; Revise</a>
+                <a class="linkbtn ghost" href="problems/{{ p.slug }}/{{ p.slug }}-onepager.pdf">PDF ↓</a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+          {% for i in range(solved_count + 1, total_count + 1) %}
+          <tr class="pending">
+            <td class="num">{{ i }}</td>
+            <td class="title">Coming up</td>
+            <td><span class="badge">—</span></td>
+            <td><span class="muted-cat">Not yet solved</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">Built by Pawan · generated from <a href="{{ site.github }}">dsa-interview-prep</a></div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,64 @@
+{
+  "site": {
+    "title": "Parashar Patterns",
+    "tagline": "BLIND 75 \u00b7 INTERVIEW REVISION",
+    "github": "https://github.com/pawanparashar/dsa-interview-prep"
+  },
+  "problems": [
+    {
+      "number": 1,
+      "slug": "contains-duplicate",
+      "title": "Contains Duplicate",
+      "category": "Arrays & Hashing",
+      "leetcode_number": 217,
+      "neetcode_name": "Duplicate Integer",
+      "difficulty": "Easy",
+      "status": "Solved",
+      "youtube_id": "3OamzN90kPg",
+      "problem_statement": "Given an integer array <code>nums</code>, return <code>true</code> if any value appears at least twice in the array, and return <code>false</code> if every element is distinct.",
+      "examples": [
+        { "input": "nums = [1,2,3,1]", "output": "true" },
+        { "input": "nums = [1,2,3,4]", "output": "false" },
+        { "input": "nums = [1,1,1,3,3,4,3,2,4,2]", "output": "true" }
+      ],
+      "core_idea": {
+        "goal": "Determine whether any value repeats in the array.",
+        "key_insight": "A hash set gives O(1) average-case lookup and insertion, so a single pass can catch a repeat the moment it's seen, with no nested loops.",
+        "trigger_phrase": "\u201cHave I seen this value before?\u201d \u2192 reach for a Hash Set membership check."
+      },
+      "optimal_solution": {
+        "data_structure": "Hash Set (Python <code>set</code>)",
+        "steps": [
+          "Initialize an empty set <code>h</code>.",
+          "Iterate through each <code>num</code> in <code>nums</code>.",
+          "If <code>num</code> is already in <code>h</code>, return <code>True</code> immediately \u2014 duplicate found.",
+          "Otherwise, add <code>num</code> to <code>h</code> and continue.",
+          "If the loop finishes with no match, return <code>False</code>."
+        ],
+        "time_complexity": "O(n)",
+        "space_complexity": "O(n)"
+      },
+      "code": "class Solution:\n    def hasDuplicate(self, nums: List[int]) -> bool:\n        h = set()\n        for num in nums:\n            if num in h:\n                return True\n            else:\n                h.add(num)\n\n        return False",
+      "walkthrough": [
+        "Brute force compares every pair of elements, which costs O(n\u00b2) time. The moment we're willing to spend O(n) extra space, we can collapse that to a single O(n) pass.",
+        "A Python <code>set</code> is backed by a hash table, so <code>num in h</code> and <code>h.add(num)</code> are both O(1) on average. We only need to know \u201chave I seen this number before\u201d \u2014 we never need to know where or how many times, so a set is a better fit than a dict or list.",
+        "Walk the array once. For each number, check membership before inserting: if it's already there, you've found your duplicate and can short-circuit immediately rather than finishing the scan.",
+        "If the loop completes with no early return, every element was unique, so the answer is <code>False</code>."
+      ],
+      "mental_shortcut": "\u201cSeen it before? Set it and forget it.\u201d",
+      "related_problems": [
+        "Contains Duplicate II (nearby-index variant)",
+        "Contains Duplicate III (nearby-value variant)",
+        "Longest Consecutive Sequence",
+        "Single Number"
+      ],
+      "interview_talking_point": "I'm trading O(n) space for O(n) time with a hash set, which avoids the O(n\u00b2) brute-force approach of comparing every pair.",
+      "edge_cases": [
+        "Empty array \u2192 no duplicates possible, return False",
+        "Single-element array \u2192 return False",
+        "All elements identical \u2192 returns True as soon as the second element is checked",
+        "Negative numbers and zero \u2192 ints are hashable as-is, no special handling needed"
+      ]
+    }
+  ]
+}

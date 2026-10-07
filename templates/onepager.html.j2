@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ p.title }} — One-pager</title>
+<style>
+  @page { size: Letter; margin: 14mm; }
+  :root {
+    --panel: #ffffff;
+    --panel-2: #fafaf8;
+    --border: #d8dad6;
+    --fg: #1b1d22;
+    --muted: #5d636f;
+    --accent: #0e8f86;
+    --accent-dim: #dcf1ef;
+    --code-bg: #f4f6f5;
+    --font-display: 'JetBrains Mono', monospace;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--panel);
+    color: var(--fg);
+    font-family: var(--font-body);
+  }
+  .wrap { width: 100%; }
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 14px;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+  }
+  .head .num { font-family: var(--font-display); color: var(--accent); font-size: 14px; }
+  .head h1 { font-family: var(--font-display); font-size: 22px; margin: 0; flex: 1 1 auto; }
+  .pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pill {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.02em;
+    padding: 3px 8px; border-radius: 999px; border: 1px solid var(--border);
+    color: var(--muted); background: var(--panel-2); white-space: nowrap;
+  }
+  .pill.accent { color: var(--accent); border-color: var(--accent-dim); background: var(--accent-dim); }
+  .grid { display: flex; flex-wrap: wrap; gap: 12px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; width: calc(50% - 6px); }
+  .card.full { width: 100%; }
+  .card h2 {
+    font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--accent); margin: 0 0 8px;
+  }
+  .card p { margin: 0 0 6px; font-size: 11.5px; line-height: 1.45; }
+  .card p:last-child { margin-bottom: 0; }
+  .label { color: var(--muted); font-size: 10px; font-family: var(--font-mono); }
+  .examples div {
+    font-family: var(--font-mono); font-size: 10.5px; background: var(--code-bg);
+    border: 1px solid var(--border); border-radius: 5px; padding: 4px 8px; margin-bottom: 4px;
+  }
+  .callout {
+    border-left: 3px solid var(--accent); background: var(--accent-dim);
+    border-radius: 0 5px 5px 0; padding: 6px 10px; font-size: 11px; margin-top: 5px;
+  }
+  ol, ul { margin: 0; padding-left: 16px; font-size: 11.5px; line-height: 1.45; }
+  li { margin-bottom: 2px; }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 10px; margin: 0; white-space: pre-wrap; word-break: break-word;
+  }
+  code { font-family: var(--font-mono); font-size: 10px; line-height: 1.4; color: var(--fg); }
+  .kw { color: var(--accent); font-weight: 600; }
+  .complexity { display: flex; gap: 8px; margin-top: 8px; }
+  .complexity .box { flex: 1; background: var(--code-bg); border: 1px solid var(--border); border-radius: 5px; padding: 5px 8px; text-align: center; }
+  .complexity .box .v { font-family: var(--font-mono); color: var(--accent); font-size: 14px; display: block; }
+  .complexity .box .k { font-size: 8.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .quote { font-size: 10.5px; font-style: italic; color: var(--muted); border-left: 3px solid var(--border); padding-left: 8px; margin-top: 6px; }
+  .edge-list { display: flex; flex-wrap: wrap; gap: 4px 16px; list-style: none; padding: 0; margin: 0; }
+  .edge-list li { font-size: 10.5px; width: calc(50% - 8px); display: flex; gap: 6px; }
+  .edge-list li::before { content: "\2023"; color: var(--accent); flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <span class="num">#{{ p.number }}</span>
+    <h1>{{ p.title }}</h1>
+    <div class="pills">
+      <span class="pill accent">{{ p.category }}</span>
+      <span class="pill">LeetCode {{ p.leetcode_number }}</span>
+      <span class="pill">NeetCode "{{ p.neetcode_name }}"</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Problem</h2>
+      <p>{{ p.problem_statement | safe }}</p>
+      <div class="examples">
+        {% for ex in p.examples %}
+        <div>{{ ex.input }} → {{ ex.output }}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Core idea</h2>
+      <p><span class="label">Goal</span><br>{{ p.core_idea.goal }}</p>
+      <p><span class="label">Key insight</span><br>{{ p.core_idea.key_insight }}</p>
+      <div class="callout">Trigger: {{ p.core_idea.trigger_phrase | safe }}</div>
+    </div>
+
+    <div class="card">
+      <h2>Optimal solution</h2>
+      <p><span class="label">Data structure</span> — {{ p.optimal_solution.data_structure | safe }}</p>
+      <ol>
+        {% for step in p.optimal_solution.steps %}
+        <li>{{ step | safe }}</li>
+        {% endfor %}
+      </ol>
+      <div class="complexity">
+        <div class="box"><span class="v">{{ p.optimal_solution.time_complexity }}</span><span class="k">Time</span></div>
+        <div class="box"><span class="v">{{ p.optimal_solution.space_complexity }}</span><span class="k">Space</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Code</h2>
+      <pre><code>{{ p.code_html | safe }}</code></pre>
+    </div>
+
+    <div class="card full">
+      <h2>Tips to remember</h2>
+      <p><span class="label">Mental shortcut</span> — {{ p.mental_shortcut }}</p>
+      <p><span class="label">Common / related</span> — {{ p.related_problems | join(", ") }}</p>
+      <div class="quote">"{{ p.interview_talking_point }}"</div>
+    </div>
+
+    <div class="card full">
+      <h2>Edge cases</h2>
+      <ul class="edge-list">
+        {% for ec in p.edge_cases %}
+        <li>{{ ec }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>

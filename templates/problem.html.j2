@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ p.title }} — {{ site.title }}</title>
+<meta name="description" content="{{ p.title }} ({{ p.category }}) — pattern, walkthrough, video, and printable one-pager.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container row">
+      <div>
+        <a class="brand" href="../../index.html">{{ site.title.split(" ")[0] }} <span class="dot">{{ site.title.split(" ")[1] }}</span></a>
+        <div class="tagline">{{ site.tagline }}</div>
+      </div>
+      <nav>
+        <a href="{{ site.github }}">GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="p-head">
+      <a class="crumbs" href="../../index.html">← All 75</a>
+      <h1>#{{ p.number }} — {{ p.title }}</h1>
+      <div class="pills">
+        <span class="pill accent">{{ p.category }}</span>
+        <span class="pill">LeetCode {{ p.leetcode_number }}</span>
+        <span class="pill">NeetCode "{{ p.neetcode_name }}"</span>
+        <span class="badge {{ p.difficulty }}">{{ p.difficulty }}</span>
+      </div>
+      <div class="p-actions">
+        <a class="linkbtn" href="{{ p.slug }}-onepager.pdf">Download one-pager (PDF) ↓</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Problem</h2>
+      <p>{{ p.problem_statement | safe }}</p>
+      <div class="examples">
+        {% for ex in p.examples %}
+        <div>{{ ex.input }} → {{ ex.output }}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Watch the walkthrough</h2>
+      <div class="video-frame">
+        <iframe src="https://www.youtube.com/embed/{{ p.youtube_id }}" title="{{ p.title }} solution walkthrough" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Core idea</h2>
+      <p><strong>Goal</strong><br>{{ p.core_idea.goal }}</p>
+      <p><strong>Key insight</strong><br>{{ p.core_idea.key_insight }}</p>
+      <div class="callout">Trigger phrase: {{ p.core_idea.trigger_phrase | safe }}</div>
+    </div>
+
+    <div class="section">
+      <h2>Walkthrough</h2>
+      {% for para in p.walkthrough %}
+      <p>{{ para | safe }}</p>
+      {% endfor %}
+    </div>
+
+    <div class="section">
+      <h2>Optimal solution</h2>
+      <p><strong>Data structure:</strong> {{ p.optimal_solution.data_structure | safe }}</p>
+      <ol class="steps">
+        {% for step in p.optimal_solution.steps %}
+        <li>{{ step | safe }}</li>
+        {% endfor %}
+      </ol>
+      <div class="complexity">
+        <div class="box"><span class="v">{{ p.optimal_solution.time_complexity }}</span><span class="k">Time</span></div>
+        <div class="box"><span class="v">{{ p.optimal_solution.space_complexity }}</span><span class="k">Space</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Code</h2>
+      <pre><code>{{ p.code_html | safe }}</code></pre>
+    </div>
+
+    <div class="section">
+      <h2>Tips to remember this pattern</h2>
+      <p><strong>Mental shortcut</strong> — {{ p.mental_shortcut }}</p>
+      <p><strong>Common / related problems</strong></p>
+      <ul class="plain">
+        {% for rp in p.related_problems %}
+        <li>{{ rp }}</li>
+        {% endfor %}
+      </ul>
+      <div class="quote">"{{ p.interview_talking_point }}"</div>
+    </div>
+
+    <div class="section">
+      <h2>Edge cases to consider</h2>
+      <ul class="edge-list">
+        {% for ec in p.edge_cases %}
+        <li>{{ ec }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Day-of-interview revision</h2>
+      <p class="muted">Short on time? Skim the trigger phrase, the steps above, and keep this PDF open as a fallback.</p>
+      <div class="p-actions">
+        <a class="linkbtn" href="{{ p.slug }}-onepager.pdf">Download one-pager (PDF) ↓</a>
+        <a class="linkbtn ghost" href="../../index.html">Back to all 75 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">Built by Pawan · generated from <a href="{{ site.github }}">dsa-interview-prep</a></div>
+  </footer>
+</body>
+</html>
