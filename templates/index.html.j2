@@ -46,28 +46,24 @@
           </tr>
         </thead>
         <tbody>
-          {% for p in problems %}
-          <tr>
-            <td class="num">{{ p.number }}</td>
+          {% for r in rows %}
+          <tr{% if not r.solved %} class="pending"{% endif %}>
+            <td class="num">{{ r.number }}</td>
             <td class="title">
-              {{ p.title }}
-              <span class="muted-cat">{{ p.category }}</span>
+              {{ r.title }}
+              <span class="muted-cat">{{ r.category }}</span>
             </td>
-            <td><span class="badge {{ p.difficulty }}">{{ p.difficulty }}</span></td>
+            <td><span class="badge {{ r.difficulty }}">{{ r.difficulty }}</span></td>
             <td>
+              {% if r.solved %}
               <div class="cell-links">
-                <a class="linkbtn" href="problems/{{ p.slug }}/index.html">Learn &amp; Revise</a>
-                <a class="linkbtn ghost" href="problems/{{ p.slug }}/{{ p.slug }}-onepager.pdf">PDF ↓</a>
+                <a class="linkbtn" href="problems/{{ r.slug }}/index.html">Learn &amp; Revise</a>
+                <a class="linkbtn ghost" href="problems/{{ r.slug }}/{{ r.slug }}-onepager.pdf">PDF ↓</a>
               </div>
+              {% else %}
+              <span class="muted-cat">Not yet solved</span>
+              {% endif %}
             </td>
-          </tr>
-          {% endfor %}
-          {% for i in range(solved_count + 1, total_count + 1) %}
-          <tr class="pending">
-            <td class="num">{{ i }}</td>
-            <td class="title">Coming up</td>
-            <td><span class="badge">—</span></td>
-            <td><span class="muted-cat">Not yet solved</span></td>
           </tr>
           {% endfor %}
         </tbody>

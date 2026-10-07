@@ -23,7 +23,6 @@ from jinja2 import Environment, FileSystemLoader
 ROOT = Path(__file__).resolve().parent.parent
 DATA_FILE = ROOT / "data" / "problems.json"
 TEMPLATES_DIR = ROOT / "templates"
-TOTAL_PROBLEMS = 75
 
 PY_KEYWORDS = [
     "class", "def", "return", "if", "elif", "else", "for", "while", "in", "not",
@@ -40,10 +39,17 @@ def highlight_code(code: str) -> str:
     return _KW_PATTERN.sub(r'<span class="kw">\1</span>', escaped)
 
 
+def slugify(text: str) -> str:
+    s = text.lower()
+    s = re.sub(r"[^a-z0-9]+", "-", s)
+    return s.strip("-")
+
+
 def main():
     data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
     site = data["site"]
     problems = data["problems"]
+    roadmap = data.get("roadmap", [])
     solved_count = len(problems)
 
     for p in problems:
@@ -53,6 +59,24 @@ def main():
             # HTML attribute (escapes quotes/ampersands/angle brackets).
             p["trace_json"] = html.escape(json.dumps(p["trace"]), quote=True)
 
+    # Merge the full 75-problem roadmap with whichever ones are solved
+    # (present in `problems`), matched by slugified title. Unsolved entries
+    # get their Problem/Difficulty from the roadmap and no links.
+    solved_by_slug = {p["slug"]: p for p in problems}
+    rows = []
+    for i, entry in enumerate(roadmap, start=1):
+        slug = slugify(entry["title"])
+        p = solved_by_slug.get(slug)
+        rows.append({
+            "number": i,
+            "title": p["title"] if p else entry["title"],
+            "category": p["category"] if p else entry["category"],
+            "difficulty": p["difficulty"] if p else entry["difficulty"],
+            "slug": p["slug"] if p else slug,
+            "solved": p is not None,
+        })
+    total_count = len(rows) or len(problems)
+
     env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)), autoescape=False)
 
     # --- home page ---
@@ -60,13 +84,13 @@ def main():
     (ROOT / "index.html").write_text(
         index_tpl.render(
             site=site,
-            problems=problems,
+            rows=rows,
             solved_count=solved_count,
-            total_count=TOTAL_PROBLEMS,
+            total_count=total_count,
         ),
         encoding="utf-8",
     )
-    print(f"wrote index.html ({solved_count}/{TOTAL_PROBLEMS} problems)")
+    print(f"wrote index.html ({solved_count}/{total_count} problems)")
 
     # --- per-problem pages + PDFs ---
     problem_tpl = env.get_template("problem.html.j2")

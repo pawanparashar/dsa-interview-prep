@@ -2,7 +2,7 @@
   "site": {
     "title": "Coding Patterns",
     "author": "Pawan Parashar",
-    "tagline": "BLIND 75 \u00b7 INTERVIEW REVISION",
+    "tagline": "BLIND 75 · INTERVIEW REVISION",
     "github": "https://github.com/pawanparashar/dsa-interview-prep"
   },
   "problems": [
@@ -18,21 +18,30 @@
       "youtube_id": "3OamzN90kPg",
       "problem_statement": "Given an integer array <code>nums</code>, return <code>true</code> if any value appears at least twice in the array, and return <code>false</code> if every element is distinct.",
       "examples": [
-        { "input": "nums = [1,2,3,1]", "output": "true" },
-        { "input": "nums = [1,2,3,4]", "output": "false" },
-        { "input": "nums = [1,1,1,3,3,4,3,2,4,2]", "output": "true" }
+        {
+          "input": "nums = [1,2,3,1]",
+          "output": "true"
+        },
+        {
+          "input": "nums = [1,2,3,4]",
+          "output": "false"
+        },
+        {
+          "input": "nums = [1,1,1,3,3,4,3,2,4,2]",
+          "output": "true"
+        }
       ],
       "core_idea": {
         "goal": "Determine whether any value repeats in the array.",
         "key_insight": "A hash set gives O(1) average-case lookup and insertion, so a single pass can catch a repeat the moment it's seen, with no nested loops.",
-        "trigger_phrase": "\u201cHave I seen this value before?\u201d \u2192 reach for a Hash Set membership check."
+        "trigger_phrase": "“Have I seen this value before?” → reach for a Hash Set membership check."
       },
       "optimal_solution": {
         "data_structure": "Hash Set (Python <code>set</code>)",
         "steps": [
           "Initialize an empty set <code>h</code>.",
           "Iterate through each <code>num</code> in <code>nums</code>.",
-          "If <code>num</code> is already in <code>h</code>, return <code>True</code> immediately \u2014 duplicate found.",
+          "If <code>num</code> is already in <code>h</code>, return <code>True</code> immediately — duplicate found.",
           "Otherwise, add <code>num</code> to <code>h</code> and continue.",
           "If the loop finishes with no match, return <code>False</code>."
         ],
@@ -41,35 +50,455 @@
       },
       "code": "class Solution:\n    def hasDuplicate(self, nums: List[int]) -> bool:\n        h = set()\n        for num in nums:\n            if num in h:\n                return True\n            else:\n                h.add(num)\n\n        return False",
       "walkthrough": [
-        "Brute force compares every pair of elements, which costs O(n\u00b2) time. The moment we're willing to spend O(n) extra space, we can collapse that to a single O(n) pass.",
-        "A Python <code>set</code> is backed by a hash table, so <code>num in h</code> and <code>h.add(num)</code> are both O(1) on average. We only need to know \u201chave I seen this number before\u201d \u2014 we never need to know where or how many times, so a set is a better fit than a dict or list.",
+        "Brute force compares every pair of elements, which costs O(n²) time. The moment we're willing to spend O(n) extra space, we can collapse that to a single O(n) pass.",
+        "A Python <code>set</code> is backed by a hash table, so <code>num in h</code> and <code>h.add(num)</code> are both O(1) on average. We only need to know “have I seen this number before” — we never need to know where or how many times, so a set is a better fit than a dict or list.",
         "Walk the array once. For each number, check membership before inserting: if it's already there, you've found your duplicate and can short-circuit immediately rather than finishing the scan.",
         "If the loop completes with no early return, every element was unique, so the answer is <code>False</code>."
       ],
-      "mental_shortcut": "\u201cSeen it before? Set it and forget it.\u201d",
+      "mental_shortcut": "“Seen it before? Set it and forget it.”",
       "related_problems": [
         "Contains Duplicate II (nearby-index variant)",
         "Contains Duplicate III (nearby-value variant)",
         "Longest Consecutive Sequence",
         "Single Number"
       ],
-      "interview_talking_point": "I'm trading O(n) space for O(n) time with a hash set, which avoids the O(n\u00b2) brute-force approach of comparing every pair.",
+      "interview_talking_point": "I'm trading O(n) space for O(n) time with a hash set, which avoids the O(n²) brute-force approach of comparing every pair.",
       "edge_cases": [
-        "Empty array \u2192 no duplicates possible, return False",
-        "Single-element array \u2192 return False",
-        "All elements identical \u2192 returns True as soon as the second element is checked",
-        "Negative numbers and zero \u2192 ints are hashable as-is, no special handling needed"
+        "Empty array → no duplicates possible, return False",
+        "Single-element array → return False",
+        "All elements identical → returns True as soon as the second element is checked",
+        "Negative numbers and zero → ints are hashable as-is, no special handling needed"
       ],
       "trace": {
-        "array": [1, 2, 3, 1],
+        "array": [
+          1,
+          2,
+          3,
+          1
+        ],
         "frames": [
-          { "idx": null, "set": [], "status": "start", "note": "Start with an empty hash set h." },
-          { "idx": 0, "set": [1], "status": "add", "note": "num = 1 \u2014 not in h, so add it. h = {1}" },
-          { "idx": 1, "set": [1, 2], "status": "add", "note": "num = 2 \u2014 not in h, so add it. h = {1, 2}" },
-          { "idx": 2, "set": [1, 2, 3], "status": "add", "note": "num = 3 \u2014 not in h, so add it. h = {1, 2, 3}" },
-          { "idx": 3, "set": [1, 2, 3], "status": "found", "note": "num = 1 \u2014 already in h! Return True immediately." }
+          {
+            "idx": null,
+            "set": [],
+            "status": "start",
+            "note": "Start with an empty hash set h."
+          },
+          {
+            "idx": 0,
+            "set": [
+              1
+            ],
+            "status": "add",
+            "note": "num = 1 — not in h, so add it. h = {1}"
+          },
+          {
+            "idx": 1,
+            "set": [
+              1,
+              2
+            ],
+            "status": "add",
+            "note": "num = 2 — not in h, so add it. h = {1, 2}"
+          },
+          {
+            "idx": 2,
+            "set": [
+              1,
+              2,
+              3
+            ],
+            "status": "add",
+            "note": "num = 3 — not in h, so add it. h = {1, 2, 3}"
+          },
+          {
+            "idx": 3,
+            "set": [
+              1,
+              2,
+              3
+            ],
+            "status": "found",
+            "note": "num = 1 — already in h! Return True immediately."
+          }
         ]
       }
+    }
+  ],
+  "roadmap": [
+    {
+      "category": "Arrays & Hashing",
+      "title": "Contains Duplicate",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Arrays & Hashing",
+      "title": "Valid Anagram",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Arrays & Hashing",
+      "title": "Two Sum",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Arrays & Hashing",
+      "title": "Group Anagrams",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Arrays & Hashing",
+      "title": "Top K Frequent Elements",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Arrays & Hashing",
+      "title": "Encode and Decode Strings",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Arrays & Hashing",
+      "title": "Product of Array Except Self",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Arrays & Hashing",
+      "title": "Longest Consecutive Sequence",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Two Pointers",
+      "title": "Valid Palindrome",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Two Pointers",
+      "title": "3Sum",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Two Pointers",
+      "title": "Container With Most Water",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Sliding Window",
+      "title": "Best Time to Buy And Sell Stock",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Sliding Window",
+      "title": "Longest Substring Without Repeating Characters",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Sliding Window",
+      "title": "Longest Repeating Character Replacement",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Sliding Window",
+      "title": "Minimum Window Substring",
+      "difficulty": "Hard"
+    },
+    {
+      "category": "Stack",
+      "title": "Valid Parentheses",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Binary Search",
+      "title": "Find Minimum In Rotated Sorted Array",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Binary Search",
+      "title": "Search In Rotated Sorted Array",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Linked List",
+      "title": "Reverse Linked List",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Linked List",
+      "title": "Merge Two Sorted Lists",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Linked List",
+      "title": "Linked List Cycle",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Linked List",
+      "title": "Reorder List",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Linked List",
+      "title": "Remove Nth Node From End of List",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Linked List",
+      "title": "Merge K Sorted Lists",
+      "difficulty": "Hard"
+    },
+    {
+      "category": "Trees",
+      "title": "Invert Binary Tree",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Trees",
+      "title": "Maximum Depth of Binary Tree",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Trees",
+      "title": "Same Tree",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Trees",
+      "title": "Subtree of Another Tree",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Trees",
+      "title": "Lowest Common Ancestor of a Binary Search Tree",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Trees",
+      "title": "Binary Tree Level Order Traversal",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Trees",
+      "title": "Validate Binary Search Tree",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Trees",
+      "title": "Kth Smallest Element In a BST",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Trees",
+      "title": "Construct Binary Tree From Preorder And Inorder Traversal",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Trees",
+      "title": "Binary Tree Maximum Path Sum",
+      "difficulty": "Hard"
+    },
+    {
+      "category": "Trees",
+      "title": "Serialize And Deserialize Binary Tree",
+      "difficulty": "Hard"
+    },
+    {
+      "category": "Heap / Priority Queue",
+      "title": "Find Median From Data Stream",
+      "difficulty": "Hard"
+    },
+    {
+      "category": "Backtracking",
+      "title": "Combination Sum",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Backtracking",
+      "title": "Word Search",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Tries",
+      "title": "Implement Trie Prefix Tree",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Tries",
+      "title": "Design Add And Search Words Data Structure",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Tries",
+      "title": "Word Search II",
+      "difficulty": "Hard"
+    },
+    {
+      "category": "Graphs",
+      "title": "Number of Islands",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Graphs",
+      "title": "Clone Graph",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Graphs",
+      "title": "Pacific Atlantic Water Flow",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Graphs",
+      "title": "Course Schedule",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Graphs",
+      "title": "Graph Valid Tree",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Graphs",
+      "title": "Number of Connected Components In An Undirected Graph",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Advanced Graphs",
+      "title": "Alien Dictionary",
+      "difficulty": "Hard"
+    },
+    {
+      "category": "1-D Dynamic Programming",
+      "title": "Climbing Stairs",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "1-D Dynamic Programming",
+      "title": "House Robber",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "1-D Dynamic Programming",
+      "title": "House Robber II",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "1-D Dynamic Programming",
+      "title": "Longest Palindromic Substring",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "1-D Dynamic Programming",
+      "title": "Palindromic Substrings",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "1-D Dynamic Programming",
+      "title": "Decode Ways",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "1-D Dynamic Programming",
+      "title": "Coin Change",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "1-D Dynamic Programming",
+      "title": "Maximum Product Subarray",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "1-D Dynamic Programming",
+      "title": "Word Break",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "1-D Dynamic Programming",
+      "title": "Longest Increasing Subsequence",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "2-D Dynamic Programming",
+      "title": "Unique Paths",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "2-D Dynamic Programming",
+      "title": "Longest Common Subsequence",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Greedy",
+      "title": "Maximum Subarray",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Greedy",
+      "title": "Jump Game",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Intervals",
+      "title": "Insert Interval",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Intervals",
+      "title": "Merge Intervals",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Intervals",
+      "title": "Non Overlapping Intervals",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Intervals",
+      "title": "Meeting Rooms",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Intervals",
+      "title": "Meeting Rooms II",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Math & Geometry",
+      "title": "Rotate Image",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Math & Geometry",
+      "title": "Spiral Matrix",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Math & Geometry",
+      "title": "Set Matrix Zeroes",
+      "difficulty": "Medium"
+    },
+    {
+      "category": "Bit Manipulation",
+      "title": "Number of 1 Bits",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Bit Manipulation",
+      "title": "Counting Bits",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Bit Manipulation",
+      "title": "Reverse Bits",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Bit Manipulation",
+      "title": "Missing Number",
+      "difficulty": "Easy"
+    },
+    {
+      "category": "Bit Manipulation",
+      "title": "Sum of Two Integers",
+      "difficulty": "Medium"
     }
   ]
 }
