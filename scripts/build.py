@@ -54,6 +54,8 @@ def main():
 
     for p in problems:
         p["code_html"] = highlight_code(p["code"])
+        for alt in p.get("alternative_solutions", []):
+            alt["code_html"] = highlight_code(alt["code"])
         if p.get("trace"):
             # html.escape so the JSON can sit safely inside a double-quoted
             # HTML attribute (escapes quotes/ampersands/angle brackets).

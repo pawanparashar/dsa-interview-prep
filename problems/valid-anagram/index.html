@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Valid Anagram — Coding Patterns</title>
+<meta name="description" content="Valid Anagram (Arrays & Hashing) — pattern, walkthrough, video, and printable one-pager.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container row">
+      <div>
+        <a class="brand" href="../../index.html">Coding <span class="dot">Patterns</span></a>
+        <div class="tagline">BLIND 75 · INTERVIEW REVISION</div>
+      </div>
+      <nav>
+        <a href="https://github.com/pawanparashar/dsa-interview-prep">GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="p-head">
+      <a class="crumbs" href="../../index.html">← All 75</a>
+      <h1>#2 — Valid Anagram</h1>
+      <div class="pills">
+        <span class="pill accent">Arrays & Hashing</span>
+        <span class="pill">LeetCode 242</span>
+        <span class="pill">NeetCode "Valid Anagram"</span>
+        <span class="badge Easy">Easy</span>
+      </div>
+      <div class="p-actions">
+        <a class="linkbtn" href="valid-anagram-onepager.pdf">Download one-pager (PDF) ↓</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Problem</h2>
+      <p>Given two strings <code>s</code> and <code>t</code>, return <code>true</code> if the two strings are anagrams of each other, otherwise return <code>false</code>. An anagram is a string that contains the exact same characters as another string, but the order of the characters can be different.</p>
+      <div class="examples">
+        
+        <div>s = "racecar", t = "carrace" → true</div>
+        
+        <div>s = "jar", t = "jam" → false</div>
+        
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Watch the walkthrough</h2>
+      <div class="video-frame">
+        <iframe src="https://www.youtube.com/embed/9UtInBqnCgA" title="Valid Anagram solution walkthrough" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Core idea</h2>
+      <p><strong>Goal</strong><br>Determine whether two strings are anagrams of each other.</p>
+      <p><strong>Key insight</strong><br>Two strings are anagrams exactly when they contain the same characters the same number of times — order doesn't matter, so the problem reduces to comparing character frequency counts instead of comparing the strings directly.</p>
+      <div class="callout">Trigger phrase: “Same letters, different order?” → reach for a character frequency count (Hash Map).</div>
+    </div>
+
+    
+    <div class="section">
+      <h2>Step through it</h2>
+      <p class="muted">Walk the algorithm one step at a time — forward, back, or press play.</p>
+      <div class="viz" id="viz" data-trace="{&quot;mode&quot;: &quot;strings&quot;, &quot;s&quot;: &quot;racecar&quot;, &quot;t&quot;: &quot;carrace&quot;, &quot;frames&quot;: [{&quot;phase&quot;: &quot;build&quot;, &quot;sIdx&quot;: null, &quot;tIdx&quot;: null, &quot;counterS&quot;: {}, &quot;counterT&quot;: {}, &quot;status&quot;: &quot;build&quot;, &quot;note&quot;: &quot;Lengths match (7 = 7) \u2014 start building frequency counts for both strings together.&quot;}, {&quot;phase&quot;: &quot;build&quot;, &quot;sIdx&quot;: 0, &quot;tIdx&quot;: 0, &quot;counterS&quot;: {&quot;r&quot;: 1}, &quot;counterT&quot;: {&quot;c&quot;: 1}, &quot;status&quot;: &quot;build&quot;, &quot;note&quot;: &quot;s[0] = &#x27;r&#x27; \u2192 counterS = {r:1}.  t[0] = &#x27;c&#x27; \u2192 counterT = {c:1}.&quot;}, {&quot;phase&quot;: &quot;build&quot;, &quot;sIdx&quot;: 1, &quot;tIdx&quot;: 1, &quot;counterS&quot;: {&quot;r&quot;: 1, &quot;a&quot;: 1}, &quot;counterT&quot;: {&quot;c&quot;: 1, &quot;a&quot;: 1}, &quot;status&quot;: &quot;build&quot;, &quot;note&quot;: &quot;s[1] = &#x27;a&#x27; \u2192 counterS = {r:1, a:1}.  t[1] = &#x27;a&#x27; \u2192 counterT = {c:1, a:1}.&quot;}, {&quot;phase&quot;: &quot;build&quot;, &quot;sIdx&quot;: 2, &quot;tIdx&quot;: 2, &quot;counterS&quot;: {&quot;r&quot;: 1, &quot;a&quot;: 1, &quot;c&quot;: 1}, &quot;counterT&quot;: {&quot;c&quot;: 1, &quot;a&quot;: 1, &quot;r&quot;: 1}, &quot;status&quot;: &quot;build&quot;, &quot;note&quot;: &quot;s[2] = &#x27;c&#x27; \u2192 counterS = {r:1, a:1, c:1}.  t[2] = &#x27;r&#x27; \u2192 counterT = {c:1, a:1, r:1}.&quot;}, {&quot;phase&quot;: &quot;build&quot;, &quot;sIdx&quot;: 3, &quot;tIdx&quot;: 3, &quot;counterS&quot;: {&quot;r&quot;: 1, &quot;a&quot;: 1, &quot;c&quot;: 1, &quot;e&quot;: 1}, &quot;counterT&quot;: {&quot;c&quot;: 1, &quot;a&quot;: 1, &quot;r&quot;: 2}, &quot;status&quot;: &quot;build&quot;, &quot;note&quot;: &quot;s[3] = &#x27;e&#x27; \u2192 counterS = {r:1, a:1, c:1, e:1}.  t[3] = &#x27;r&#x27; \u2192 counterT = {c:1, a:1, r:2}.&quot;}, {&quot;phase&quot;: &quot;build&quot;, &quot;sIdx&quot;: 4, &quot;tIdx&quot;: 4, &quot;counterS&quot;: {&quot;r&quot;: 1, &quot;a&quot;: 1, &quot;c&quot;: 2, &quot;e&quot;: 1}, &quot;counterT&quot;: {&quot;c&quot;: 1, &quot;a&quot;: 2, &quot;r&quot;: 2}, &quot;status&quot;: &quot;build&quot;, &quot;note&quot;: &quot;s[4] = &#x27;c&#x27; \u2192 counterS = {r:1, a:1, c:2, e:1}.  t[4] = &#x27;a&#x27; \u2192 counterT = {c:1, a:2, r:2}.&quot;}, {&quot;phase&quot;: &quot;build&quot;, &quot;sIdx&quot;: 5, &quot;tIdx&quot;: 5, &quot;counterS&quot;: {&quot;r&quot;: 1, &quot;a&quot;: 2, &quot;c&quot;: 2, &quot;e&quot;: 1}, &quot;counterT&quot;: {&quot;c&quot;: 2, &quot;a&quot;: 2, &quot;r&quot;: 2}, &quot;status&quot;: &quot;build&quot;, &quot;note&quot;: &quot;s[5] = &#x27;a&#x27; \u2192 counterS = {r:1, a:2, c:2, e:1}.  t[5] = &#x27;c&#x27; \u2192 counterT = {c:2, a:2, r:2}.&quot;}, {&quot;phase&quot;: &quot;build&quot;, &quot;sIdx&quot;: 6, &quot;tIdx&quot;: 6, &quot;counterS&quot;: {&quot;r&quot;: 2, &quot;a&quot;: 2, &quot;c&quot;: 2, &quot;e&quot;: 1}, &quot;counterT&quot;: {&quot;c&quot;: 2, &quot;a&quot;: 2, &quot;r&quot;: 2, &quot;e&quot;: 1}, &quot;status&quot;: &quot;build&quot;, &quot;note&quot;: &quot;s[6] = &#x27;r&#x27; \u2192 counterS = {r:2, a:2, c:2, e:1}.  t[6] = &#x27;e&#x27; \u2192 counterT = {c:2, a:2, r:2, e:1}. Both strings fully counted.&quot;}, {&quot;phase&quot;: &quot;compare&quot;, &quot;sIdx&quot;: null, &quot;tIdx&quot;: null, &quot;counterS&quot;: {&quot;r&quot;: 2, &quot;a&quot;: 2, &quot;c&quot;: 2, &quot;e&quot;: 1}, &quot;counterT&quot;: {&quot;c&quot;: 2, &quot;a&quot;: 2, &quot;r&quot;: 2, &quot;e&quot;: 1}, &quot;compareKey&quot;: &quot;r&quot;, &quot;status&quot;: &quot;match&quot;, &quot;note&quot;: &quot;Compare &#x27;r&#x27;: counterS[r] = 2, counterT[r] = 2 \u2014 match.&quot;}, {&quot;phase&quot;: &quot;compare&quot;, &quot;sIdx&quot;: null, &quot;tIdx&quot;: null, &quot;counterS&quot;: {&quot;r&quot;: 2, &quot;a&quot;: 2, &quot;c&quot;: 2, &quot;e&quot;: 1}, &quot;counterT&quot;: {&quot;c&quot;: 2, &quot;a&quot;: 2, &quot;r&quot;: 2, &quot;e&quot;: 1}, &quot;compareKey&quot;: &quot;a&quot;, &quot;status&quot;: &quot;match&quot;, &quot;note&quot;: &quot;Compare &#x27;a&#x27;: counterS[a] = 2, counterT[a] = 2 \u2014 match.&quot;}, {&quot;phase&quot;: &quot;compare&quot;, &quot;sIdx&quot;: null, &quot;tIdx&quot;: null, &quot;counterS&quot;: {&quot;r&quot;: 2, &quot;a&quot;: 2, &quot;c&quot;: 2, &quot;e&quot;: 1}, &quot;counterT&quot;: {&quot;c&quot;: 2, &quot;a&quot;: 2, &quot;r&quot;: 2, &quot;e&quot;: 1}, &quot;compareKey&quot;: &quot;c&quot;, &quot;status&quot;: &quot;match&quot;, &quot;note&quot;: &quot;Compare &#x27;c&#x27;: counterS[c] = 2, counterT[c] = 2 \u2014 match.&quot;}, {&quot;phase&quot;: &quot;compare&quot;, &quot;sIdx&quot;: null, &quot;tIdx&quot;: null, &quot;counterS&quot;: {&quot;r&quot;: 2, &quot;a&quot;: 2, &quot;c&quot;: 2, &quot;e&quot;: 1}, &quot;counterT&quot;: {&quot;c&quot;: 2, &quot;a&quot;: 2, &quot;r&quot;: 2, &quot;e&quot;: 1}, &quot;compareKey&quot;: &quot;e&quot;, &quot;status&quot;: &quot;match&quot;, &quot;note&quot;: &quot;Compare &#x27;e&#x27;: counterS[e] = 1, counterT[e] = 1 \u2014 match.&quot;}, {&quot;phase&quot;: &quot;done&quot;, &quot;sIdx&quot;: null, &quot;tIdx&quot;: null, &quot;counterS&quot;: {&quot;r&quot;: 2, &quot;a&quot;: 2, &quot;c&quot;: 2, &quot;e&quot;: 1}, &quot;counterT&quot;: {&quot;c&quot;: 2, &quot;a&quot;: 2, &quot;r&quot;: 2, &quot;e&quot;: 1}, &quot;compareKey&quot;: null, &quot;status&quot;: &quot;done&quot;, &quot;note&quot;: &quot;Every character count matches \u2014 return True. The strings are anagrams.&quot;}]}">
+        <div class="viz-body" id="vizBody"></div>
+        <div class="viz-note" id="vizNote"></div>
+        <div class="viz-controls">
+          <button class="viz-btn" id="vizPrev" aria-label="Previous step">&larr; Prev</button>
+          <button class="viz-btn accent" id="vizPlay" aria-label="Play">&#9654; Play</button>
+          <button class="viz-btn" id="vizNext" aria-label="Next step">Next &rarr;</button>
+          <span class="viz-step-count" id="vizCount"></span>
+        </div>
+        <div class="viz-progress"><div class="viz-progress-fill" id="vizProgressFill"></div></div>
+      </div>
+    </div>
+    
+
+    <div class="section">
+      <h2>Walkthrough</h2>
+      
+      <p>Two strings are anagrams exactly when every character appears the same number of times in both — order doesn't matter, so this calls for frequency counts rather than a position-by-position comparison.</p>
+      
+      <p>First check: if the lengths differ, the strings can't be anagrams, so return <code>False</code> immediately without doing any counting — a cheap short-circuit.</p>
+      
+      <p>Build two frequency dictionaries in a single pass over both strings together (same index <code>ch</code>), incrementing each character's count with <code>.get(char, 0) + 1</code> so a character seen for the first time defaults to 0 instead of raising a <code>KeyError</code>.</p>
+      
+      <p>Then compare: walk every key in <code>counterS</code> and check it has the same count in <code>counterT</code> (again using <code>.get</code>, so a character missing from <code>t</code> just reads as 0 and fails the comparison instead of throwing). If every count lines up, the strings are anagrams.</p>
+      
+      <p>Because <code>s</code> and <code>t</code> only contain lowercase English letters (per the problem's constraints), each dictionary never holds more than 26 keys — so despite looking like O(n) extra space, it's effectively O(1).</p>
+      
+    </div>
+
+    <div class="section">
+      <h2>Optimal solution</h2>
+      <p><strong>Data structure:</strong> Two Hash Maps (Python <code>dict</code>) tracking character counts</p>
+      <ol class="steps">
+        
+        <li>If <code>s</code> and <code>t</code> have different lengths, they can't be anagrams — return <code>False</code> immediately.</li>
+        
+        <li>Walk both strings together in one pass, building <code>counterS</code> and <code>counterT</code> with <code>dict.get(char, 0) + 1</code>.</li>
+        
+        <li>For every character in <code>counterS</code>, compare its count against <code>counterT.get(char, 0)</code>; any mismatch means the strings aren't anagrams — return <code>False</code>.</li>
+        
+        <li>If every character's count matches, return <code>True</code>.</li>
+        
+      </ol>
+      <div class="complexity">
+        <div class="box"><span class="v">O(n + m)</span><span class="k">Time</span></div>
+        <div class="box"><span class="v">O(1)</span><span class="k">Space</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Code</h2>
+      <pre><code><span class="kw">class</span> Solution:
+    <span class="kw">def</span> isAnagram(<span class="kw">self</span>, s: str, t: str) -&gt; bool:
+        counterS, counterT = {}, {}
+        <span class="kw">if</span> len(s) != len(t):
+            <span class="kw">return</span> <span class="kw">False</span>
+
+        <span class="kw">for</span> ch <span class="kw">in</span> range(len(s)):
+            counterS[s[ch]] = 1 + counterS.get(s[ch], 0)
+            counterT[t[ch]] = 1 + counterT.get(t[ch], 0)
+
+        <span class="kw">for</span> c <span class="kw">in</span> counterS:
+            <span class="kw">if</span> counterS[c] != counterT.get(c, 0):
+                <span class="kw">return</span> <span class="kw">False</span>
+
+        <span class="kw">return</span> <span class="kw">True</span></code></pre>
+    </div>
+
+    
+    <div class="section">
+      <h2>Other ways to solve it</h2>
+      
+      <div class="alt-solution">
+        <h3>Pythonic one-liner — collections.Counter</h3>
+        <p class="muted">Same O(n) idea, but lets <code>Counter</code> do the counting and the comparison in one expression. Easiest to write correctly under interview pressure, and reads cleanly — the main trade-off is it's a library call instead of showing your own counting logic, so some interviewers may ask you to implement it by hand anyway (the primary solution above).</p>
+        <pre><code><span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+<span class="kw">class</span> Solution:
+    <span class="kw">def</span> isAnagram(<span class="kw">self</span>, s: str, t: str) -&gt; bool:
+        <span class="kw">if</span> len(s) != len(t):
+            <span class="kw">return</span> <span class="kw">False</span>
+        <span class="kw">return</span> Counter(s) == Counter(t)</code></pre>
+        <div class="complexity">
+          <div class="box"><span class="v">O(n + m)</span><span class="k">Time</span></div>
+          <div class="box"><span class="v">O(1)</span><span class="k">Space</span></div>
+        </div>
+      </div>
+      
+      <div class="alt-solution">
+        <h3>Sorting</h3>
+        <p class="muted">The simplest to reason about: two strings are anagrams exactly when sorting both produces the same sequence. Easier to explain out loud and needs no extra data structure, but it's slower — O(n log n) instead of O(n) — so it's a good fallback if you blank on the hash map approach, not the first choice.</p>
+        <pre><code><span class="kw">class</span> Solution:
+    <span class="kw">def</span> isAnagram(<span class="kw">self</span>, s: str, t: str) -&gt; bool:
+        <span class="kw">return</span> sorted(s) == sorted(t)</code></pre>
+        <div class="complexity">
+          <div class="box"><span class="v">O(n log n)</span><span class="k">Time</span></div>
+          <div class="box"><span class="v">O(n)</span><span class="k">Space</span></div>
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <div class="section">
+      <h2>Tips to remember this pattern</h2>
+      <p><strong>Mental shortcut</strong> — “Same letters, same counts → anagram.”</p>
+      <p><strong>Common / related problems</strong></p>
+      <ul class="plain">
+        
+        <li>Group Anagrams</li>
+        
+        <li>Two Sum</li>
+        
+        <li>Contains Duplicate</li>
+        
+      </ul>
+      <div class="quote">"I'm comparing character frequency counts instead of sorting, which keeps this at O(n) time instead of O(n log n) — and because the alphabet is fixed at 26 lowercase letters, the extra space is effectively O(1)."</div>
+    </div>
+
+    <div class="section">
+      <h2>Edge cases to consider</h2>
+      <ul class="edge-list">
+        
+        <li>Different lengths → return False immediately, no counting needed</li>
+        
+        <li>s and t are identical strings → trivially anagrams</li>
+        
+        <li>All identical characters, e.g. "aaa" vs "aaa" → true</li>
+        
+        <li>Input is lowercase-only per constraints — mixed case or Unicode input would need normalizing first</li>
+        
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Day-of-interview revision</h2>
+      <p class="muted">Short on time? Skim the trigger phrase, the steps above, and keep this PDF open as a fallback.</p>
+      <div class="p-actions">
+        <a class="linkbtn" href="valid-anagram-onepager.pdf">Download one-pager (PDF) ↓</a>
+        <a class="linkbtn ghost" href="../../index.html">Back to all 75 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">Built by Pawan Parashar · generated from <a href="https://github.com/pawanparashar/dsa-interview-prep">dsa-interview-prep</a></div>
+  </footer>
+
+  
+  <script>
+  (function () {
+    var root = document.getElementById('viz');
+    if (!root) return;
+    var trace = JSON.parse(root.dataset.trace);
+    var mode = trace.mode || 'array-set';
+    var frames = trace.frames;
+    var cur = 0;
+    var playing = false;
+    var timer = null;
+
+    var bodyEl = document.getElementById('vizBody');
+    var noteEl = document.getElementById('vizNote');
+    var countEl = document.getElementById('vizCount');
+    var fillEl = document.getElementById('vizProgressFill');
+    var prevBtn = document.getElementById('vizPrev');
+    var nextBtn = document.getElementById('vizNext');
+    var playBtn = document.getElementById('vizPlay');
+
+    function makeCells(container, chars) {
+      chars.split('').forEach(function (ch) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell';
+        cell.textContent = ch;
+        container.appendChild(cell);
+      });
+    }
+
+    function renderChips(container, counts, highlightKey, mismatch) {
+      container.innerHTML = '';
+      var keys = Object.keys(counts);
+      if (keys.length === 0) {
+        var empty = document.createElement('span');
+        empty.className = 'viz-set-empty';
+        empty.textContent = '(empty)';
+        container.appendChild(empty);
+        return;
+      }
+      keys.forEach(function (k) {
+        var chip = document.createElement('span');
+        chip.className = 'viz-chip';
+        if (k === highlightKey) chip.classList.add(mismatch ? 'found' : 'active');
+        chip.textContent = k + ':' + counts[k];
+        container.appendChild(chip);
+      });
+    }
+
+    var updateFrame;
+
+    if (mode === 'strings') {
+      bodyEl.innerHTML =
+        '<div class="viz-str-row"><span class="viz-str-label">s =</span><div class="viz-array" id="vizArrS"></div></div>' +
+        '<div class="viz-str-row"><span class="viz-str-label">t =</span><div class="viz-array" id="vizArrT"></div></div>' +
+        '<div class="viz-counts-row">' +
+          '<div class="viz-counts"><div class="viz-set-label">counterS =</div><div class="viz-set" id="vizChipsS"></div></div>' +
+          '<div class="viz-counts"><div class="viz-set-label">counterT =</div><div class="viz-set" id="vizChipsT"></div></div>' +
+        '</div>';
+      makeCells(document.getElementById('vizArrS'), trace.s);
+      makeCells(document.getElementById('vizArrT'), trace.t);
+      var sCells = bodyEl.querySelectorAll('#vizArrS .viz-cell');
+      var tCells = bodyEl.querySelectorAll('#vizArrT .viz-cell');
+      var chipsS = document.getElementById('vizChipsS');
+      var chipsT = document.getElementById('vizChipsT');
+
+      updateFrame = function (f) {
+        sCells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.sIdx !== null && i === f.sIdx) cell.classList.add('active');
+          else if (f.phase !== 'build' || (f.sIdx !== null && i < f.sIdx)) cell.classList.add('done');
+        });
+        tCells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.tIdx !== null && i === f.tIdx) cell.classList.add('active');
+          else if (f.phase !== 'build' || (f.tIdx !== null && i < f.tIdx)) cell.classList.add('done');
+        });
+        var mismatch = f.status === 'mismatch';
+        renderChips(chipsS, f.counterS, f.compareKey, mismatch);
+        renderChips(chipsT, f.counterT, f.compareKey, mismatch);
+      };
+    } else {
+      bodyEl.innerHTML =
+        '<div class="viz-array" id="vizArray"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">h =</span><div class="viz-set" id="vizSet"></div></div>';
+      var arrayEl = document.getElementById('vizArray');
+      trace.array.forEach(function (val) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell';
+        cell.textContent = val;
+        arrayEl.appendChild(cell);
+      });
+      var cells = arrayEl.querySelectorAll('.viz-cell');
+      var setEl = document.getElementById('vizSet');
+
+      updateFrame = function (f) {
+        cells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'found', 'done');
+          if (f.idx !== null && i === f.idx) {
+            cell.classList.add(f.status === 'found' ? 'found' : 'active');
+          } else if (f.idx !== null && i < f.idx) {
+            cell.classList.add('done');
+          }
+        });
+        setEl.innerHTML = '';
+        if (f.set.length === 0) {
+          var empty = document.createElement('span');
+          empty.className = 'viz-set-empty';
+          empty.textContent = '(empty)';
+          setEl.appendChild(empty);
+        } else {
+          f.set.forEach(function (v) {
+            var chip = document.createElement('span');
+            chip.className = 'viz-chip';
+            chip.textContent = v;
+            setEl.appendChild(chip);
+          });
+        }
+      };
+    }
+
+    function render() {
+      var f = frames[cur];
+      updateFrame(f);
+      var flag = f.status === 'found' || f.status === 'mismatch';
+      noteEl.textContent = f.note;
+      noteEl.className = 'viz-note' + (flag ? ' found' : '');
+      countEl.textContent = 'Step ' + (cur + 1) + ' / ' + frames.length;
+      fillEl.style.width = (((cur + 1) / frames.length) * 100) + '%';
+      prevBtn.disabled = cur === 0;
+      nextBtn.disabled = cur === frames.length - 1;
+      if (cur === frames.length - 1) stopPlaying();
+    }
+
+    function goTo(i) {
+      cur = Math.max(0, Math.min(frames.length - 1, i));
+      render();
+    }
+
+    function stopPlaying() {
+      playing = false;
+      playBtn.innerHTML = '&#9654; Play';
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    function startPlaying() {
+      if (cur === frames.length - 1) cur = 0;
+      playing = true;
+      playBtn.innerHTML = '&#10074;&#10074; Pause';
+      timer = setInterval(function () {
+        if (cur >= frames.length - 1) { stopPlaying(); render(); return; }
+        goTo(cur + 1);
+      }, 1400);
+    }
+
+    prevBtn.addEventListener('click', function () { stopPlaying(); goTo(cur - 1); });
+    nextBtn.addEventListener('click', function () { stopPlaying(); goTo(cur + 1); });
+    playBtn.addEventListener('click', function () {
+      if (playing) { stopPlaying(); } else { startPlaying(); }
+    });
+
+    render();
+  })();
+  </script>
+  
+</body>
+</html>

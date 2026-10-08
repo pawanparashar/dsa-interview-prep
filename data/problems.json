@@ -122,6 +122,315 @@
           }
         ]
       }
+    },
+    {
+      "number": 2,
+      "slug": "valid-anagram",
+      "title": "Valid Anagram",
+      "category": "Arrays & Hashing",
+      "leetcode_number": 242,
+      "neetcode_name": "Valid Anagram",
+      "difficulty": "Easy",
+      "status": "Solved",
+      "youtube_id": "9UtInBqnCgA",
+      "problem_statement": "Given two strings <code>s</code> and <code>t</code>, return <code>true</code> if the two strings are anagrams of each other, otherwise return <code>false</code>. An anagram is a string that contains the exact same characters as another string, but the order of the characters can be different.",
+      "examples": [
+        {
+          "input": "s = \"racecar\", t = \"carrace\"",
+          "output": "true"
+        },
+        {
+          "input": "s = \"jar\", t = \"jam\"",
+          "output": "false"
+        }
+      ],
+      "core_idea": {
+        "goal": "Determine whether two strings are anagrams of each other.",
+        "key_insight": "Two strings are anagrams exactly when they contain the same characters the same number of times — order doesn't matter, so the problem reduces to comparing character frequency counts instead of comparing the strings directly.",
+        "trigger_phrase": "“Same letters, different order?” → reach for a character frequency count (Hash Map)."
+      },
+      "optimal_solution": {
+        "data_structure": "Two Hash Maps (Python <code>dict</code>) tracking character counts",
+        "steps": [
+          "If <code>s</code> and <code>t</code> have different lengths, they can't be anagrams — return <code>False</code> immediately.",
+          "Walk both strings together in one pass, building <code>counterS</code> and <code>counterT</code> with <code>dict.get(char, 0) + 1</code>.",
+          "For every character in <code>counterS</code>, compare its count against <code>counterT.get(char, 0)</code>; any mismatch means the strings aren't anagrams — return <code>False</code>.",
+          "If every character's count matches, return <code>True</code>."
+        ],
+        "time_complexity": "O(n + m)",
+        "space_complexity": "O(1)"
+      },
+      "code": "class Solution:\n    def isAnagram(self, s: str, t: str) -> bool:\n        counterS, counterT = {}, {}\n        if len(s) != len(t):\n            return False\n\n        for ch in range(len(s)):\n            counterS[s[ch]] = 1 + counterS.get(s[ch], 0)\n            counterT[t[ch]] = 1 + counterT.get(t[ch], 0)\n\n        for c in counterS:\n            if counterS[c] != counterT.get(c, 0):\n                return False\n\n        return True",
+      "walkthrough": [
+        "Two strings are anagrams exactly when every character appears the same number of times in both — order doesn't matter, so this calls for frequency counts rather than a position-by-position comparison.",
+        "First check: if the lengths differ, the strings can't be anagrams, so return <code>False</code> immediately without doing any counting — a cheap short-circuit.",
+        "Build two frequency dictionaries in a single pass over both strings together (same index <code>ch</code>), incrementing each character's count with <code>.get(char, 0) + 1</code> so a character seen for the first time defaults to 0 instead of raising a <code>KeyError</code>.",
+        "Then compare: walk every key in <code>counterS</code> and check it has the same count in <code>counterT</code> (again using <code>.get</code>, so a character missing from <code>t</code> just reads as 0 and fails the comparison instead of throwing). If every count lines up, the strings are anagrams.",
+        "Because <code>s</code> and <code>t</code> only contain lowercase English letters (per the problem's constraints), each dictionary never holds more than 26 keys — so despite looking like O(n) extra space, it's effectively O(1)."
+      ],
+      "mental_shortcut": "“Same letters, same counts → anagram.”",
+      "related_problems": [
+        "Group Anagrams",
+        "Two Sum",
+        "Contains Duplicate"
+      ],
+      "interview_talking_point": "I'm comparing character frequency counts instead of sorting, which keeps this at O(n) time instead of O(n log n) — and because the alphabet is fixed at 26 lowercase letters, the extra space is effectively O(1).",
+      "edge_cases": [
+        "Different lengths → return False immediately, no counting needed",
+        "s and t are identical strings → trivially anagrams",
+        "All identical characters, e.g. \"aaa\" vs \"aaa\" → true",
+        "Input is lowercase-only per constraints — mixed case or Unicode input would need normalizing first"
+      ],
+      "alternative_solutions": [
+        {
+          "name": "Pythonic one-liner — collections.Counter",
+          "note": "Same O(n) idea, but lets <code>Counter</code> do the counting and the comparison in one expression. Easiest to write correctly under interview pressure, and reads cleanly — the main trade-off is it's a library call instead of showing your own counting logic, so some interviewers may ask you to implement it by hand anyway (the primary solution above).",
+          "code": "from collections import Counter\n\nclass Solution:\n    def isAnagram(self, s: str, t: str) -> bool:\n        if len(s) != len(t):\n            return False\n        return Counter(s) == Counter(t)",
+          "time_complexity": "O(n + m)",
+          "space_complexity": "O(1)"
+        },
+        {
+          "name": "Sorting",
+          "note": "The simplest to reason about: two strings are anagrams exactly when sorting both produces the same sequence. Easier to explain out loud and needs no extra data structure, but it's slower — O(n log n) instead of O(n) — so it's a good fallback if you blank on the hash map approach, not the first choice.",
+          "code": "class Solution:\n    def isAnagram(self, s: str, t: str) -> bool:\n        return sorted(s) == sorted(t)",
+          "time_complexity": "O(n log n)",
+          "space_complexity": "O(n)"
+        }
+      ],
+      "trace": {
+        "mode": "strings",
+        "s": "racecar",
+        "t": "carrace",
+        "frames": [
+          {
+            "phase": "build",
+            "sIdx": null,
+            "tIdx": null,
+            "counterS": {},
+            "counterT": {},
+            "status": "build",
+            "note": "Lengths match (7 = 7) — start building frequency counts for both strings together."
+          },
+          {
+            "phase": "build",
+            "sIdx": 0,
+            "tIdx": 0,
+            "counterS": {
+              "r": 1
+            },
+            "counterT": {
+              "c": 1
+            },
+            "status": "build",
+            "note": "s[0] = 'r' → counterS = {r:1}.  t[0] = 'c' → counterT = {c:1}."
+          },
+          {
+            "phase": "build",
+            "sIdx": 1,
+            "tIdx": 1,
+            "counterS": {
+              "r": 1,
+              "a": 1
+            },
+            "counterT": {
+              "c": 1,
+              "a": 1
+            },
+            "status": "build",
+            "note": "s[1] = 'a' → counterS = {r:1, a:1}.  t[1] = 'a' → counterT = {c:1, a:1}."
+          },
+          {
+            "phase": "build",
+            "sIdx": 2,
+            "tIdx": 2,
+            "counterS": {
+              "r": 1,
+              "a": 1,
+              "c": 1
+            },
+            "counterT": {
+              "c": 1,
+              "a": 1,
+              "r": 1
+            },
+            "status": "build",
+            "note": "s[2] = 'c' → counterS = {r:1, a:1, c:1}.  t[2] = 'r' → counterT = {c:1, a:1, r:1}."
+          },
+          {
+            "phase": "build",
+            "sIdx": 3,
+            "tIdx": 3,
+            "counterS": {
+              "r": 1,
+              "a": 1,
+              "c": 1,
+              "e": 1
+            },
+            "counterT": {
+              "c": 1,
+              "a": 1,
+              "r": 2
+            },
+            "status": "build",
+            "note": "s[3] = 'e' → counterS = {r:1, a:1, c:1, e:1}.  t[3] = 'r' → counterT = {c:1, a:1, r:2}."
+          },
+          {
+            "phase": "build",
+            "sIdx": 4,
+            "tIdx": 4,
+            "counterS": {
+              "r": 1,
+              "a": 1,
+              "c": 2,
+              "e": 1
+            },
+            "counterT": {
+              "c": 1,
+              "a": 2,
+              "r": 2
+            },
+            "status": "build",
+            "note": "s[4] = 'c' → counterS = {r:1, a:1, c:2, e:1}.  t[4] = 'a' → counterT = {c:1, a:2, r:2}."
+          },
+          {
+            "phase": "build",
+            "sIdx": 5,
+            "tIdx": 5,
+            "counterS": {
+              "r": 1,
+              "a": 2,
+              "c": 2,
+              "e": 1
+            },
+            "counterT": {
+              "c": 2,
+              "a": 2,
+              "r": 2
+            },
+            "status": "build",
+            "note": "s[5] = 'a' → counterS = {r:1, a:2, c:2, e:1}.  t[5] = 'c' → counterT = {c:2, a:2, r:2}."
+          },
+          {
+            "phase": "build",
+            "sIdx": 6,
+            "tIdx": 6,
+            "counterS": {
+              "r": 2,
+              "a": 2,
+              "c": 2,
+              "e": 1
+            },
+            "counterT": {
+              "c": 2,
+              "a": 2,
+              "r": 2,
+              "e": 1
+            },
+            "status": "build",
+            "note": "s[6] = 'r' → counterS = {r:2, a:2, c:2, e:1}.  t[6] = 'e' → counterT = {c:2, a:2, r:2, e:1}. Both strings fully counted."
+          },
+          {
+            "phase": "compare",
+            "sIdx": null,
+            "tIdx": null,
+            "counterS": {
+              "r": 2,
+              "a": 2,
+              "c": 2,
+              "e": 1
+            },
+            "counterT": {
+              "c": 2,
+              "a": 2,
+              "r": 2,
+              "e": 1
+            },
+            "compareKey": "r",
+            "status": "match",
+            "note": "Compare 'r': counterS[r] = 2, counterT[r] = 2 — match."
+          },
+          {
+            "phase": "compare",
+            "sIdx": null,
+            "tIdx": null,
+            "counterS": {
+              "r": 2,
+              "a": 2,
+              "c": 2,
+              "e": 1
+            },
+            "counterT": {
+              "c": 2,
+              "a": 2,
+              "r": 2,
+              "e": 1
+            },
+            "compareKey": "a",
+            "status": "match",
+            "note": "Compare 'a': counterS[a] = 2, counterT[a] = 2 — match."
+          },
+          {
+            "phase": "compare",
+            "sIdx": null,
+            "tIdx": null,
+            "counterS": {
+              "r": 2,
+              "a": 2,
+              "c": 2,
+              "e": 1
+            },
+            "counterT": {
+              "c": 2,
+              "a": 2,
+              "r": 2,
+              "e": 1
+            },
+            "compareKey": "c",
+            "status": "match",
+            "note": "Compare 'c': counterS[c] = 2, counterT[c] = 2 — match."
+          },
+          {
+            "phase": "compare",
+            "sIdx": null,
+            "tIdx": null,
+            "counterS": {
+              "r": 2,
+              "a": 2,
+              "c": 2,
+              "e": 1
+            },
+            "counterT": {
+              "c": 2,
+              "a": 2,
+              "r": 2,
+              "e": 1
+            },
+            "compareKey": "e",
+            "status": "match",
+            "note": "Compare 'e': counterS[e] = 1, counterT[e] = 1 — match."
+          },
+          {
+            "phase": "done",
+            "sIdx": null,
+            "tIdx": null,
+            "counterS": {
+              "r": 2,
+              "a": 2,
+              "c": 2,
+              "e": 1
+            },
+            "counterT": {
+              "c": 2,
+              "a": 2,
+              "r": 2,
+              "e": 1
+            },
+            "compareKey": null,
+            "status": "done",
+            "note": "Every character count matches — return True. The strings are anagrams."
+          }
+        ]
+      }
     }
   ],
   "roadmap": [

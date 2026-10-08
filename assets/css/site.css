@@ -520,6 +520,66 @@ ul.edge-list li::before { content: "▸"; color: var(--accent); flex-shrink: 0; 
   transition: width 0.25s ease;
 }
 
+/* two-string compare mode (e.g. Valid Anagram) */
+.viz-str-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.viz-str-label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+  width: 24px;
+  flex-shrink: 0;
+}
+.viz-counts-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  margin-bottom: 14px;
+}
+.viz-counts {
+  flex: 1;
+  min-width: 180px;
+}
+.viz-counts .viz-set-label {
+  display: block;
+  margin-bottom: 6px;
+}
+.viz-counts .viz-set {
+  min-height: 30px;
+}
+
+/* alternative solutions */
+.alt-solution {
+  margin-bottom: 26px;
+  padding-bottom: 26px;
+  border-bottom: 1px solid var(--border);
+}
+.alt-solution:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+.alt-solution h3 {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--fg);
+  margin: 0 0 6px;
+}
+.alt-solution p.muted {
+  color: var(--muted);
+  font-size: 13.5px;
+  margin: 0 0 10px;
+  max-width: 68ch;
+}
+.alt-solution .complexity {
+  max-width: 300px;
+}
+
 footer {
   padding: 30px 0 50px;
   color: var(--muted);

@@ -71,11 +71,7 @@
       <h2>Step through it</h2>
       <p class="muted">Walk the algorithm one step at a time — forward, back, or press play.</p>
       <div class="viz" id="viz" data-trace="{&quot;array&quot;: [1, 2, 3, 1], &quot;frames&quot;: [{&quot;idx&quot;: null, &quot;set&quot;: [], &quot;status&quot;: &quot;start&quot;, &quot;note&quot;: &quot;Start with an empty hash set h.&quot;}, {&quot;idx&quot;: 0, &quot;set&quot;: [1], &quot;status&quot;: &quot;add&quot;, &quot;note&quot;: &quot;num = 1 \u2014 not in h, so add it. h = {1}&quot;}, {&quot;idx&quot;: 1, &quot;set&quot;: [1, 2], &quot;status&quot;: &quot;add&quot;, &quot;note&quot;: &quot;num = 2 \u2014 not in h, so add it. h = {1, 2}&quot;}, {&quot;idx&quot;: 2, &quot;set&quot;: [1, 2, 3], &quot;status&quot;: &quot;add&quot;, &quot;note&quot;: &quot;num = 3 \u2014 not in h, so add it. h = {1, 2, 3}&quot;}, {&quot;idx&quot;: 3, &quot;set&quot;: [1, 2, 3], &quot;status&quot;: &quot;found&quot;, &quot;note&quot;: &quot;num = 1 \u2014 already in h! Return True immediately.&quot;}]}">
-        <div class="viz-array" id="vizArray"></div>
-        <div class="viz-set-row">
-          <span class="viz-set-label">h =</span>
-          <div class="viz-set" id="vizSet"></div>
-        </div>
+        <div class="viz-body" id="vizBody"></div>
         <div class="viz-note" id="vizNote"></div>
         <div class="viz-controls">
           <button class="viz-btn" id="vizPrev" aria-label="Previous step">&larr; Prev</button>
@@ -137,6 +133,8 @@
         <span class="kw">return</span> <span class="kw">False</span></code></pre>
     </div>
 
+    
+
     <div class="section">
       <h2>Tips to remember this pattern</h2>
       <p><strong>Mental shortcut</strong> — “Seen it before? Set it and forget it.”</p>
@@ -190,14 +188,13 @@
     var root = document.getElementById('viz');
     if (!root) return;
     var trace = JSON.parse(root.dataset.trace);
-    var arr = trace.array;
+    var mode = trace.mode || 'array-set';
     var frames = trace.frames;
     var cur = 0;
     var playing = false;
     var timer = null;
 
-    var arrayEl = document.getElementById('vizArray');
-    var setEl = document.getElementById('vizSet');
+    var bodyEl = document.getElementById('vizBody');
     var noteEl = document.getElementById('vizNote');
     var countEl = document.getElementById('vizCount');
     var fillEl = document.getElementById('vizProgressFill');
@@ -205,40 +202,112 @@
     var nextBtn = document.getElementById('vizNext');
     var playBtn = document.getElementById('vizPlay');
 
-    arr.forEach(function (val) {
-      var cell = document.createElement('div');
-      cell.className = 'viz-cell';
-      cell.textContent = val;
-      arrayEl.appendChild(cell);
-    });
-    var cells = arrayEl.querySelectorAll('.viz-cell');
-
-    function render() {
-      var f = frames[cur];
-      cells.forEach(function (cell, i) {
-        cell.classList.remove('active', 'found', 'done');
-        if (f.idx !== null && i === f.idx) {
-          cell.classList.add(f.status === 'found' ? 'found' : 'active');
-        } else if (f.idx !== null && i < f.idx) {
-          cell.classList.add('done');
-        }
+    function makeCells(container, chars) {
+      chars.split('').forEach(function (ch) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell';
+        cell.textContent = ch;
+        container.appendChild(cell);
       });
-      setEl.innerHTML = '';
-      if (f.set.length === 0) {
+    }
+
+    function renderChips(container, counts, highlightKey, mismatch) {
+      container.innerHTML = '';
+      var keys = Object.keys(counts);
+      if (keys.length === 0) {
         var empty = document.createElement('span');
         empty.className = 'viz-set-empty';
         empty.textContent = '(empty)';
-        setEl.appendChild(empty);
-      } else {
-        f.set.forEach(function (v) {
-          var chip = document.createElement('span');
-          chip.className = 'viz-chip';
-          chip.textContent = v;
-          setEl.appendChild(chip);
-        });
+        container.appendChild(empty);
+        return;
       }
+      keys.forEach(function (k) {
+        var chip = document.createElement('span');
+        chip.className = 'viz-chip';
+        if (k === highlightKey) chip.classList.add(mismatch ? 'found' : 'active');
+        chip.textContent = k + ':' + counts[k];
+        container.appendChild(chip);
+      });
+    }
+
+    var updateFrame;
+
+    if (mode === 'strings') {
+      bodyEl.innerHTML =
+        '<div class="viz-str-row"><span class="viz-str-label">s =</span><div class="viz-array" id="vizArrS"></div></div>' +
+        '<div class="viz-str-row"><span class="viz-str-label">t =</span><div class="viz-array" id="vizArrT"></div></div>' +
+        '<div class="viz-counts-row">' +
+          '<div class="viz-counts"><div class="viz-set-label">counterS =</div><div class="viz-set" id="vizChipsS"></div></div>' +
+          '<div class="viz-counts"><div class="viz-set-label">counterT =</div><div class="viz-set" id="vizChipsT"></div></div>' +
+        '</div>';
+      makeCells(document.getElementById('vizArrS'), trace.s);
+      makeCells(document.getElementById('vizArrT'), trace.t);
+      var sCells = bodyEl.querySelectorAll('#vizArrS .viz-cell');
+      var tCells = bodyEl.querySelectorAll('#vizArrT .viz-cell');
+      var chipsS = document.getElementById('vizChipsS');
+      var chipsT = document.getElementById('vizChipsT');
+
+      updateFrame = function (f) {
+        sCells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.sIdx !== null && i === f.sIdx) cell.classList.add('active');
+          else if (f.phase !== 'build' || (f.sIdx !== null && i < f.sIdx)) cell.classList.add('done');
+        });
+        tCells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.tIdx !== null && i === f.tIdx) cell.classList.add('active');
+          else if (f.phase !== 'build' || (f.tIdx !== null && i < f.tIdx)) cell.classList.add('done');
+        });
+        var mismatch = f.status === 'mismatch';
+        renderChips(chipsS, f.counterS, f.compareKey, mismatch);
+        renderChips(chipsT, f.counterT, f.compareKey, mismatch);
+      };
+    } else {
+      bodyEl.innerHTML =
+        '<div class="viz-array" id="vizArray"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">h =</span><div class="viz-set" id="vizSet"></div></div>';
+      var arrayEl = document.getElementById('vizArray');
+      trace.array.forEach(function (val) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell';
+        cell.textContent = val;
+        arrayEl.appendChild(cell);
+      });
+      var cells = arrayEl.querySelectorAll('.viz-cell');
+      var setEl = document.getElementById('vizSet');
+
+      updateFrame = function (f) {
+        cells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'found', 'done');
+          if (f.idx !== null && i === f.idx) {
+            cell.classList.add(f.status === 'found' ? 'found' : 'active');
+          } else if (f.idx !== null && i < f.idx) {
+            cell.classList.add('done');
+          }
+        });
+        setEl.innerHTML = '';
+        if (f.set.length === 0) {
+          var empty = document.createElement('span');
+          empty.className = 'viz-set-empty';
+          empty.textContent = '(empty)';
+          setEl.appendChild(empty);
+        } else {
+          f.set.forEach(function (v) {
+            var chip = document.createElement('span');
+            chip.className = 'viz-chip';
+            chip.textContent = v;
+            setEl.appendChild(chip);
+          });
+        }
+      };
+    }
+
+    function render() {
+      var f = frames[cur];
+      updateFrame(f);
+      var flag = f.status === 'found' || f.status === 'mismatch';
       noteEl.textContent = f.note;
-      noteEl.className = 'viz-note' + (f.status === 'found' ? ' found' : '');
+      noteEl.className = 'viz-note' + (flag ? ' found' : '');
       countEl.textContent = 'Step ' + (cur + 1) + ' / ' + frames.length;
       fillEl.style.width = (((cur + 1) / frames.length) * 100) + '%';
       prevBtn.disabled = cur === 0;

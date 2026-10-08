@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Valid Anagram — One-pager</title>
+<style>
+  @page { size: Letter; margin: 14mm; }
+  :root {
+    --panel: #ffffff;
+    --panel-2: #fafaf8;
+    --border: #d8dad6;
+    --fg: #1b1d22;
+    --muted: #5d636f;
+    --accent: #0e8f86;
+    --accent-dim: #dcf1ef;
+    --code-bg: #f4f6f5;
+    --font-display: 'JetBrains Mono', monospace;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--panel);
+    color: var(--fg);
+    font-family: var(--font-body);
+  }
+  .wrap { width: 100%; }
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 14px;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+  }
+  .head .num { font-family: var(--font-display); color: var(--accent); font-size: 14px; }
+  .head h1 { font-family: var(--font-display); font-size: 22px; margin: 0; flex: 1 1 auto; }
+  .pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pill {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.02em;
+    padding: 3px 8px; border-radius: 999px; border: 1px solid var(--border);
+    color: var(--muted); background: var(--panel-2); white-space: nowrap;
+  }
+  .pill.accent { color: var(--accent); border-color: var(--accent-dim); background: var(--accent-dim); }
+  .grid { display: flex; flex-wrap: wrap; gap: 12px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; width: calc(50% - 6px); }
+  .card.full { width: 100%; }
+  .card h2 {
+    font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--accent); margin: 0 0 8px;
+  }
+  .card p { margin: 0 0 6px; font-size: 11.5px; line-height: 1.45; }
+  .card p:last-child { margin-bottom: 0; }
+  .label { color: var(--muted); font-size: 10px; font-family: var(--font-mono); }
+  .examples div {
+    font-family: var(--font-mono); font-size: 10.5px; background: var(--code-bg);
+    border: 1px solid var(--border); border-radius: 5px; padding: 4px 8px; margin-bottom: 4px;
+  }
+  .callout {
+    border-left: 3px solid var(--accent); background: var(--accent-dim);
+    border-radius: 0 5px 5px 0; padding: 6px 10px; font-size: 11px; margin-top: 5px;
+  }
+  ol, ul { margin: 0; padding-left: 16px; font-size: 11.5px; line-height: 1.45; }
+  li { margin-bottom: 2px; }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 10px; margin: 0; white-space: pre-wrap; word-break: break-word;
+  }
+  code { font-family: var(--font-mono); font-size: 10px; line-height: 1.4; color: var(--fg); }
+  .kw { color: var(--accent); font-weight: 600; }
+  .complexity { display: flex; gap: 8px; margin-top: 8px; }
+  .complexity .box { flex: 1; background: var(--code-bg); border: 1px solid var(--border); border-radius: 5px; padding: 5px 8px; text-align: center; }
+  .complexity .box .v { font-family: var(--font-mono); color: var(--accent); font-size: 14px; display: block; }
+  .complexity .box .k { font-size: 8.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .quote { font-size: 10.5px; font-style: italic; color: var(--muted); border-left: 3px solid var(--border); padding-left: 8px; margin-top: 6px; }
+  .edge-list { display: flex; flex-wrap: wrap; gap: 4px 16px; list-style: none; padding: 0; margin: 0; }
+  .edge-list li { font-size: 10.5px; width: calc(50% - 8px); display: flex; gap: 6px; }
+  .edge-list li::before { content: "\2023"; color: var(--accent); flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <span class="num">#2</span>
+    <h1>Valid Anagram</h1>
+    <div class="pills">
+      <span class="pill accent">Arrays & Hashing</span>
+      <span class="pill">LeetCode 242</span>
+      <span class="pill">NeetCode "Valid Anagram"</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Problem</h2>
+      <p>Given two strings <code>s</code> and <code>t</code>, return <code>true</code> if the two strings are anagrams of each other, otherwise return <code>false</code>. An anagram is a string that contains the exact same characters as another string, but the order of the characters can be different.</p>
+      <div class="examples">
+        
+        <div>s = "racecar", t = "carrace" → true</div>
+        
+        <div>s = "jar", t = "jam" → false</div>
+        
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Core idea</h2>
+      <p><span class="label">Goal</span><br>Determine whether two strings are anagrams of each other.</p>
+      <p><span class="label">Key insight</span><br>Two strings are anagrams exactly when they contain the same characters the same number of times — order doesn't matter, so the problem reduces to comparing character frequency counts instead of comparing the strings directly.</p>
+      <div class="callout">Trigger: “Same letters, different order?” → reach for a character frequency count (Hash Map).</div>
+    </div>
+
+    <div class="card">
+      <h2>Optimal solution</h2>
+      <p><span class="label">Data structure</span> — Two Hash Maps (Python <code>dict</code>) tracking character counts</p>
+      <ol>
+        
+        <li>If <code>s</code> and <code>t</code> have different lengths, they can't be anagrams — return <code>False</code> immediately.</li>
+        
+        <li>Walk both strings together in one pass, building <code>counterS</code> and <code>counterT</code> with <code>dict.get(char, 0) + 1</code>.</li>
+        
+        <li>For every character in <code>counterS</code>, compare its count against <code>counterT.get(char, 0)</code>; any mismatch means the strings aren't anagrams — return <code>False</code>.</li>
+        
+        <li>If every character's count matches, return <code>True</code>.</li>
+        
+      </ol>
+      <div class="complexity">
+        <div class="box"><span class="v">O(n + m)</span><span class="k">Time</span></div>
+        <div class="box"><span class="v">O(1)</span><span class="k">Space</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Code</h2>
+      <pre><code><span class="kw">class</span> Solution:
+    <span class="kw">def</span> isAnagram(<span class="kw">self</span>, s: str, t: str) -&gt; bool:
+        counterS, counterT = {}, {}
+        <span class="kw">if</span> len(s) != len(t):
+            <span class="kw">return</span> <span class="kw">False</span>
+
+        <span class="kw">for</span> ch <span class="kw">in</span> range(len(s)):
+            counterS[s[ch]] = 1 + counterS.get(s[ch], 0)
+            counterT[t[ch]] = 1 + counterT.get(t[ch], 0)
+
+        <span class="kw">for</span> c <span class="kw">in</span> counterS:
+            <span class="kw">if</span> counterS[c] != counterT.get(c, 0):
+                <span class="kw">return</span> <span class="kw">False</span>
+
+        <span class="kw">return</span> <span class="kw">True</span></code></pre>
+    </div>
+
+    <div class="card full">
+      <h2>Tips to remember</h2>
+      <p><span class="label">Mental shortcut</span> — “Same letters, same counts → anagram.”</p>
+      <p><span class="label">Common / related</span> — Group Anagrams, Two Sum, Contains Duplicate</p>
+      <div class="quote">"I'm comparing character frequency counts instead of sorting, which keeps this at O(n) time instead of O(n log n) — and because the alphabet is fixed at 26 lowercase letters, the extra space is effectively O(1)."</div>
+    </div>
+
+    <div class="card full">
+      <h2>Edge cases</h2>
+      <ul class="edge-list">
+        
+        <li>Different lengths → return False immediately, no counting needed</li>
+        
+        <li>s and t are identical strings → trivially anagrams</li>
+        
+        <li>All identical characters, e.g. "aaa" vs "aaa" → true</li>
+        
+        <li>Input is lowercase-only per constraints — mixed case or Unicode input would need normalizing first</li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>
