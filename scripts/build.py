@@ -16,6 +16,7 @@ Re-run this after editing data/problems.json to regenerate the whole site.
 import html
 import json
 import re
+import subprocess
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
@@ -43,6 +44,47 @@ def slugify(text: str) -> str:
     s = text.lower()
     s = re.sub(r"[^a-z0-9]+", "-", s)
     return s.strip("-")
+
+
+def pdf_page_count(pdf_path: Path) -> int:
+    """Return a PDF's page count via pdfinfo (poppler-utils), or -1 if unknown."""
+    try:
+        out = subprocess.run(
+            ["pdfinfo", str(pdf_path)], capture_output=True, text=True, check=True
+        ).stdout
+        for line in out.splitlines():
+            if line.startswith("Pages:"):
+                return int(line.split(":", 1)[1].strip())
+    except Exception:
+        pass
+    return -1
+
+
+def render_onepager_one_page(onepager_tpl, site, p, pdf_path: Path, html_path: Path):
+    """Render the one-pager, shrinking the scale factor until it fits on a single
+    PDF page (or we hit the minimum readable scale). Always a single page is the
+    contract for this output — never ship a 2-page "one-pager"."""
+    from weasyprint import HTML
+
+    scale = 1.0
+    min_scale = 0.72
+    step = 0.04
+    last_html = None
+    while True:
+        rendered = onepager_tpl.render(site=site, p=p, scale=round(scale, 2))
+        last_html = rendered
+        HTML(string=rendered, base_url=str(pdf_path.parent)).write_pdf(str(pdf_path))
+        pages = pdf_page_count(pdf_path)
+        if pages == 1 or scale <= min_scale:
+            if pages != 1:
+                print(
+                    f"  WARNING: {p['slug']} one-pager still {pages} page(s) at "
+                    f"minimum scale {scale:.2f} — content is too long, trim it in data/problems.json"
+                )
+            break
+        scale -= step
+    html_path.write_text(last_html, encoding="utf-8")
+    return scale
 
 
 def main():
@@ -113,15 +155,20 @@ def main():
             problem_tpl.render(site=site, p=p), encoding="utf-8"
         )
 
-        onepager_html = onepager_tpl.render(site=site, p=p)
         onepager_html_path = pdir / f"{p['slug']}-onepager.html"
-        onepager_html_path.write_text(onepager_html, encoding="utf-8")
 
         if have_weasyprint:
             pdf_path = pdir / f"{p['slug']}-onepager.pdf"
-            HTML(string=onepager_html, base_url=str(pdir)).write_pdf(str(pdf_path))
-            print(f"wrote problems/{p['slug']}/ (index.html + onepager.pdf)")
+            used_scale = render_onepager_one_page(
+                onepager_tpl, site, p, pdf_path, onepager_html_path
+            )
+            pages = pdf_page_count(pdf_path)
+            note = f" (scale {used_scale:.2f})" if used_scale < 1.0 else ""
+            print(f"wrote problems/{p['slug']}/ (index.html + onepager.pdf, {pages}pg{note})")
         else:
+            onepager_html_path.write_text(
+                onepager_tpl.render(site=site, p=p, scale=1.0), encoding="utf-8"
+            )
             print(f"wrote problems/{p['slug']}/index.html (PDF skipped)")
 
     # .nojekyll so GitHub Pages serves files as-is

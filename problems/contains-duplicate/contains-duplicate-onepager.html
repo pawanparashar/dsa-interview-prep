@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Contains Duplicate — One-pager</title>
 <style>
-  @page { size: Letter; margin: 14mm; }
+  @page { size: Letter; margin: 14.0mm; }
   :root {
     --panel: #ffffff;
     --panel-2: #fafaf8;
@@ -27,57 +27,70 @@
   }
   .wrap { width: 100%; }
   .head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 8px 14px;
+    display: block;
     border-bottom: 2px solid var(--accent);
-    padding-bottom: 10px;
-    margin-bottom: 14px;
+    padding-bottom: 10.0px;
+    margin-bottom: 14.0px;
   }
-  .head .num { font-family: var(--font-display); color: var(--accent); font-size: 14px; }
-  .head h1 { font-family: var(--font-display); font-size: 22px; margin: 0; flex: 1 1 auto; }
-  .pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .head .num { font-family: var(--font-display); color: var(--accent); font-size: 14.0px; }
+  .head h1 { font-family: var(--font-display); font-size: 22.0px; margin: 0 0 6.0px; }
+  .pills { display: block; }
   .pill {
-    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.02em;
-    padding: 3px 8px; border-radius: 999px; border: 1px solid var(--border);
+    display: inline-block;
+    font-family: var(--font-mono); font-size: 10.0px; letter-spacing: 0.02em;
+    padding: 3.0px 8.0px; border-radius: 999px; border: 1px solid var(--border);
     color: var(--muted); background: var(--panel-2); white-space: nowrap;
+    margin: 0 6.0px 4.0px 0;
   }
   .pill.accent { color: var(--accent); border-color: var(--accent-dim); background: var(--accent-dim); }
-  .grid { display: flex; flex-wrap: wrap; gap: 12px; }
-  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; width: calc(50% - 6px); }
-  .card.full { width: 100%; }
+  .row { display: block; margin-bottom: 10.0px; page-break-inside: avoid; }
+  .row::after { content: ""; display: table; clear: both; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 8.0px;
+    padding: 12.0px 14.0px;
+    page-break-inside: avoid;
+  }
+  .row .card { float: left; width: 48%; }
+  .row .card + .card { float: right; }
+  .card.full { clear: both; width: 100%; margin-bottom: 10.0px; }
   .card h2 {
     font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase;
-    letter-spacing: 0.06em; color: var(--accent); margin: 0 0 8px;
+    letter-spacing: 0.06em; color: var(--accent); margin: 0 0 8.0px;
   }
-  .card p { margin: 0 0 6px; font-size: 11.5px; line-height: 1.45; }
+  .card p { margin: 0 0 6.0px; font-size: 11.5px; line-height: 1.4; }
   .card p:last-child { margin-bottom: 0; }
-  .label { color: var(--muted); font-size: 10px; font-family: var(--font-mono); }
+  .label { color: var(--muted); font-size: 10.0px; font-family: var(--font-mono); }
   .examples div {
     font-family: var(--font-mono); font-size: 10.5px; background: var(--code-bg);
-    border: 1px solid var(--border); border-radius: 5px; padding: 4px 8px; margin-bottom: 4px;
+    border: 1px solid var(--border); border-radius: 5.0px; padding: 4.0px 8.0px; margin-bottom: 4.0px;
   }
   .callout {
     border-left: 3px solid var(--accent); background: var(--accent-dim);
-    border-radius: 0 5px 5px 0; padding: 6px 10px; font-size: 11px; margin-top: 5px;
+    border-radius: 0 5.0px 5.0px 0; padding: 6.0px 10.0px; font-size: 11.0px; margin-top: 5.0px;
   }
-  ol, ul { margin: 0; padding-left: 16px; font-size: 11.5px; line-height: 1.45; }
-  li { margin-bottom: 2px; }
+  ol, ul { margin: 0; padding-left: 16.0px; font-size: 11.5px; line-height: 1.4; }
+  li { margin-bottom: 2.0px; }
   pre {
-    background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px;
-    padding: 8px 10px; margin: 0; white-space: pre-wrap; word-break: break-word;
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 6.0px;
+    padding: 8.0px 10.0px; margin: 0; white-space: pre-wrap; word-break: break-word;
   }
-  code { font-family: var(--font-mono); font-size: 10px; line-height: 1.4; color: var(--fg); }
+  code { font-family: var(--font-mono); font-size: 10.0px; line-height: 1.35; color: var(--fg); }
   .kw { color: var(--accent); font-weight: 600; }
-  .complexity { display: flex; gap: 8px; margin-top: 8px; }
-  .complexity .box { flex: 1; background: var(--code-bg); border: 1px solid var(--border); border-radius: 5px; padding: 5px 8px; text-align: center; }
-  .complexity .box .v { font-family: var(--font-mono); color: var(--accent); font-size: 14px; display: block; }
+  .complexity { display: block; margin-top: 8.0px; }
+  .complexity::after { content: ""; display: table; clear: both; }
+  .complexity .box {
+    float: left; width: calc(50% - 4.0px); background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 5.0px; padding: 5.0px 8.0px; text-align: center;
+  }
+  .complexity .box + .box { float: right; }
+  .complexity .box .v { font-family: var(--font-mono); color: var(--accent); font-size: 14.0px; display: block; }
   .complexity .box .k { font-size: 8.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
-  .quote { font-size: 10.5px; font-style: italic; color: var(--muted); border-left: 3px solid var(--border); padding-left: 8px; margin-top: 6px; }
-  .edge-list { display: flex; flex-wrap: wrap; gap: 4px 16px; list-style: none; padding: 0; margin: 0; }
-  .edge-list li { font-size: 10.5px; width: calc(50% - 8px); display: flex; gap: 6px; }
-  .edge-list li::before { content: "\2023"; color: var(--accent); flex-shrink: 0; }
+  .quote { font-size: 10.5px; font-style: italic; color: var(--muted); border-left: 3px solid var(--border); padding-left: 8.0px; margin-top: 6.0px; }
+  .edge-list { display: block; list-style: none; padding: 0; margin: 0; }
+  .edge-list::after { content: ""; display: table; clear: both; }
+  .edge-list li { font-size: 10.5px; width: calc(50% - 8.0px); float: left; margin-bottom: 4.0px; }
+  .edge-list li:nth-child(even) { float: right; }
+  .edge-list li::before { content: "\2023"; color: var(--accent); margin-right: 4.0px; }
 </style>
 </head>
 <body>
@@ -92,7 +105,7 @@
     </div>
   </div>
 
-  <div class="grid">
+  <div class="row">
     <div class="card">
       <h2>Problem</h2>
       <p>Given an integer array <code>nums</code>, return <code>true</code> if any value appears at least twice in the array, and return <code>false</code> if every element is distinct.</p>
@@ -113,7 +126,9 @@
       <p><span class="label">Key insight</span><br>A hash set gives O(1) average-case lookup and insertion, so a single pass can catch a repeat the moment it's seen, with no nested loops.</p>
       <div class="callout">Trigger: “Have I seen this value before?” → reach for a Hash Set membership check.</div>
     </div>
+  </div>
 
+  <div class="row">
     <div class="card">
       <h2>Optimal solution</h2>
       <p><span class="label">Data structure</span> — Hash Set (Python <code>set</code>)</p>
@@ -149,28 +164,28 @@
 
         <span class="kw">return</span> <span class="kw">False</span></code></pre>
     </div>
+  </div>
 
-    <div class="card full">
-      <h2>Tips to remember</h2>
-      <p><span class="label">Mental shortcut</span> — “Seen it before? Set it and forget it.”</p>
-      <p><span class="label">Common / related</span> — Contains Duplicate II (nearby-index variant), Contains Duplicate III (nearby-value variant), Longest Consecutive Sequence, Single Number</p>
-      <div class="quote">"I'm trading O(n) space for O(n) time with a hash set, which avoids the O(n²) brute-force approach of comparing every pair."</div>
-    </div>
+  <div class="card full">
+    <h2>Tips to remember</h2>
+    <p><span class="label">Mental shortcut</span> — “Seen it before? Set it and forget it.”</p>
+    <p><span class="label">Common / related</span> — Contains Duplicate II (nearby-index variant), Contains Duplicate III (nearby-value variant), Longest Consecutive Sequence, Single Number</p>
+    <div class="quote">"I'm trading O(n) space for O(n) time with a hash set, which avoids the O(n²) brute-force approach of comparing every pair."</div>
+  </div>
 
-    <div class="card full">
-      <h2>Edge cases</h2>
-      <ul class="edge-list">
-        
-        <li>Empty array → no duplicates possible, return False</li>
-        
-        <li>Single-element array → return False</li>
-        
-        <li>All elements identical → returns True as soon as the second element is checked</li>
-        
-        <li>Negative numbers and zero → ints are hashable as-is, no special handling needed</li>
-        
-      </ul>
-    </div>
+  <div class="card full">
+    <h2>Edge cases</h2>
+    <ul class="edge-list">
+      
+      <li>Empty array → no duplicates possible, return False</li>
+      
+      <li>Single-element array → return False</li>
+      
+      <li>All elements identical → returns True as soon as the second element is checked</li>
+      
+      <li>Negative numbers and zero → ints are hashable as-is, no special handling needed</li>
+      
+    </ul>
   </div>
 </div>
 </body>
