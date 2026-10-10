@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two Sum — Coding Patterns</title>
+<meta name="description" content="Two Sum (Arrays & Hashing) — pattern, walkthrough, video, and printable one-pager.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container row">
+      <div>
+        <a class="brand" href="../../index.html">Coding <span class="dot">Patterns</span></a>
+        <div class="tagline">BLIND 75 · INTERVIEW REVISION</div>
+      </div>
+      <nav>
+        <a href="https://github.com/pawanparashar/dsa-interview-prep">GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="p-head">
+      <a class="crumbs" href="../../index.html">← All 75</a>
+      <h1>#3 — Two Sum</h1>
+      <div class="pills">
+        <span class="pill accent">Arrays & Hashing</span>
+        <span class="pill">LeetCode 1</span>
+        <span class="pill">NeetCode "Two Sum"</span>
+        <span class="badge Easy">Easy</span>
+      </div>
+      <div class="p-actions">
+        <a class="linkbtn" href="two-sum-onepager.pdf">Download one-pager (PDF) ↓</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Problem</h2>
+      <p>Given an array of integers <code>nums</code> and an integer <code>target</code>, return the indices <code>i</code> and <code>j</code> such that <code>nums[i] + nums[j] == target</code> and <code>i != j</code>. You may assume that every input has exactly one pair of indices that satisfies the condition. Return the answer with the smaller index first.</p>
+      <div class="examples">
+        
+        <div>nums = [3,4,5,6], target = 7 → [0,1]</div>
+        
+        <div>nums = [4,5,6], target = 10 → [0,2]</div>
+        
+        <div>nums = [5,5], target = 10 → [0,1]</div>
+        
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Watch the walkthrough</h2>
+      <div class="video-frame">
+        <iframe src="https://www.youtube.com/embed/aRE7Nxb3Qfs" title="Two Sum solution walkthrough" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Core idea</h2>
+      <p><strong>Goal</strong><br>Find two indices whose values add up to the target.</p>
+      <p><strong>Key insight</strong><br>Rearranging <code>nums[i] + nums[j] == target</code> gives <code>nums[j] == target - nums[i]</code>. A hash map lets you check in O(1) whether the complement you need has already been seen, so one pass is enough — no need to check every pair.</p>
+      <div class="callout">Trigger phrase: “Which other number do I need to hit the target?” → store what you've seen in a Hash Map and look up the complement.</div>
+    </div>
+
+    
+    <div class="section">
+      <h2>Step through it</h2>
+      <p class="muted">Walk the algorithm one step at a time — forward, back, or press play.</p>
+      <div class="viz" id="viz" data-trace="{&quot;array&quot;: [4, 5, 6], &quot;frames&quot;: [{&quot;idx&quot;: null, &quot;set&quot;: [], &quot;status&quot;: &quot;start&quot;, &quot;note&quot;: &quot;Start with an empty hash map result (value \u2192 index).&quot;}, {&quot;idx&quot;: 0, &quot;set&quot;: [&quot;4\u21920&quot;], &quot;status&quot;: &quot;add&quot;, &quot;note&quot;: &quot;num = 4 \u2192 need diff = 10 - 4 = 6. 6 isn&#x27;t in result yet, so store 4\u21920.&quot;}, {&quot;idx&quot;: 1, &quot;set&quot;: [&quot;4\u21920&quot;, &quot;5\u21921&quot;], &quot;status&quot;: &quot;add&quot;, &quot;note&quot;: &quot;num = 5 \u2192 need diff = 10 - 5 = 5. 5 isn&#x27;t in result yet, so store 5\u21921.&quot;}, {&quot;idx&quot;: 2, &quot;set&quot;: [&quot;4\u21920&quot;, &quot;5\u21921&quot;], &quot;status&quot;: &quot;found&quot;, &quot;note&quot;: &quot;num = 6 \u2192 need diff = 10 - 6 = 4. 4 is in result at index 0 \u2014 return [0, 2].&quot;}]}">
+        <div class="viz-body" id="vizBody"></div>
+        <div class="viz-note" id="vizNote"></div>
+        <div class="viz-controls">
+          <button class="viz-btn" id="vizPrev" aria-label="Previous step">&larr; Prev</button>
+          <button class="viz-btn accent" id="vizPlay" aria-label="Play">&#9654; Play</button>
+          <button class="viz-btn" id="vizNext" aria-label="Next step">Next &rarr;</button>
+          <span class="viz-step-count" id="vizCount"></span>
+        </div>
+        <div class="viz-progress"><div class="viz-progress-fill" id="vizProgressFill"></div></div>
+      </div>
+    </div>
+    
+
+    <div class="section">
+      <h2>Walkthrough</h2>
+      
+      <p>Brute force checks every pair of indices for a match, which costs O(n²) time. Rearranging the target equation — <code>nums[j] == target - nums[i]</code> — turns the second number into something you can look up instead of search for, collapsing the pair-check into a single pass.</p>
+      
+      <p>A Python <code>dict</code> gives O(1) average-case lookup and insertion, so for each number we can check ‘have I already seen the value that completes this pair?’ before moving on, rather than scanning the rest of the array.</p>
+      
+      <p>Walk the array once. At each index <code>i</code>, compute <code>diff = target - num</code>. Check <code>result</code> first: if <code>diff</code> is already a key, you've found your pair — <code>result[diff]</code> is the earlier index and <code>i</code> is the current one, so the earlier index naturally comes first in the returned list. Only if <code>diff</code> isn't found do you store the current number's index for later lookups.</p>
+      
+      <p>Because the problem guarantees exactly one valid pair, the first match found is the match — there's no need to keep scanning after the return.</p>
+      
+    </div>
+
+    <div class="section">
+      <h2>Optimal solution</h2>
+      <p><strong>Data structure:</strong> Hash Map (Python <code>dict</code>) mapping value → index</p>
+      <ol class="steps">
+        
+        <li>Initialize an empty dict <code>result</code>.</li>
+        
+        <li>Iterate through <code>nums</code> with index <code>i</code>.</li>
+        
+        <li>Compute <code>diff = target - num</code> — the value that would complete the pair.</li>
+        
+        <li>If <code>diff</code> is already a key in <code>result</code>, return <code>[result[diff], i]</code> immediately.</li>
+        
+        <li>Otherwise, store <code>result[num] = i</code> and continue.</li>
+        
+      </ol>
+      <div class="complexity">
+        <div class="box"><span class="v">O(n)</span><span class="k">Time</span></div>
+        <div class="box"><span class="v">O(n)</span><span class="k">Space</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Code</h2>
+      <pre><code><span class="kw">class</span> Solution:
+    <span class="kw">def</span> twoSum(<span class="kw">self</span>, nums: List[int], target: int) -&gt; List[int]:
+        result = {}
+        <span class="kw">for</span> i, num <span class="kw">in</span> enumerate(nums):
+            diff = target - num
+            <span class="kw">if</span> diff <span class="kw">in</span> result:
+                <span class="kw">return</span> [result[diff], i]
+            result[num] = i</code></pre>
+    </div>
+
+    
+    <div class="section">
+      <h2>Other ways to solve it</h2>
+      
+      <div class="alt-solution">
+        <h3>Brute force — check every pair</h3>
+        <p class="muted">Simplest to reason about and a safe fallback if you blank on the hash map trick: check every pair of indices directly. O(n²) time, but no extra space and nothing to get wrong.</p>
+        <pre><code><span class="kw">class</span> Solution:
+    <span class="kw">def</span> twoSum(<span class="kw">self</span>, nums: List[int], target: int) -&gt; List[int]:
+        <span class="kw">for</span> i <span class="kw">in</span> range(len(nums)):
+            <span class="kw">for</span> j <span class="kw">in</span> range(i + 1, len(nums)):
+                <span class="kw">if</span> nums[i] + nums[j] == target:
+                    <span class="kw">return</span> [i, j]</code></pre>
+        <div class="complexity">
+          <div class="box"><span class="v">O(n²)</span><span class="k">Time</span></div>
+          <div class="box"><span class="v">O(1)</span><span class="k">Space</span></div>
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <div class="section">
+      <h2>Tips to remember this pattern</h2>
+      <p><strong>Mental shortcut</strong> — “What's missing? Look it up, don't loop for it.”</p>
+      <p><strong>Common / related problems</strong></p>
+      <ul class="plain">
+        
+        <li>Two Sum II - Input Array Is Sorted (two-pointer variant)</li>
+        
+        <li>3Sum</li>
+        
+        <li>4Sum</li>
+        
+        <li>Two Sum Less Than K</li>
+        
+      </ul>
+      <div class="quote">"I'm trading O(n) space for O(n) time by storing each number's index in a hash map as I go, so I can check for its complement in O(1) instead of nested-looping over every pair."</div>
+    </div>
+
+    <div class="section">
+      <h2>Edge cases to consider</h2>
+      <ul class="edge-list">
+        
+        <li>Negative numbers and zero — <code>diff = target - num</code> works the same regardless of sign.</li>
+        
+        <li>Duplicate values, e.g. <code>nums = [5,5], target = 10</code> — the first 5 is stored before the second 5 looks up its complement, so <code>i != j</code> is naturally satisfied.</li>
+        
+        <li>The same index can't be reused as both <code>i</code> and <code>j</code>, since the lookup happens before the current number is added to the map.</li>
+        
+        <li>Problem guarantees exactly one solution exists, so there's no need to handle a ‘no pair found’ case.</li>
+        
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Day-of-interview revision</h2>
+      <p class="muted">Short on time? Skim the trigger phrase, the steps above, and keep this PDF open as a fallback.</p>
+      <div class="p-actions">
+        <a class="linkbtn" href="two-sum-onepager.pdf">Download one-pager (PDF) ↓</a>
+        <a class="linkbtn ghost" href="../../index.html">Back to all 75 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">Built by Pawan Parashar · generated from <a href="https://github.com/pawanparashar/dsa-interview-prep">dsa-interview-prep</a></div>
+  </footer>
+
+  
+  <script>
+  (function () {
+    var root = document.getElementById('viz');
+    if (!root) return;
+    var trace = JSON.parse(root.dataset.trace);
+    var mode = trace.mode || 'array-set';
+    var frames = trace.frames;
+    var cur = 0;
+    var playing = false;
+    var timer = null;
+
+    var bodyEl = document.getElementById('vizBody');
+    var noteEl = document.getElementById('vizNote');
+    var countEl = document.getElementById('vizCount');
+    var fillEl = document.getElementById('vizProgressFill');
+    var prevBtn = document.getElementById('vizPrev');
+    var nextBtn = document.getElementById('vizNext');
+    var playBtn = document.getElementById('vizPlay');
+
+    function makeCells(container, chars) {
+      chars.split('').forEach(function (ch) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell';
+        cell.textContent = ch;
+        container.appendChild(cell);
+      });
+    }
+
+    function renderChips(container, counts, highlightKey, mismatch) {
+      container.innerHTML = '';
+      var keys = Object.keys(counts);
+      if (keys.length === 0) {
+        var empty = document.createElement('span');
+        empty.className = 'viz-set-empty';
+        empty.textContent = '(empty)';
+        container.appendChild(empty);
+        return;
+      }
+      keys.forEach(function (k) {
+        var chip = document.createElement('span');
+        chip.className = 'viz-chip';
+        if (k === highlightKey) chip.classList.add(mismatch ? 'found' : 'active');
+        chip.textContent = k + ':' + counts[k];
+        container.appendChild(chip);
+      });
+    }
+
+    var updateFrame;
+
+    if (mode === 'strings') {
+      bodyEl.innerHTML =
+        '<div class="viz-str-row"><span class="viz-str-label">s =</span><div class="viz-array" id="vizArrS"></div></div>' +
+        '<div class="viz-str-row"><span class="viz-str-label">t =</span><div class="viz-array" id="vizArrT"></div></div>' +
+        '<div class="viz-counts-row">' +
+          '<div class="viz-counts"><div class="viz-set-label">counterS =</div><div class="viz-set" id="vizChipsS"></div></div>' +
+          '<div class="viz-counts"><div class="viz-set-label">counterT =</div><div class="viz-set" id="vizChipsT"></div></div>' +
+        '</div>';
+      makeCells(document.getElementById('vizArrS'), trace.s);
+      makeCells(document.getElementById('vizArrT'), trace.t);
+      var sCells = bodyEl.querySelectorAll('#vizArrS .viz-cell');
+      var tCells = bodyEl.querySelectorAll('#vizArrT .viz-cell');
+      var chipsS = document.getElementById('vizChipsS');
+      var chipsT = document.getElementById('vizChipsT');
+
+      updateFrame = function (f) {
+        sCells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.sIdx !== null && i === f.sIdx) cell.classList.add('active');
+          else if (f.phase !== 'build' || (f.sIdx !== null && i < f.sIdx)) cell.classList.add('done');
+        });
+        tCells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.tIdx !== null && i === f.tIdx) cell.classList.add('active');
+          else if (f.phase !== 'build' || (f.tIdx !== null && i < f.tIdx)) cell.classList.add('done');
+        });
+        var mismatch = f.status === 'mismatch';
+        renderChips(chipsS, f.counterS, f.compareKey, mismatch);
+        renderChips(chipsT, f.counterT, f.compareKey, mismatch);
+      };
+    } else {
+      bodyEl.innerHTML =
+        '<div class="viz-array" id="vizArray"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">h =</span><div class="viz-set" id="vizSet"></div></div>';
+      var arrayEl = document.getElementById('vizArray');
+      trace.array.forEach(function (val) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell';
+        cell.textContent = val;
+        arrayEl.appendChild(cell);
+      });
+      var cells = arrayEl.querySelectorAll('.viz-cell');
+      var setEl = document.getElementById('vizSet');
+
+      updateFrame = function (f) {
+        cells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'found', 'done');
+          if (f.idx !== null && i === f.idx) {
+            cell.classList.add(f.status === 'found' ? 'found' : 'active');
+          } else if (f.idx !== null && i < f.idx) {
+            cell.classList.add('done');
+          }
+        });
+        setEl.innerHTML = '';
+        if (f.set.length === 0) {
+          var empty = document.createElement('span');
+          empty.className = 'viz-set-empty';
+          empty.textContent = '(empty)';
+          setEl.appendChild(empty);
+        } else {
+          f.set.forEach(function (v) {
+            var chip = document.createElement('span');
+            chip.className = 'viz-chip';
+            chip.textContent = v;
+            setEl.appendChild(chip);
+          });
+        }
+      };
+    }
+
+    function render() {
+      var f = frames[cur];
+      updateFrame(f);
+      var flag = f.status === 'found' || f.status === 'mismatch';
+      noteEl.textContent = f.note;
+      noteEl.className = 'viz-note' + (flag ? ' found' : '');
+      countEl.textContent = 'Step ' + (cur + 1) + ' / ' + frames.length;
+      fillEl.style.width = (((cur + 1) / frames.length) * 100) + '%';
+      prevBtn.disabled = cur === 0;
+      nextBtn.disabled = cur === frames.length - 1;
+      if (cur === frames.length - 1) stopPlaying();
+    }
+
+    function goTo(i) {
+      cur = Math.max(0, Math.min(frames.length - 1, i));
+      render();
+    }
+
+    function stopPlaying() {
+      playing = false;
+      playBtn.innerHTML = '&#9654; Play';
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    function startPlaying() {
+      if (cur === frames.length - 1) cur = 0;
+      playing = true;
+      playBtn.innerHTML = '&#10074;&#10074; Pause';
+      timer = setInterval(function () {
+        if (cur >= frames.length - 1) { stopPlaying(); render(); return; }
+        goTo(cur + 1);
+      }, 1400);
+    }
+
+    prevBtn.addEventListener('click', function () { stopPlaying(); goTo(cur - 1); });
+    nextBtn.addEventListener('click', function () { stopPlaying(); goTo(cur + 1); });
+    playBtn.addEventListener('click', function () {
+      if (playing) { stopPlaying(); } else { startPlaying(); }
+    });
+
+    render();
+  })();
+  </script>
+  
+</body>
+</html>

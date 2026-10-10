@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Two Sum — One-pager</title>
+<style>
+  @page { size: Letter; margin: 14.0mm; }
+  :root {
+    --panel: #ffffff;
+    --panel-2: #fafaf8;
+    --border: #d8dad6;
+    --fg: #1b1d22;
+    --muted: #5d636f;
+    --accent: #0e8f86;
+    --accent-dim: #dcf1ef;
+    --code-bg: #f4f6f5;
+    --font-display: 'JetBrains Mono', monospace;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--panel);
+    color: var(--fg);
+    font-family: var(--font-body);
+  }
+  .wrap { width: 100%; }
+  .head {
+    display: block;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 10.0px;
+    margin-bottom: 14.0px;
+  }
+  .head .num { font-family: var(--font-display); color: var(--accent); font-size: 14.0px; }
+  .head h1 { font-family: var(--font-display); font-size: 22.0px; margin: 0 0 6.0px; }
+  .pills { display: block; }
+  .pill {
+    display: inline-block;
+    font-family: var(--font-mono); font-size: 10.0px; letter-spacing: 0.02em;
+    padding: 3.0px 8.0px; border-radius: 999px; border: 1px solid var(--border);
+    color: var(--muted); background: var(--panel-2); white-space: nowrap;
+    margin: 0 6.0px 4.0px 0;
+  }
+  .pill.accent { color: var(--accent); border-color: var(--accent-dim); background: var(--accent-dim); }
+  .row { display: block; margin-bottom: 10.0px; page-break-inside: avoid; }
+  .row::after { content: ""; display: table; clear: both; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 8.0px;
+    padding: 12.0px 14.0px;
+    page-break-inside: avoid;
+  }
+  .row .card { float: left; width: 48%; }
+  .row .card + .card { float: right; }
+  .card.full { clear: both; width: 100%; margin-bottom: 10.0px; }
+  .card h2 {
+    font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--accent); margin: 0 0 8.0px;
+  }
+  .card p { margin: 0 0 6.0px; font-size: 11.5px; line-height: 1.4; }
+  .card p:last-child { margin-bottom: 0; }
+  .label { color: var(--muted); font-size: 10.0px; font-family: var(--font-mono); }
+  .examples div {
+    font-family: var(--font-mono); font-size: 10.5px; background: var(--code-bg);
+    border: 1px solid var(--border); border-radius: 5.0px; padding: 4.0px 8.0px; margin-bottom: 4.0px;
+  }
+  .callout {
+    border-left: 3px solid var(--accent); background: var(--accent-dim);
+    border-radius: 0 5.0px 5.0px 0; padding: 6.0px 10.0px; font-size: 11.0px; margin-top: 5.0px;
+  }
+  ol, ul { margin: 0; padding-left: 16.0px; font-size: 11.5px; line-height: 1.4; }
+  li { margin-bottom: 2.0px; }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 6.0px;
+    padding: 8.0px 10.0px; margin: 0; white-space: pre-wrap; word-break: break-word;
+  }
+  code { font-family: var(--font-mono); font-size: 10.0px; line-height: 1.35; color: var(--fg); }
+  .kw { color: var(--accent); font-weight: 600; }
+  .complexity { display: block; margin-top: 8.0px; }
+  .complexity::after { content: ""; display: table; clear: both; }
+  .complexity .box {
+    float: left; width: calc(50% - 4.0px); background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 5.0px; padding: 5.0px 8.0px; text-align: center;
+  }
+  .complexity .box + .box { float: right; }
+  .complexity .box .v { font-family: var(--font-mono); color: var(--accent); font-size: 14.0px; display: block; }
+  .complexity .box .k { font-size: 8.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .quote { font-size: 10.5px; font-style: italic; color: var(--muted); border-left: 3px solid var(--border); padding-left: 8.0px; margin-top: 6.0px; }
+  .edge-list { display: block; list-style: none; padding: 0; margin: 0; }
+  .edge-list::after { content: ""; display: table; clear: both; }
+  .edge-list li { font-size: 10.5px; width: calc(50% - 8.0px); float: left; margin-bottom: 4.0px; }
+  .edge-list li:nth-child(even) { float: right; }
+  .edge-list li::before { content: "\2023"; color: var(--accent); margin-right: 4.0px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <span class="num">#3</span>
+    <h1>Two Sum</h1>
+    <div class="pills">
+      <span class="pill accent">Arrays & Hashing</span>
+      <span class="pill">LeetCode 1</span>
+      <span class="pill">NeetCode "Two Sum"</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card">
+      <h2>Problem</h2>
+      <p>Given an array of integers <code>nums</code> and an integer <code>target</code>, return the indices <code>i</code> and <code>j</code> such that <code>nums[i] + nums[j] == target</code> and <code>i != j</code>. You may assume that every input has exactly one pair of indices that satisfies the condition. Return the answer with the smaller index first.</p>
+      <div class="examples">
+        
+        <div>nums = [3,4,5,6], target = 7 → [0,1]</div>
+        
+        <div>nums = [4,5,6], target = 10 → [0,2]</div>
+        
+        <div>nums = [5,5], target = 10 → [0,1]</div>
+        
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Core idea</h2>
+      <p><span class="label">Goal</span><br>Find two indices whose values add up to the target.</p>
+      <p><span class="label">Key insight</span><br>Rearranging <code>nums[i] + nums[j] == target</code> gives <code>nums[j] == target - nums[i]</code>. A hash map lets you check in O(1) whether the complement you need has already been seen, so one pass is enough — no need to check every pair.</p>
+      <div class="callout">Trigger: “Which other number do I need to hit the target?” → store what you've seen in a Hash Map and look up the complement.</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card">
+      <h2>Optimal solution</h2>
+      <p><span class="label">Data structure</span> — Hash Map (Python <code>dict</code>) mapping value → index</p>
+      <ol>
+        
+        <li>Initialize an empty dict <code>result</code>.</li>
+        
+        <li>Iterate through <code>nums</code> with index <code>i</code>.</li>
+        
+        <li>Compute <code>diff = target - num</code> — the value that would complete the pair.</li>
+        
+        <li>If <code>diff</code> is already a key in <code>result</code>, return <code>[result[diff], i]</code> immediately.</li>
+        
+        <li>Otherwise, store <code>result[num] = i</code> and continue.</li>
+        
+      </ol>
+      <div class="complexity">
+        <div class="box"><span class="v">O(n)</span><span class="k">Time</span></div>
+        <div class="box"><span class="v">O(n)</span><span class="k">Space</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Code</h2>
+      <pre><code><span class="kw">class</span> Solution:
+    <span class="kw">def</span> twoSum(<span class="kw">self</span>, nums: List[int], target: int) -&gt; List[int]:
+        result = {}
+        <span class="kw">for</span> i, num <span class="kw">in</span> enumerate(nums):
+            diff = target - num
+            <span class="kw">if</span> diff <span class="kw">in</span> result:
+                <span class="kw">return</span> [result[diff], i]
+            result[num] = i</code></pre>
+    </div>
+  </div>
+
+  <div class="card full">
+    <h2>Tips to remember</h2>
+    <p><span class="label">Mental shortcut</span> — “What's missing? Look it up, don't loop for it.”</p>
+    <p><span class="label">Common / related</span> — Two Sum II - Input Array Is Sorted (two-pointer variant), 3Sum, 4Sum, Two Sum Less Than K</p>
+    <div class="quote">"I'm trading O(n) space for O(n) time by storing each number's index in a hash map as I go, so I can check for its complement in O(1) instead of nested-looping over every pair."</div>
+  </div>
+
+  <div class="card full">
+    <h2>Edge cases</h2>
+    <ul class="edge-list">
+      
+      <li>Negative numbers and zero — <code>diff = target - num</code> works the same regardless of sign.</li>
+      
+      <li>Duplicate values, e.g. <code>nums = [5,5], target = 10</code> — the first 5 is stored before the second 5 looks up its complement, so <code>i != j</code> is naturally satisfied.</li>
+      
+      <li>The same index can't be reused as both <code>i</code> and <code>j</code>, since the lookup happens before the current number is added to the map.</li>
+      
+      <li>Problem guarantees exactly one solution exists, so there's no need to handle a ‘no pair found’ case.</li>
+      
+    </ul>
+  </div>
+</div>
+</body>
+</html>

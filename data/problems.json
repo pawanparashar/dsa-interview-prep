@@ -431,6 +431,120 @@
           }
         ]
       }
+    },
+    {
+      "number": 3,
+      "slug": "two-sum",
+      "title": "Two Sum",
+      "category": "Arrays & Hashing",
+      "leetcode_number": 1,
+      "neetcode_name": "Two Sum",
+      "difficulty": "Easy",
+      "status": "Solved",
+      "youtube_id": "aRE7Nxb3Qfs",
+      "problem_statement": "Given an array of integers <code>nums</code> and an integer <code>target</code>, return the indices <code>i</code> and <code>j</code> such that <code>nums[i] + nums[j] == target</code> and <code>i != j</code>. You may assume that every input has exactly one pair of indices that satisfies the condition. Return the answer with the smaller index first.",
+      "examples": [
+        {
+          "input": "nums = [3,4,5,6], target = 7",
+          "output": "[0,1]"
+        },
+        {
+          "input": "nums = [4,5,6], target = 10",
+          "output": "[0,2]"
+        },
+        {
+          "input": "nums = [5,5], target = 10",
+          "output": "[0,1]"
+        }
+      ],
+      "core_idea": {
+        "goal": "Find two indices whose values add up to the target.",
+        "key_insight": "Rearranging <code>nums[i] + nums[j] == target</code> gives <code>nums[j] == target - nums[i]</code>. A hash map lets you check in O(1) whether the complement you need has already been seen, so one pass is enough — no need to check every pair.",
+        "trigger_phrase": "“Which other number do I need to hit the target?” → store what you've seen in a Hash Map and look up the complement."
+      },
+      "optimal_solution": {
+        "data_structure": "Hash Map (Python <code>dict</code>) mapping value → index",
+        "steps": [
+          "Initialize an empty dict <code>result</code>.",
+          "Iterate through <code>nums</code> with index <code>i</code>.",
+          "Compute <code>diff = target - num</code> — the value that would complete the pair.",
+          "If <code>diff</code> is already a key in <code>result</code>, return <code>[result[diff], i]</code> immediately.",
+          "Otherwise, store <code>result[num] = i</code> and continue."
+        ],
+        "time_complexity": "O(n)",
+        "space_complexity": "O(n)"
+      },
+      "code": "class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        result = {}\n        for i, num in enumerate(nums):\n            diff = target - num\n            if diff in result:\n                return [result[diff], i]\n            result[num] = i",
+      "walkthrough": [
+        "Brute force checks every pair of indices for a match, which costs O(n²) time. Rearranging the target equation — <code>nums[j] == target - nums[i]</code> — turns the second number into something you can look up instead of search for, collapsing the pair-check into a single pass.",
+        "A Python <code>dict</code> gives O(1) average-case lookup and insertion, so for each number we can check ‘have I already seen the value that completes this pair?’ before moving on, rather than scanning the rest of the array.",
+        "Walk the array once. At each index <code>i</code>, compute <code>diff = target - num</code>. Check <code>result</code> first: if <code>diff</code> is already a key, you've found your pair — <code>result[diff]</code> is the earlier index and <code>i</code> is the current one, so the earlier index naturally comes first in the returned list. Only if <code>diff</code> isn't found do you store the current number's index for later lookups.",
+        "Because the problem guarantees exactly one valid pair, the first match found is the match — there's no need to keep scanning after the return."
+      ],
+      "mental_shortcut": "“What's missing? Look it up, don't loop for it.”",
+      "related_problems": [
+        "Two Sum II - Input Array Is Sorted (two-pointer variant)",
+        "3Sum",
+        "4Sum",
+        "Two Sum Less Than K"
+      ],
+      "interview_talking_point": "I'm trading O(n) space for O(n) time by storing each number's index in a hash map as I go, so I can check for its complement in O(1) instead of nested-looping over every pair.",
+      "edge_cases": [
+        "Negative numbers and zero — <code>diff = target - num</code> works the same regardless of sign.",
+        "Duplicate values, e.g. <code>nums = [5,5], target = 10</code> — the first 5 is stored before the second 5 looks up its complement, so <code>i != j</code> is naturally satisfied.",
+        "The same index can't be reused as both <code>i</code> and <code>j</code>, since the lookup happens before the current number is added to the map.",
+        "Problem guarantees exactly one solution exists, so there's no need to handle a ‘no pair found’ case."
+      ],
+      "alternative_solutions": [
+        {
+          "name": "Brute force — check every pair",
+          "note": "Simplest to reason about and a safe fallback if you blank on the hash map trick: check every pair of indices directly. O(n²) time, but no extra space and nothing to get wrong.",
+          "code": "class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        for i in range(len(nums)):\n            for j in range(i + 1, len(nums)):\n                if nums[i] + nums[j] == target:\n                    return [i, j]",
+          "time_complexity": "O(n²)",
+          "space_complexity": "O(1)"
+        }
+      ],
+      "trace": {
+        "array": [
+          4,
+          5,
+          6
+        ],
+        "frames": [
+          {
+            "idx": null,
+            "set": [],
+            "status": "start",
+            "note": "Start with an empty hash map result (value → index)."
+          },
+          {
+            "idx": 0,
+            "set": [
+              "4→0"
+            ],
+            "status": "add",
+            "note": "num = 4 → need diff = 10 - 4 = 6. 6 isn't in result yet, so store 4→0."
+          },
+          {
+            "idx": 1,
+            "set": [
+              "4→0",
+              "5→1"
+            ],
+            "status": "add",
+            "note": "num = 5 → need diff = 10 - 5 = 5. 5 isn't in result yet, so store 5→1."
+          },
+          {
+            "idx": 2,
+            "set": [
+              "4→0",
+              "5→1"
+            ],
+            "status": "found",
+            "note": "num = 6 → need diff = 10 - 6 = 4. 4 is in result at index 0 — return [0, 2]."
+          }
+        ]
+      }
     }
   ],
   "roadmap": [

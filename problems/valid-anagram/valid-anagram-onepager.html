@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Valid Anagram — One-pager</title>
 <style>
-  @page { size: Letter; margin: 13.44mm; }
+  @page { size: Letter; margin: 12.88mm; }
   :root {
     --panel: #ffffff;
     --panel-2: #fafaf8;
@@ -29,68 +29,68 @@
   .head {
     display: block;
     border-bottom: 2px solid var(--accent);
-    padding-bottom: 9.6px;
-    margin-bottom: 13.44px;
+    padding-bottom: 9.2px;
+    margin-bottom: 12.88px;
   }
-  .head .num { font-family: var(--font-display); color: var(--accent); font-size: 13.44px; }
-  .head h1 { font-family: var(--font-display); font-size: 21.12px; margin: 0 0 5.76px; }
+  .head .num { font-family: var(--font-display); color: var(--accent); font-size: 12.88px; }
+  .head h1 { font-family: var(--font-display); font-size: 20.24px; margin: 0 0 5.52px; }
   .pills { display: block; }
   .pill {
     display: inline-block;
-    font-family: var(--font-mono); font-size: 9.6px; letter-spacing: 0.02em;
-    padding: 2.88px 7.68px; border-radius: 999px; border: 1px solid var(--border);
+    font-family: var(--font-mono); font-size: 9.2px; letter-spacing: 0.02em;
+    padding: 2.76px 7.36px; border-radius: 999px; border: 1px solid var(--border);
     color: var(--muted); background: var(--panel-2); white-space: nowrap;
-    margin: 0 5.76px 3.84px 0;
+    margin: 0 5.52px 3.68px 0;
   }
   .pill.accent { color: var(--accent); border-color: var(--accent-dim); background: var(--accent-dim); }
-  .row { display: block; margin-bottom: 9.6px; page-break-inside: avoid; }
+  .row { display: block; margin-bottom: 9.2px; page-break-inside: avoid; }
   .row::after { content: ""; display: table; clear: both; }
   .card {
-    background: var(--panel); border: 1px solid var(--border); border-radius: 7.68px;
-    padding: 11.52px 13.44px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 7.36px;
+    padding: 11.04px 12.88px;
     page-break-inside: avoid;
   }
   .row .card { float: left; width: 48%; }
   .row .card + .card { float: right; }
-  .card.full { clear: both; width: 100%; margin-bottom: 9.6px; }
+  .card.full { clear: both; width: 100%; margin-bottom: 9.2px; }
   .card h2 {
-    font-family: var(--font-mono); font-size: 10.08px; text-transform: uppercase;
-    letter-spacing: 0.06em; color: var(--accent); margin: 0 0 7.68px;
+    font-family: var(--font-mono); font-size: 9.66px; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--accent); margin: 0 0 7.36px;
   }
-  .card p { margin: 0 0 5.76px; font-size: 11.04px; line-height: 1.4; }
+  .card p { margin: 0 0 5.52px; font-size: 10.58px; line-height: 1.4; }
   .card p:last-child { margin-bottom: 0; }
-  .label { color: var(--muted); font-size: 9.6px; font-family: var(--font-mono); }
+  .label { color: var(--muted); font-size: 9.2px; font-family: var(--font-mono); }
   .examples div {
-    font-family: var(--font-mono); font-size: 10.08px; background: var(--code-bg);
-    border: 1px solid var(--border); border-radius: 4.8px; padding: 3.84px 7.68px; margin-bottom: 3.84px;
+    font-family: var(--font-mono); font-size: 9.66px; background: var(--code-bg);
+    border: 1px solid var(--border); border-radius: 4.6px; padding: 3.68px 7.36px; margin-bottom: 3.68px;
   }
   .callout {
     border-left: 3px solid var(--accent); background: var(--accent-dim);
-    border-radius: 0 4.8px 4.8px 0; padding: 5.76px 9.6px; font-size: 10.56px; margin-top: 4.8px;
+    border-radius: 0 4.6px 4.6px 0; padding: 5.52px 9.2px; font-size: 10.12px; margin-top: 4.6px;
   }
-  ol, ul { margin: 0; padding-left: 15.36px; font-size: 11.04px; line-height: 1.4; }
-  li { margin-bottom: 1.92px; }
+  ol, ul { margin: 0; padding-left: 14.72px; font-size: 10.58px; line-height: 1.4; }
+  li { margin-bottom: 1.84px; }
   pre {
-    background: var(--code-bg); border: 1px solid var(--border); border-radius: 5.76px;
-    padding: 7.68px 9.6px; margin: 0; white-space: pre-wrap; word-break: break-word;
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 5.52px;
+    padding: 7.36px 9.2px; margin: 0; white-space: pre-wrap; word-break: break-word;
   }
-  code { font-family: var(--font-mono); font-size: 9.6px; line-height: 1.35; color: var(--fg); }
+  code { font-family: var(--font-mono); font-size: 9.2px; line-height: 1.35; color: var(--fg); }
   .kw { color: var(--accent); font-weight: 600; }
-  .complexity { display: block; margin-top: 7.68px; }
+  .complexity { display: block; margin-top: 7.36px; }
   .complexity::after { content: ""; display: table; clear: both; }
   .complexity .box {
-    float: left; width: calc(50% - 3.84px); background: var(--code-bg); border: 1px solid var(--border);
-    border-radius: 4.8px; padding: 4.8px 7.68px; text-align: center;
+    float: left; width: calc(50% - 3.68px); background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 4.6px; padding: 4.6px 7.36px; text-align: center;
   }
   .complexity .box + .box { float: right; }
-  .complexity .box .v { font-family: var(--font-mono); color: var(--accent); font-size: 13.44px; display: block; }
-  .complexity .box .k { font-size: 8.16px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
-  .quote { font-size: 10.08px; font-style: italic; color: var(--muted); border-left: 3px solid var(--border); padding-left: 7.68px; margin-top: 5.76px; }
+  .complexity .box .v { font-family: var(--font-mono); color: var(--accent); font-size: 12.88px; display: block; }
+  .complexity .box .k { font-size: 7.82px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .quote { font-size: 9.66px; font-style: italic; color: var(--muted); border-left: 3px solid var(--border); padding-left: 7.36px; margin-top: 5.52px; }
   .edge-list { display: block; list-style: none; padding: 0; margin: 0; }
   .edge-list::after { content: ""; display: table; clear: both; }
-  .edge-list li { font-size: 10.08px; width: calc(50% - 7.68px); float: left; margin-bottom: 3.84px; }
+  .edge-list li { font-size: 9.66px; width: calc(50% - 7.36px); float: left; margin-bottom: 3.68px; }
   .edge-list li:nth-child(even) { float: right; }
-  .edge-list li::before { content: "\2023"; color: var(--accent); margin-right: 3.84px; }
+  .edge-list li::before { content: "\2023"; color: var(--accent); margin-right: 3.68px; }
 </style>
 </head>
 <body>
