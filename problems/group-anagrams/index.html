@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Group Anagrams — Coding Patterns</title>
+<meta name="description" content="Group Anagrams (Arrays & Hashing) — pattern, walkthrough, video, and printable one-pager.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container row">
+      <div>
+        <a class="brand" href="../../index.html">Coding <span class="dot">Patterns</span></a>
+        <div class="tagline">BLIND 75 · INTERVIEW REVISION</div>
+      </div>
+      <nav>
+        <a href="https://github.com/pawanparashar/dsa-interview-prep">GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="p-head">
+      <a class="crumbs" href="../../index.html">← All 75</a>
+      <h1>#4 — Group Anagrams</h1>
+      <div class="pills">
+        <span class="pill accent">Arrays & Hashing</span>
+        <span class="pill">LeetCode 49</span>
+        <span class="pill">NeetCode "Group Anagrams"</span>
+        <span class="badge Medium">Medium</span>
+      </div>
+      <div class="p-actions">
+        <a class="linkbtn" href="group-anagrams-onepager.pdf">Download one-pager (PDF) ↓</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Problem</h2>
+      <p>Given an array of strings <code>strs</code>, group the anagrams together. You can return the answer in any order. An anagram is a string that contains the exact same characters as another string, but the order of the characters can be different.</p>
+      <div class="examples">
+        
+        <div>strs = ["eat","tea","tan","ate","nat","bat"] → [["bat"],["nat","tan"],["ate","eat","tea"]]</div>
+        
+        <div>strs = ["x"] → [["x"]]</div>
+        
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Watch the walkthrough</h2>
+      <div class="video-frame">
+        <iframe src="https://www.youtube.com/embed/eDmxPfVa81k" title="Group Anagrams solution walkthrough" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Core idea</h2>
+      <p><strong>Goal</strong><br>Partition a list of strings into groups where every string in a group is an anagram of every other string in that group.</p>
+      <p><strong>Key insight</strong><br>Anagrams always produce the same letter-frequency signature, so instead of comparing every pair of strings (O(n²) work), compute one canonical "fingerprint" per string and use it as a hash map key — strings with the same fingerprint land in the same bucket automatically.</p>
+      <div class="callout">Trigger phrase: “Group things that are the same letters rearranged” → build a frequency-count signature and bucket by it (Hash Map).</div>
+    </div>
+
+    
+    <div class="section">
+      <h2>Step through it</h2>
+      <p class="muted">Walk the algorithm one step at a time — forward, back, or press play.</p>
+      <div class="viz" id="viz" data-trace="{&quot;mode&quot;: &quot;groups&quot;, &quot;array&quot;: [&quot;eat&quot;, &quot;tea&quot;, &quot;tan&quot;, &quot;ate&quot;, &quot;nat&quot;, &quot;bat&quot;], &quot;frames&quot;: [{&quot;idx&quot;: null, &quot;key&quot;: null, &quot;groups&quot;: {}, &quot;status&quot;: &quot;start&quot;, &quot;note&quot;: &quot;Start with an empty hash map results: signature \u2192 list of words.&quot;}, {&quot;idx&quot;: 0, &quot;key&quot;: &quot;a1e1t1&quot;, &quot;groups&quot;: {&quot;a1e1t1&quot;: [&quot;eat&quot;]}, &quot;status&quot;: &quot;add&quot;, &quot;note&quot;: &quot;\&quot;eat\&quot; \u2192 count signature \&quot;a1e1t1\&quot; (new key) \u2192 start a new group: {a1e1t1: [\&quot;eat\&quot;]}.&quot;}, {&quot;idx&quot;: 1, &quot;key&quot;: &quot;a1e1t1&quot;, &quot;groups&quot;: {&quot;a1e1t1&quot;: [&quot;eat&quot;, &quot;tea&quot;]}, &quot;status&quot;: &quot;add&quot;, &quot;note&quot;: &quot;\&quot;tea\&quot; \u2192 count signature \&quot;a1e1t1\&quot; matches an existing group \u2192 append: a1e1t1 now holds [&#x27;eat&#x27;, &#x27;tea&#x27;].&quot;}, {&quot;idx&quot;: 2, &quot;key&quot;: &quot;a1n1t1&quot;, &quot;groups&quot;: {&quot;a1e1t1&quot;: [&quot;eat&quot;, &quot;tea&quot;], &quot;a1n1t1&quot;: [&quot;tan&quot;]}, &quot;status&quot;: &quot;add&quot;, &quot;note&quot;: &quot;\&quot;tan\&quot; \u2192 count signature \&quot;a1n1t1\&quot; (new key) \u2192 start a new group: {a1n1t1: [\&quot;tan\&quot;]}.&quot;}, {&quot;idx&quot;: 3, &quot;key&quot;: &quot;a1e1t1&quot;, &quot;groups&quot;: {&quot;a1e1t1&quot;: [&quot;eat&quot;, &quot;tea&quot;, &quot;ate&quot;], &quot;a1n1t1&quot;: [&quot;tan&quot;]}, &quot;status&quot;: &quot;add&quot;, &quot;note&quot;: &quot;\&quot;ate\&quot; \u2192 count signature \&quot;a1e1t1\&quot; matches an existing group \u2192 append: a1e1t1 now holds [&#x27;eat&#x27;, &#x27;tea&#x27;, &#x27;ate&#x27;].&quot;}, {&quot;idx&quot;: 4, &quot;key&quot;: &quot;a1n1t1&quot;, &quot;groups&quot;: {&quot;a1e1t1&quot;: [&quot;eat&quot;, &quot;tea&quot;, &quot;ate&quot;], &quot;a1n1t1&quot;: [&quot;tan&quot;, &quot;nat&quot;]}, &quot;status&quot;: &quot;add&quot;, &quot;note&quot;: &quot;\&quot;nat\&quot; \u2192 count signature \&quot;a1n1t1\&quot; matches an existing group \u2192 append: a1n1t1 now holds [&#x27;tan&#x27;, &#x27;nat&#x27;].&quot;}, {&quot;idx&quot;: 5, &quot;key&quot;: &quot;a1b1t1&quot;, &quot;groups&quot;: {&quot;a1e1t1&quot;: [&quot;eat&quot;, &quot;tea&quot;, &quot;ate&quot;], &quot;a1n1t1&quot;: [&quot;tan&quot;, &quot;nat&quot;], &quot;a1b1t1&quot;: [&quot;bat&quot;]}, &quot;status&quot;: &quot;add&quot;, &quot;note&quot;: &quot;\&quot;bat\&quot; \u2192 count signature \&quot;a1b1t1\&quot; (new key) \u2192 start a new group: {a1b1t1: [\&quot;bat\&quot;]}.&quot;}, {&quot;idx&quot;: null, &quot;key&quot;: null, &quot;groups&quot;: {&quot;a1e1t1&quot;: [&quot;eat&quot;, &quot;tea&quot;, &quot;ate&quot;], &quot;a1n1t1&quot;: [&quot;tan&quot;, &quot;nat&quot;], &quot;a1b1t1&quot;: [&quot;bat&quot;]}, &quot;status&quot;: &quot;done&quot;, &quot;note&quot;: &quot;All words processed \u2014 return list(results.values()): [[&#x27;eat&#x27;, &#x27;tea&#x27;, &#x27;ate&#x27;], [&#x27;tan&#x27;, &#x27;nat&#x27;], [&#x27;bat&#x27;]].&quot;}]}">
+        <div class="viz-body" id="vizBody"></div>
+        <div class="viz-note" id="vizNote"></div>
+        <div class="viz-controls">
+          <button class="viz-btn" id="vizPrev" aria-label="Previous step">&larr; Prev</button>
+          <button class="viz-btn accent" id="vizPlay" aria-label="Play">&#9654; Play</button>
+          <button class="viz-btn" id="vizNext" aria-label="Next step">Next &rarr;</button>
+          <span class="viz-step-count" id="vizCount"></span>
+        </div>
+        <div class="viz-progress"><div class="viz-progress-fill" id="vizProgressFill"></div></div>
+      </div>
+    </div>
+    
+
+    <div class="section">
+      <h2>Walkthrough</h2>
+      
+      <p>The brute-force instinct is to compare every string against every other string to check if they're anagrams — but that's O(n²) comparisons, and each comparison itself costs time. The faster approach flips the problem: instead of comparing strings to each other, give every string a canonical "fingerprint" that's identical for all of its anagrams, then just group by that fingerprint in one pass.</p>
+      
+      <p>The fingerprint used here is a 26-element array counting how many times each lowercase letter appears in the string — <code>count[ord(c) - ord('a')] += 1</code> maps <code>'a'</code> → index 0, <code>'b'</code> → index 1, and so on up to <code>'z'</code> → index 25. Two strings are anagrams exactly when their count arrays are identical, regardless of character order.</p>
+      
+      <p>A Python list can't be used as a dict key because it's mutable and unhashable, so the count array is converted to a <code>tuple</code> first — tuples are immutable and hashable, making them safe hash-map keys.</p>
+      
+      <p><code>results</code> is a <code>defaultdict(list)</code> specifically so the first time a new signature shows up, <code>results[key]</code> doesn't raise a <code>KeyError</code> — it just returns a fresh empty list ready for <code>.append()</code>.</p>
+      
+      <p>By the end of the single pass over <code>strs</code>, every bucket in <code>results</code> holds one full group of anagrams, and <code>list(results.values())</code> hands them all back without needing to track group order.</p>
+      
+    </div>
+
+    <div class="section">
+      <h2>Optimal solution</h2>
+      <p><strong>Data structure:</strong> Hash Map (Python <code>defaultdict(list)</code>) keyed by a 26-length character-count tuple</p>
+      <ol class="steps">
+        
+        <li>Create <code>results</code> as a <code>defaultdict(list)</code> so a brand-new key automatically starts with an empty list.</li>
+        
+        <li>For each string <code>s</code> in <code>strs</code>, build a 26-length <code>count</code> array (one slot per lowercase letter) and increment <code>count[ord(c) - ord('a')]</code> for every character <code>c</code> in <code>s</code>.</li>
+        
+        <li>Convert <code>count</code> to a <code>tuple</code> (lists aren't hashable, so they can't be dict keys) and use it as <code>key</code>.</li>
+        
+        <li>Append <code>s</code> to <code>results[key]</code> — every anagram of <code>s</code> produces the exact same <code>count</code> tuple, so they all land in the same bucket.</li>
+        
+        <li>Return <code>list(results.values())</code> — the grouped anagrams, in any order.</li>
+        
+      </ol>
+      <div class="complexity">
+        <div class="box"><span class="v">O(n · k) — n strings, each of average length k</span><span class="k">Time</span></div>
+        <div class="box"><span class="v">O(n · k)</span><span class="k">Space</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Code</h2>
+      <pre><code><span class="kw">class</span> Solution:
+    <span class="kw">def</span> groupAnagrams(<span class="kw">self</span>, strs: List[str]) -&gt; List[List[str]]:
+        results = defaultdict(list)
+
+        <span class="kw">for</span> s <span class="kw">in</span> strs:
+            count = [0] * 26
+
+            <span class="kw">for</span> c <span class="kw">in</span> s:
+                count[ord(c)-ord(&#x27;a&#x27;)] += 1
+                
+            key = tuple(count)
+            results[key].append(s)
+        
+        <span class="kw">return</span> list(results.values())</code></pre>
+    </div>
+
+    
+    <div class="section">
+      <h2>Other ways to solve it</h2>
+      
+      <div class="alt-solution">
+        <h3>Sorted-string key</h3>
+        <p class="muted">Instead of a 26-length count tuple, use <code>''.join(sorted(s))</code> as the key — two strings are anagrams exactly when their sorted characters match. Simpler to write and explain under pressure, but sorting each string costs O(k log k) instead of O(k), so it's a good fallback if you blank on the counting-array trick, not the first choice for large inputs.</p>
+        <pre><code><span class="kw">class</span> Solution:
+    <span class="kw">def</span> groupAnagrams(<span class="kw">self</span>, strs: List[str]) -&gt; List[List[str]]:
+        results = defaultdict(list)
+        <span class="kw">for</span> s <span class="kw">in</span> strs:
+            key = &#x27;&#x27;.join(sorted(s))
+            results[key].append(s)
+        <span class="kw">return</span> list(results.values())</code></pre>
+        <div class="complexity">
+          <div class="box"><span class="v">O(n · k log k)</span><span class="k">Time</span></div>
+          <div class="box"><span class="v">O(n · k)</span><span class="k">Space</span></div>
+        </div>
+      </div>
+      
+      <div class="alt-solution">
+        <h3>Brute-force pairwise comparison</h3>
+        <p class="muted">Compare each string against one representative of every existing group using <code>Counter</code> equality (or sorted-string equality) and place it in the first matching group, else start a new one. No hashing trick needed — easy to reason about out loud — but it's O(n² · k) in the worst case, so only mention it as the naive baseline you're improving on.</p>
+        <pre><code><span class="kw">class</span> Solution:
+    <span class="kw">def</span> groupAnagrams(<span class="kw">self</span>, strs: List[str]) -&gt; List[List[str]]:
+        groups = []
+        <span class="kw">for</span> s <span class="kw">in</span> strs:
+            placed = <span class="kw">False</span>
+            <span class="kw">for</span> group <span class="kw">in</span> groups:
+                <span class="kw">if</span> Counter(group[0]) == Counter(s):
+                    group.append(s)
+                    placed = <span class="kw">True</span>
+                    <span class="kw">break</span>
+            <span class="kw">if</span> <span class="kw">not</span> placed:
+                groups.append([s])
+        <span class="kw">return</span> groups</code></pre>
+        <div class="complexity">
+          <div class="box"><span class="v">O(n² · k)</span><span class="k">Time</span></div>
+          <div class="box"><span class="v">O(n · k)</span><span class="k">Space</span></div>
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <div class="section">
+      <h2>Tips to remember this pattern</h2>
+      <p><strong>Mental shortcut</strong> — “Same letters, same counts → same bucket.”</p>
+      <p><strong>Common / related problems</strong></p>
+      <ul class="plain">
+        
+        <li>Valid Anagram</li>
+        
+        <li>Top K Frequent Elements</li>
+        
+        <li>Contains Duplicate</li>
+        
+      </ul>
+      <div class="quote">"I'm turning each string into a canonical count-based fingerprint and bucketing by it in a hash map — that's a single O(n·k) pass instead of comparing every pair of strings, and the 26-slot count array keeps each fingerprint a fixed, hashable size regardless of the string's length."</div>
+    </div>
+
+    <div class="section">
+      <h2>Edge cases to consider</h2>
+      <ul class="edge-list">
+        
+        <li>Empty input list → return an empty list, no groups</li>
+        
+        <li>A string that's empty "" → its count array is all zeros; every other empty string groups with it</li>
+        
+        <li>A single-character or single-element input → forms its own group of one</li>
+        
+        <li>All strings are anagrams of each other → one big group</li>
+        
+        <li>No two strings are anagrams → n groups of one, same as the input count</li>
+        
+        <li>Input is lowercase-only per constraints — mixed case or non-letter characters would need normalizing (e.g. lowercasing) before counting</li>
+        
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Day-of-interview revision</h2>
+      <p class="muted">Short on time? Skim the trigger phrase, the steps above, and keep this PDF open as a fallback.</p>
+      <div class="p-actions">
+        <a class="linkbtn" href="group-anagrams-onepager.pdf">Download one-pager (PDF) ↓</a>
+        <a class="linkbtn ghost" href="../../index.html">Back to all 75 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">Built by Pawan Parashar · generated from <a href="https://github.com/pawanparashar/dsa-interview-prep">dsa-interview-prep</a></div>
+  </footer>
+
+  
+  <script>
+  (function () {
+    var root = document.getElementById('viz');
+    if (!root) return;
+    var trace = JSON.parse(root.dataset.trace);
+    var mode = trace.mode || 'array-set';
+    var frames = trace.frames;
+    var cur = 0;
+    var playing = false;
+    var timer = null;
+
+    var bodyEl = document.getElementById('vizBody');
+    var noteEl = document.getElementById('vizNote');
+    var countEl = document.getElementById('vizCount');
+    var fillEl = document.getElementById('vizProgressFill');
+    var prevBtn = document.getElementById('vizPrev');
+    var nextBtn = document.getElementById('vizNext');
+    var playBtn = document.getElementById('vizPlay');
+
+    function makeCells(container, chars) {
+      chars.split('').forEach(function (ch) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell';
+        cell.textContent = ch;
+        container.appendChild(cell);
+      });
+    }
+
+    function renderChips(container, counts, highlightKey, mismatch) {
+      container.innerHTML = '';
+      var keys = Object.keys(counts);
+      if (keys.length === 0) {
+        var empty = document.createElement('span');
+        empty.className = 'viz-set-empty';
+        empty.textContent = '(empty)';
+        container.appendChild(empty);
+        return;
+      }
+      keys.forEach(function (k) {
+        var chip = document.createElement('span');
+        chip.className = 'viz-chip';
+        if (k === highlightKey) chip.classList.add(mismatch ? 'found' : 'active');
+        chip.textContent = k + ':' + counts[k];
+        container.appendChild(chip);
+      });
+    }
+
+    var updateFrame;
+
+    if (mode === 'strings') {
+      bodyEl.innerHTML =
+        '<div class="viz-str-row"><span class="viz-str-label">s =</span><div class="viz-array" id="vizArrS"></div></div>' +
+        '<div class="viz-str-row"><span class="viz-str-label">t =</span><div class="viz-array" id="vizArrT"></div></div>' +
+        '<div class="viz-counts-row">' +
+          '<div class="viz-counts"><div class="viz-set-label">counterS =</div><div class="viz-set" id="vizChipsS"></div></div>' +
+          '<div class="viz-counts"><div class="viz-set-label">counterT =</div><div class="viz-set" id="vizChipsT"></div></div>' +
+        '</div>';
+      makeCells(document.getElementById('vizArrS'), trace.s);
+      makeCells(document.getElementById('vizArrT'), trace.t);
+      var sCells = bodyEl.querySelectorAll('#vizArrS .viz-cell');
+      var tCells = bodyEl.querySelectorAll('#vizArrT .viz-cell');
+      var chipsS = document.getElementById('vizChipsS');
+      var chipsT = document.getElementById('vizChipsT');
+
+      updateFrame = function (f) {
+        sCells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.sIdx !== null && i === f.sIdx) cell.classList.add('active');
+          else if (f.phase !== 'build' || (f.sIdx !== null && i < f.sIdx)) cell.classList.add('done');
+        });
+        tCells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.tIdx !== null && i === f.tIdx) cell.classList.add('active');
+          else if (f.phase !== 'build' || (f.tIdx !== null && i < f.tIdx)) cell.classList.add('done');
+        });
+        var mismatch = f.status === 'mismatch';
+        renderChips(chipsS, f.counterS, f.compareKey, mismatch);
+        renderChips(chipsT, f.counterT, f.compareKey, mismatch);
+      };
+    } else if (mode === 'groups') {
+      bodyEl.innerHTML =
+        '<div class="viz-array" id="vizArray"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">groups =</span></div>' +
+        '<div class="viz-groups" id="vizGroups"></div>';
+      var arrayElG = document.getElementById('vizArray');
+      trace.array.forEach(function (val) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell viz-cell-word';
+        cell.textContent = val;
+        arrayElG.appendChild(cell);
+      });
+      var cellsG = arrayElG.querySelectorAll('.viz-cell');
+      var groupsEl = document.getElementById('vizGroups');
+
+      updateFrame = function (f) {
+        cellsG.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.idx !== null && i === f.idx) {
+            cell.classList.add('active');
+          } else if ((f.idx !== null && i < f.idx) || f.status === 'done') {
+            cell.classList.add('done');
+          }
+        });
+        groupsEl.innerHTML = '';
+        var keysG = Object.keys(f.groups);
+        if (keysG.length === 0) {
+          var emptyG = document.createElement('span');
+          emptyG.className = 'viz-set-empty';
+          emptyG.textContent = '(empty)';
+          groupsEl.appendChild(emptyG);
+        } else {
+          keysG.forEach(function (k) {
+            var box = document.createElement('div');
+            box.className = 'viz-group-box';
+            if (k === f.key) box.classList.add('active');
+            var label = document.createElement('div');
+            label.className = 'viz-group-key';
+            label.textContent = 'key: ' + k;
+            box.appendChild(label);
+            var wordsWrap = document.createElement('div');
+            wordsWrap.className = 'viz-group-words';
+            f.groups[k].forEach(function (w) {
+              var chip = document.createElement('span');
+              chip.className = 'viz-chip';
+              chip.textContent = w;
+              wordsWrap.appendChild(chip);
+            });
+            box.appendChild(wordsWrap);
+            groupsEl.appendChild(box);
+          });
+        }
+      };
+    } else {
+      bodyEl.innerHTML =
+        '<div class="viz-array" id="vizArray"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">h =</span><div class="viz-set" id="vizSet"></div></div>';
+      var arrayEl = document.getElementById('vizArray');
+      trace.array.forEach(function (val) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell';
+        cell.textContent = val;
+        arrayEl.appendChild(cell);
+      });
+      var cells = arrayEl.querySelectorAll('.viz-cell');
+      var setEl = document.getElementById('vizSet');
+
+      updateFrame = function (f) {
+        cells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'found', 'done');
+          if (f.idx !== null && i === f.idx) {
+            cell.classList.add(f.status === 'found' ? 'found' : 'active');
+          } else if (f.idx !== null && i < f.idx) {
+            cell.classList.add('done');
+          }
+        });
+        setEl.innerHTML = '';
+        if (f.set.length === 0) {
+          var empty = document.createElement('span');
+          empty.className = 'viz-set-empty';
+          empty.textContent = '(empty)';
+          setEl.appendChild(empty);
+        } else {
+          f.set.forEach(function (v) {
+            var chip = document.createElement('span');
+            chip.className = 'viz-chip';
+            chip.textContent = v;
+            setEl.appendChild(chip);
+          });
+        }
+      };
+    }
+
+    function render() {
+      var f = frames[cur];
+      updateFrame(f);
+      var flag = f.status === 'found' || f.status === 'mismatch';
+      noteEl.textContent = f.note;
+      noteEl.className = 'viz-note' + (flag ? ' found' : '');
+      countEl.textContent = 'Step ' + (cur + 1) + ' / ' + frames.length;
+      fillEl.style.width = (((cur + 1) / frames.length) * 100) + '%';
+      prevBtn.disabled = cur === 0;
+      nextBtn.disabled = cur === frames.length - 1;
+      if (cur === frames.length - 1) stopPlaying();
+    }
+
+    function goTo(i) {
+      cur = Math.max(0, Math.min(frames.length - 1, i));
+      render();
+    }
+
+    function stopPlaying() {
+      playing = false;
+      playBtn.innerHTML = '&#9654; Play';
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    function startPlaying() {
+      if (cur === frames.length - 1) cur = 0;
+      playing = true;
+      playBtn.innerHTML = '&#10074;&#10074; Pause';
+      timer = setInterval(function () {
+        if (cur >= frames.length - 1) { stopPlaying(); render(); return; }
+        goTo(cur + 1);
+      }, 1400);
+    }
+
+    prevBtn.addEventListener('click', function () { stopPlaying(); goTo(cur - 1); });
+    nextBtn.addEventListener('click', function () { stopPlaying(); goTo(cur + 1); });
+    playBtn.addEventListener('click', function () {
+      if (playing) { stopPlaying(); } else { startPlaying(); }
+    });
+
+    render();
+  })();
+  </script>
+  
+</body>
+</html>

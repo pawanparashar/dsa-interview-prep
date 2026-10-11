@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Group Anagrams — One-pager</title>
+<style>
+  @page { size: Letter; margin: 12.88mm; }
+  :root {
+    --panel: #ffffff;
+    --panel-2: #fafaf8;
+    --border: #d8dad6;
+    --fg: #1b1d22;
+    --muted: #5d636f;
+    --accent: #0e8f86;
+    --accent-dim: #dcf1ef;
+    --code-bg: #f4f6f5;
+    --font-display: 'JetBrains Mono', monospace;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--panel);
+    color: var(--fg);
+    font-family: var(--font-body);
+  }
+  .wrap { width: 100%; }
+  .head {
+    display: block;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 9.2px;
+    margin-bottom: 12.88px;
+  }
+  .head .num { font-family: var(--font-display); color: var(--accent); font-size: 12.88px; }
+  .head h1 { font-family: var(--font-display); font-size: 20.24px; margin: 0 0 5.52px; }
+  .pills { display: block; }
+  .pill {
+    display: inline-block;
+    font-family: var(--font-mono); font-size: 9.2px; letter-spacing: 0.02em;
+    padding: 2.76px 7.36px; border-radius: 999px; border: 1px solid var(--border);
+    color: var(--muted); background: var(--panel-2); white-space: nowrap;
+    margin: 0 5.52px 3.68px 0;
+  }
+  .pill.accent { color: var(--accent); border-color: var(--accent-dim); background: var(--accent-dim); }
+  .row { display: block; margin-bottom: 9.2px; page-break-inside: avoid; }
+  .row::after { content: ""; display: table; clear: both; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 7.36px;
+    padding: 11.04px 12.88px;
+    page-break-inside: avoid;
+  }
+  .row .card { float: left; width: 48%; }
+  .row .card + .card { float: right; }
+  .card.full { clear: both; width: 100%; margin-bottom: 9.2px; }
+  .card h2 {
+    font-family: var(--font-mono); font-size: 9.66px; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--accent); margin: 0 0 7.36px;
+  }
+  .card p { margin: 0 0 5.52px; font-size: 10.58px; line-height: 1.4; }
+  .card p:last-child { margin-bottom: 0; }
+  .label { color: var(--muted); font-size: 9.2px; font-family: var(--font-mono); }
+  .examples div {
+    font-family: var(--font-mono); font-size: 9.66px; background: var(--code-bg);
+    border: 1px solid var(--border); border-radius: 4.6px; padding: 3.68px 7.36px; margin-bottom: 3.68px;
+  }
+  .callout {
+    border-left: 3px solid var(--accent); background: var(--accent-dim);
+    border-radius: 0 4.6px 4.6px 0; padding: 5.52px 9.2px; font-size: 10.12px; margin-top: 4.6px;
+  }
+  ol, ul { margin: 0; padding-left: 14.72px; font-size: 10.58px; line-height: 1.4; }
+  li { margin-bottom: 1.84px; }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 5.52px;
+    padding: 7.36px 9.2px; margin: 0; white-space: pre-wrap; word-break: break-word;
+  }
+  code { font-family: var(--font-mono); font-size: 9.2px; line-height: 1.35; color: var(--fg); }
+  .kw { color: var(--accent); font-weight: 600; }
+  .complexity { display: block; margin-top: 7.36px; }
+  .complexity::after { content: ""; display: table; clear: both; }
+  .complexity .box {
+    float: left; width: calc(50% - 3.68px); background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 4.6px; padding: 4.6px 7.36px; text-align: center;
+  }
+  .complexity .box + .box { float: right; }
+  .complexity .box .v { font-family: var(--font-mono); color: var(--accent); font-size: 12.88px; display: block; }
+  .complexity .box .k { font-size: 7.82px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .quote { font-size: 9.66px; font-style: italic; color: var(--muted); border-left: 3px solid var(--border); padding-left: 7.36px; margin-top: 5.52px; }
+  .edge-list { display: block; list-style: none; padding: 0; margin: 0; }
+  .edge-list::after { content: ""; display: table; clear: both; }
+  .edge-list li { font-size: 9.66px; width: calc(50% - 7.36px); float: left; margin-bottom: 3.68px; }
+  .edge-list li:nth-child(even) { float: right; }
+  .edge-list li::before { content: "\2023"; color: var(--accent); margin-right: 3.68px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <span class="num">#4</span>
+    <h1>Group Anagrams</h1>
+    <div class="pills">
+      <span class="pill accent">Arrays & Hashing</span>
+      <span class="pill">LeetCode 49</span>
+      <span class="pill">NeetCode "Group Anagrams"</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card">
+      <h2>Problem</h2>
+      <p>Given an array of strings <code>strs</code>, group the anagrams together. You can return the answer in any order. An anagram is a string that contains the exact same characters as another string, but the order of the characters can be different.</p>
+      <div class="examples">
+        
+        <div>strs = ["eat","tea","tan","ate","nat","bat"] → [["bat"],["nat","tan"],["ate","eat","tea"]]</div>
+        
+        <div>strs = ["x"] → [["x"]]</div>
+        
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Core idea</h2>
+      <p><span class="label">Goal</span><br>Partition a list of strings into groups where every string in a group is an anagram of every other string in that group.</p>
+      <p><span class="label">Key insight</span><br>Anagrams always produce the same letter-frequency signature, so instead of comparing every pair of strings (O(n²) work), compute one canonical "fingerprint" per string and use it as a hash map key — strings with the same fingerprint land in the same bucket automatically.</p>
+      <div class="callout">Trigger: “Group things that are the same letters rearranged” → build a frequency-count signature and bucket by it (Hash Map).</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card">
+      <h2>Optimal solution</h2>
+      <p><span class="label">Data structure</span> — Hash Map (Python <code>defaultdict(list)</code>) keyed by a 26-length character-count tuple</p>
+      <ol>
+        
+        <li>Create <code>results</code> as a <code>defaultdict(list)</code> so a brand-new key automatically starts with an empty list.</li>
+        
+        <li>For each string <code>s</code> in <code>strs</code>, build a 26-length <code>count</code> array (one slot per lowercase letter) and increment <code>count[ord(c) - ord('a')]</code> for every character <code>c</code> in <code>s</code>.</li>
+        
+        <li>Convert <code>count</code> to a <code>tuple</code> (lists aren't hashable, so they can't be dict keys) and use it as <code>key</code>.</li>
+        
+        <li>Append <code>s</code> to <code>results[key]</code> — every anagram of <code>s</code> produces the exact same <code>count</code> tuple, so they all land in the same bucket.</li>
+        
+        <li>Return <code>list(results.values())</code> — the grouped anagrams, in any order.</li>
+        
+      </ol>
+      <div class="complexity">
+        <div class="box"><span class="v">O(n · k) — n strings, each of average length k</span><span class="k">Time</span></div>
+        <div class="box"><span class="v">O(n · k)</span><span class="k">Space</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Code</h2>
+      <pre><code><span class="kw">class</span> Solution:
+    <span class="kw">def</span> groupAnagrams(<span class="kw">self</span>, strs: List[str]) -&gt; List[List[str]]:
+        results = defaultdict(list)
+
+        <span class="kw">for</span> s <span class="kw">in</span> strs:
+            count = [0] * 26
+
+            <span class="kw">for</span> c <span class="kw">in</span> s:
+                count[ord(c)-ord(&#x27;a&#x27;)] += 1
+                
+            key = tuple(count)
+            results[key].append(s)
+        
+        <span class="kw">return</span> list(results.values())</code></pre>
+    </div>
+  </div>
+
+  <div class="card full">
+    <h2>Tips to remember</h2>
+    <p><span class="label">Mental shortcut</span> — “Same letters, same counts → same bucket.”</p>
+    <p><span class="label">Common / related</span> — Valid Anagram, Top K Frequent Elements, Contains Duplicate</p>
+    <div class="quote">"I'm turning each string into a canonical count-based fingerprint and bucketing by it in a hash map — that's a single O(n·k) pass instead of comparing every pair of strings, and the 26-slot count array keeps each fingerprint a fixed, hashable size regardless of the string's length."</div>
+  </div>
+
+  <div class="card full">
+    <h2>Edge cases</h2>
+    <ul class="edge-list">
+      
+      <li>Empty input list → return an empty list, no groups</li>
+      
+      <li>A string that's empty "" → its count array is all zeros; every other empty string groups with it</li>
+      
+      <li>A single-character or single-element input → forms its own group of one</li>
+      
+      <li>All strings are anagrams of each other → one big group</li>
+      
+      <li>No two strings are anagrams → n groups of one, same as the input count</li>
+      
+      <li>Input is lowercase-only per constraints — mixed case or non-letter characters would need normalizing (e.g. lowercasing) before counting</li>
+      
+    </ul>
+  </div>
+</div>
+</body>
+</html>

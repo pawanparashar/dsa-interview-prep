@@ -262,6 +262,59 @@
         renderChips(chipsS, f.counterS, f.compareKey, mismatch);
         renderChips(chipsT, f.counterT, f.compareKey, mismatch);
       };
+    } else if (mode === 'groups') {
+      bodyEl.innerHTML =
+        '<div class="viz-array" id="vizArray"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">groups =</span></div>' +
+        '<div class="viz-groups" id="vizGroups"></div>';
+      var arrayElG = document.getElementById('vizArray');
+      trace.array.forEach(function (val) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell viz-cell-word';
+        cell.textContent = val;
+        arrayElG.appendChild(cell);
+      });
+      var cellsG = arrayElG.querySelectorAll('.viz-cell');
+      var groupsEl = document.getElementById('vizGroups');
+
+      updateFrame = function (f) {
+        cellsG.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.idx !== null && i === f.idx) {
+            cell.classList.add('active');
+          } else if ((f.idx !== null && i < f.idx) || f.status === 'done') {
+            cell.classList.add('done');
+          }
+        });
+        groupsEl.innerHTML = '';
+        var keysG = Object.keys(f.groups);
+        if (keysG.length === 0) {
+          var emptyG = document.createElement('span');
+          emptyG.className = 'viz-set-empty';
+          emptyG.textContent = '(empty)';
+          groupsEl.appendChild(emptyG);
+        } else {
+          keysG.forEach(function (k) {
+            var box = document.createElement('div');
+            box.className = 'viz-group-box';
+            if (k === f.key) box.classList.add('active');
+            var label = document.createElement('div');
+            label.className = 'viz-group-key';
+            label.textContent = 'key: ' + k;
+            box.appendChild(label);
+            var wordsWrap = document.createElement('div');
+            wordsWrap.className = 'viz-group-words';
+            f.groups[k].forEach(function (w) {
+              var chip = document.createElement('span');
+              chip.className = 'viz-chip';
+              chip.textContent = w;
+              wordsWrap.appendChild(chip);
+            });
+            box.appendChild(wordsWrap);
+            groupsEl.appendChild(box);
+          });
+        }
+      };
     } else {
       bodyEl.innerHTML =
         '<div class="viz-array" id="vizArray"></div>' +

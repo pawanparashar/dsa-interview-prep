@@ -545,6 +545,215 @@
           }
         ]
       }
+    },
+    {
+      "number": 4,
+      "slug": "group-anagrams",
+      "title": "Group Anagrams",
+      "category": "Arrays & Hashing",
+      "leetcode_number": 49,
+      "neetcode_name": "Group Anagrams",
+      "difficulty": "Medium",
+      "status": "Solved",
+      "youtube_id": "eDmxPfVa81k",
+      "problem_statement": "Given an array of strings <code>strs</code>, group the anagrams together. You can return the answer in any order. An anagram is a string that contains the exact same characters as another string, but the order of the characters can be different.",
+      "examples": [
+        {
+          "input": "strs = [\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]",
+          "output": "[[\"bat\"],[\"nat\",\"tan\"],[\"ate\",\"eat\",\"tea\"]]"
+        },
+        {
+          "input": "strs = [\"x\"]",
+          "output": "[[\"x\"]]"
+        }
+      ],
+      "core_idea": {
+        "goal": "Partition a list of strings into groups where every string in a group is an anagram of every other string in that group.",
+        "key_insight": "Anagrams always produce the same letter-frequency signature, so instead of comparing every pair of strings (O(n²) work), compute one canonical \"fingerprint\" per string and use it as a hash map key — strings with the same fingerprint land in the same bucket automatically.",
+        "trigger_phrase": "“Group things that are the same letters rearranged” → build a frequency-count signature and bucket by it (Hash Map)."
+      },
+      "optimal_solution": {
+        "data_structure": "Hash Map (Python <code>defaultdict(list)</code>) keyed by a 26-length character-count tuple",
+        "steps": [
+          "Create <code>results</code> as a <code>defaultdict(list)</code> so a brand-new key automatically starts with an empty list.",
+          "For each string <code>s</code> in <code>strs</code>, build a 26-length <code>count</code> array (one slot per lowercase letter) and increment <code>count[ord(c) - ord('a')]</code> for every character <code>c</code> in <code>s</code>.",
+          "Convert <code>count</code> to a <code>tuple</code> (lists aren't hashable, so they can't be dict keys) and use it as <code>key</code>.",
+          "Append <code>s</code> to <code>results[key]</code> — every anagram of <code>s</code> produces the exact same <code>count</code> tuple, so they all land in the same bucket.",
+          "Return <code>list(results.values())</code> — the grouped anagrams, in any order."
+        ],
+        "time_complexity": "O(n · k) — n strings, each of average length k",
+        "space_complexity": "O(n · k)"
+      },
+      "code": "class Solution:\n    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:\n        results = defaultdict(list)\n\n        for s in strs:\n            count = [0] * 26\n\n            for c in s:\n                count[ord(c)-ord('a')] += 1\n                \n            key = tuple(count)\n            results[key].append(s)\n        \n        return list(results.values())",
+      "walkthrough": [
+        "The brute-force instinct is to compare every string against every other string to check if they're anagrams — but that's O(n²) comparisons, and each comparison itself costs time. The faster approach flips the problem: instead of comparing strings to each other, give every string a canonical \"fingerprint\" that's identical for all of its anagrams, then just group by that fingerprint in one pass.",
+        "The fingerprint used here is a 26-element array counting how many times each lowercase letter appears in the string — <code>count[ord(c) - ord('a')] += 1</code> maps <code>'a'</code> → index 0, <code>'b'</code> → index 1, and so on up to <code>'z'</code> → index 25. Two strings are anagrams exactly when their count arrays are identical, regardless of character order.",
+        "A Python list can't be used as a dict key because it's mutable and unhashable, so the count array is converted to a <code>tuple</code> first — tuples are immutable and hashable, making them safe hash-map keys.",
+        "<code>results</code> is a <code>defaultdict(list)</code> specifically so the first time a new signature shows up, <code>results[key]</code> doesn't raise a <code>KeyError</code> — it just returns a fresh empty list ready for <code>.append()</code>.",
+        "By the end of the single pass over <code>strs</code>, every bucket in <code>results</code> holds one full group of anagrams, and <code>list(results.values())</code> hands them all back without needing to track group order."
+      ],
+      "mental_shortcut": "“Same letters, same counts → same bucket.”",
+      "related_problems": [
+        "Valid Anagram",
+        "Top K Frequent Elements",
+        "Contains Duplicate"
+      ],
+      "interview_talking_point": "I'm turning each string into a canonical count-based fingerprint and bucketing by it in a hash map — that's a single O(n·k) pass instead of comparing every pair of strings, and the 26-slot count array keeps each fingerprint a fixed, hashable size regardless of the string's length.",
+      "edge_cases": [
+        "Empty input list → return an empty list, no groups",
+        "A string that's empty \"\" → its count array is all zeros; every other empty string groups with it",
+        "A single-character or single-element input → forms its own group of one",
+        "All strings are anagrams of each other → one big group",
+        "No two strings are anagrams → n groups of one, same as the input count",
+        "Input is lowercase-only per constraints — mixed case or non-letter characters would need normalizing (e.g. lowercasing) before counting"
+      ],
+      "alternative_solutions": [
+        {
+          "name": "Sorted-string key",
+          "note": "Instead of a 26-length count tuple, use <code>''.join(sorted(s))</code> as the key — two strings are anagrams exactly when their sorted characters match. Simpler to write and explain under pressure, but sorting each string costs O(k log k) instead of O(k), so it's a good fallback if you blank on the counting-array trick, not the first choice for large inputs.",
+          "code": "class Solution:\n    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:\n        results = defaultdict(list)\n        for s in strs:\n            key = ''.join(sorted(s))\n            results[key].append(s)\n        return list(results.values())",
+          "time_complexity": "O(n · k log k)",
+          "space_complexity": "O(n · k)"
+        },
+        {
+          "name": "Brute-force pairwise comparison",
+          "note": "Compare each string against one representative of every existing group using <code>Counter</code> equality (or sorted-string equality) and place it in the first matching group, else start a new one. No hashing trick needed — easy to reason about out loud — but it's O(n² · k) in the worst case, so only mention it as the naive baseline you're improving on.",
+          "code": "class Solution:\n    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:\n        groups = []\n        for s in strs:\n            placed = False\n            for group in groups:\n                if Counter(group[0]) == Counter(s):\n                    group.append(s)\n                    placed = True\n                    break\n            if not placed:\n                groups.append([s])\n        return groups",
+          "time_complexity": "O(n² · k)",
+          "space_complexity": "O(n · k)"
+        }
+      ],
+      "trace": {
+        "mode": "groups",
+        "array": [
+          "eat",
+          "tea",
+          "tan",
+          "ate",
+          "nat",
+          "bat"
+        ],
+        "frames": [
+          {
+            "idx": null,
+            "key": null,
+            "groups": {},
+            "status": "start",
+            "note": "Start with an empty hash map results: signature → list of words."
+          },
+          {
+            "idx": 0,
+            "key": "a1e1t1",
+            "groups": {
+              "a1e1t1": [
+                "eat"
+              ]
+            },
+            "status": "add",
+            "note": "\"eat\" → count signature \"a1e1t1\" (new key) → start a new group: {a1e1t1: [\"eat\"]}."
+          },
+          {
+            "idx": 1,
+            "key": "a1e1t1",
+            "groups": {
+              "a1e1t1": [
+                "eat",
+                "tea"
+              ]
+            },
+            "status": "add",
+            "note": "\"tea\" → count signature \"a1e1t1\" matches an existing group → append: a1e1t1 now holds ['eat', 'tea']."
+          },
+          {
+            "idx": 2,
+            "key": "a1n1t1",
+            "groups": {
+              "a1e1t1": [
+                "eat",
+                "tea"
+              ],
+              "a1n1t1": [
+                "tan"
+              ]
+            },
+            "status": "add",
+            "note": "\"tan\" → count signature \"a1n1t1\" (new key) → start a new group: {a1n1t1: [\"tan\"]}."
+          },
+          {
+            "idx": 3,
+            "key": "a1e1t1",
+            "groups": {
+              "a1e1t1": [
+                "eat",
+                "tea",
+                "ate"
+              ],
+              "a1n1t1": [
+                "tan"
+              ]
+            },
+            "status": "add",
+            "note": "\"ate\" → count signature \"a1e1t1\" matches an existing group → append: a1e1t1 now holds ['eat', 'tea', 'ate']."
+          },
+          {
+            "idx": 4,
+            "key": "a1n1t1",
+            "groups": {
+              "a1e1t1": [
+                "eat",
+                "tea",
+                "ate"
+              ],
+              "a1n1t1": [
+                "tan",
+                "nat"
+              ]
+            },
+            "status": "add",
+            "note": "\"nat\" → count signature \"a1n1t1\" matches an existing group → append: a1n1t1 now holds ['tan', 'nat']."
+          },
+          {
+            "idx": 5,
+            "key": "a1b1t1",
+            "groups": {
+              "a1e1t1": [
+                "eat",
+                "tea",
+                "ate"
+              ],
+              "a1n1t1": [
+                "tan",
+                "nat"
+              ],
+              "a1b1t1": [
+                "bat"
+              ]
+            },
+            "status": "add",
+            "note": "\"bat\" → count signature \"a1b1t1\" (new key) → start a new group: {a1b1t1: [\"bat\"]}."
+          },
+          {
+            "idx": null,
+            "key": null,
+            "groups": {
+              "a1e1t1": [
+                "eat",
+                "tea",
+                "ate"
+              ],
+              "a1n1t1": [
+                "tan",
+                "nat"
+              ],
+              "a1b1t1": [
+                "bat"
+              ]
+            },
+            "status": "done",
+            "note": "All words processed — return list(results.values()): [['eat', 'tea', 'ate'], ['tan', 'nat'], ['bat']]."
+          }
+        ]
+      }
     }
   ],
   "roadmap": [
