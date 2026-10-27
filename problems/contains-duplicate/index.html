@@ -315,6 +315,78 @@
           });
         }
       };
+    } else if (mode === 'topk') {
+      bodyEl.innerHTML =
+        '<div class="viz-array" id="vizArray"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">freq =</span><div class="viz-set" id="vizFreq"></div></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">buckets (index = frequency) =</span></div>' +
+        '<div class="viz-groups" id="vizBuckets"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">out =</span><div class="viz-set" id="vizOutput"></div></div>';
+      var arrayElT = document.getElementById('vizArray');
+      trace.array.forEach(function (val) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell';
+        cell.textContent = val;
+        arrayElT.appendChild(cell);
+      });
+      var cellsT = arrayElT.querySelectorAll('.viz-cell');
+      var freqEl = document.getElementById('vizFreq');
+      var bucketsEl = document.getElementById('vizBuckets');
+      var outputEl = document.getElementById('vizOutput');
+
+      updateFrame = function (f) {
+        cellsT.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.idx !== null && i === f.idx) {
+            cell.classList.add('active');
+          } else if ((f.idx !== null && i < f.idx) || f.phase !== 'count') {
+            cell.classList.add('done');
+          }
+        });
+        renderChips(freqEl, f.freq, f.activeKey, false);
+        bucketsEl.innerHTML = '';
+        var bucketKeys = Object.keys(f.buckets).sort(function (a, b) { return Number(b) - Number(a); });
+        if (bucketKeys.length === 0) {
+          var emptyB = document.createElement('span');
+          emptyB.className = 'viz-set-empty';
+          emptyB.textContent = '(empty)';
+          bucketsEl.appendChild(emptyB);
+        } else {
+          bucketKeys.forEach(function (bk) {
+            var box = document.createElement('div');
+            box.className = 'viz-group-box';
+            if (f.bucketIdx !== null && Number(bk) === f.bucketIdx) box.classList.add('active');
+            var label = document.createElement('div');
+            label.className = 'viz-group-key';
+            label.textContent = 'idx ' + bk;
+            box.appendChild(label);
+            var wordsWrap = document.createElement('div');
+            wordsWrap.className = 'viz-group-words';
+            f.buckets[bk].forEach(function (w) {
+              var chip = document.createElement('span');
+              chip.className = 'viz-chip';
+              chip.textContent = w;
+              wordsWrap.appendChild(chip);
+            });
+            box.appendChild(wordsWrap);
+            bucketsEl.appendChild(box);
+          });
+        }
+        outputEl.innerHTML = '';
+        if (f.output.length === 0) {
+          var emptyO = document.createElement('span');
+          emptyO.className = 'viz-set-empty';
+          emptyO.textContent = '(empty)';
+          outputEl.appendChild(emptyO);
+        } else {
+          f.output.forEach(function (v) {
+            var chip = document.createElement('span');
+            chip.className = 'viz-chip found';
+            chip.textContent = v;
+            outputEl.appendChild(chip);
+          });
+        }
+      };
     } else {
       bodyEl.innerHTML =
         '<div class="viz-array" id="vizArray"></div>' +

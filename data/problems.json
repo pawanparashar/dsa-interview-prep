@@ -754,6 +754,470 @@
           }
         ]
       }
+    },
+    {
+      "number": 5,
+      "slug": "top-k-frequent-elements",
+      "title": "Top K Frequent Elements",
+      "category": "Arrays & Hashing",
+      "leetcode_number": 347,
+      "neetcode_name": "Top K Elements in List",
+      "difficulty": "Medium",
+      "status": "Solved",
+      "youtube_id": "phNDYf1xzco",
+      "problem_statement": "Given an integer array <code>nums</code> and an integer <code>k</code>, return the <code>k</code> most frequent elements within the array. The test cases are generated such that the answer is always unique. You may return the output in any order.",
+      "examples": [
+        {
+          "input": "nums = [1,2,2,3,3,3], k = 2",
+          "output": "[2,3]"
+        },
+        {
+          "input": "nums = [7,7], k = 1",
+          "output": "[7]"
+        }
+      ],
+      "core_idea": {
+        "goal": "Return the k values that appear most often in an array, without sorting the whole frequency distribution.",
+        "key_insight": "A value's frequency can never exceed the length of the array, so instead of sorting all (value, frequency) pairs by frequency — O(n log n) — bucket each value directly into an index equal to its frequency count. Reading the buckets from the highest index down then visits values in descending frequency order for free, in O(n) overall.",
+        "trigger_phrase": "“Top / most frequent k” with no need for full sorted order → bucket sort by frequency (Hash Map + array of buckets), not a heap or a full sort."
+      },
+      "optimal_solution": {
+        "data_structure": "Hash Map for counts, plus a bucket array of size <code>len(nums) + 1</code> indexed by frequency",
+        "steps": [
+          "Count every value's frequency into a hash map <code>freq</code> with a single pass over <code>nums</code>.",
+          "Create a bucket array <code>res</code> of size <code>len(nums) + 1</code> — a value can appear at most <code>len(nums)</code> times, so every possible frequency has a slot.",
+          "For each <code>(key, value)</code> pair in <code>freq</code> (<code>value</code> is the frequency), append <code>key</code> into <code>res[value]</code> — this groups all values that share the same frequency into the same bucket.",
+          "Walk <code>res</code> in reverse (highest frequency first). Any non-empty bucket holds values of that frequency; append them to the output until it has <code>k</code> elements.",
+          "Return the collected output."
+        ],
+        "time_complexity": "O(n)",
+        "space_complexity": "O(n)"
+      },
+      "code": "class Solution:\n    def topKFrequent(self, nums: List[int], k: int) -> List[int]:\n        freq = defaultdict(int)\n        for num in nums:\n            freq[num] += 1\n\n        res = [0] * (len(nums)+1)\n\n        for key,value in freq.items():\n            if res[value] == 0:\n                res[value] = [key]\n            else:\n                res[value].append(key)\n\n        out = []\n        for item in reversed(res):\n            if item != 0 and len(out) < k:\n                for i in item:\n                    out.append(i)\n\n        return out",
+      "walkthrough": [
+        "The naive approach is to count frequencies, then sort the (value, frequency) pairs to pull off the top k — but sorting costs O(n log n) when the counting itself only needed O(n). Bucket sort avoids the sort entirely by exploiting a hard limit: no value can appear more than <code>len(nums)</code> times.",
+        "First pass: build a frequency hash map the normal way, incrementing <code>freq[num]</code> for every number in <code>nums</code>.",
+        "Second pass: instead of sorting by frequency, place each value directly into a bucket array at the index equal to its own frequency — <code>res[value].append(key)</code>. Because frequency is bounded by the array length, <code>res</code> only needs <code>len(nums) + 1</code> slots (index 0 through <code>len(nums)</code>) to hold every possible frequency.",
+        "This bucketing step is the key trick: values that share a frequency automatically land in the same bucket, and the bucket array is naturally ordered from low frequency (index 0) to high frequency (last index) with no comparisons needed.",
+        "Final pass: walk the buckets from the highest index down to 0. The first non-empty buckets encountered hold the most frequent values, so appending their contents to the output — stopping once it reaches <code>k</code> elements — directly yields the k most frequent values without ever sorting anything."
+      ],
+      "mental_shortcut": "“Frequency can't exceed array length → bucket by frequency, read buckets top-down.”",
+      "related_problems": [
+        "Group Anagrams",
+        "Valid Anagram",
+        "Contains Duplicate"
+      ],
+      "interview_talking_point": "Frequencies are bounded by the array length, so I bucket values by frequency into a fixed-size array instead of sorting (value, frequency) pairs — that turns an O(n log n) sort into an O(n) counting pass plus an O(n) bucket scan.",
+      "edge_cases": [
+        "k equals the number of distinct values → every bucket with any value is collected, output has exactly k elements",
+        "All elements are identical, e.g. [7,7] → one bucket at the max index holding a single key, k = 1 returns that key",
+        "Every element is unique → every value sits in bucket index 1; any k of them is a valid answer since the problem guarantees a unique result set",
+        "Multiple keys landing in the same bucket when k falls in the middle of that bucket: the reference solution's outer check (<code>len(out) < k</code>) is tested once per bucket, so it can append an entire tied bucket even if that slightly overshoots k — worth mentioning as a trade-off versus trimming to exactly k inside the inner loop",
+        "Empty nums array → freq and buckets stay empty, output is empty (k would be 0 in that case per the problem's constraints)"
+      ],
+      "alternative_solutions": [
+        {
+          "name": "Heap (heapq.nlargest)",
+          "note": "Count frequencies the same way, then let a heap pull the k largest in O(n log k) instead of O(n). More idiomatic Python and easy to justify, but asymptotically worse than bucket sort for this problem since frequency is bounded — mention bucket sort as the optimal approach, heap as the natural fallback.",
+          "code": "import heapq\n\nclass Solution:\n    def topKFrequent(self, nums: List[int], k: int) -> List[int]:\n        freq = defaultdict(int)\n        for num in nums:\n            freq[num] += 1\n        return heapq.nlargest(k, freq.keys(), key=freq.get)",
+          "time_complexity": "O(n log k)",
+          "space_complexity": "O(n)"
+        },
+        {
+          "name": "Counter.most_common",
+          "note": "Python's <code>Counter</code> does the counting and gives a built-in <code>most_common(k)</code>. Shortest to write under time pressure, but it's a library call hiding the same O(n log n) sort under the hood (or a heap, depending on implementation) — good as a one-liner fallback, not a substitute for explaining the bucket-sort trick.",
+          "code": "from collections import Counter\n\nclass Solution:\n    def topKFrequent(self, nums: List[int], k: int) -> List[int]:\n        return [key for key, _ in Counter(nums).most_common(k)]",
+          "time_complexity": "O(n log n)",
+          "space_complexity": "O(n)"
+        }
+      ],
+      "trace": {
+        "mode": "topk",
+        "array": [
+          1,
+          1,
+          1,
+          2,
+          2,
+          3
+        ],
+        "k": 2,
+        "frames": [
+          {
+            "phase": "start",
+            "idx": null,
+            "freq": {},
+            "activeKey": null,
+            "bucketIdx": null,
+            "buckets": {},
+            "output": [],
+            "status": "start",
+            "note": "nums = [1,1,1,2,2,3], k = 2. Start counting frequencies with an empty hash map."
+          },
+          {
+            "phase": "count",
+            "idx": 0,
+            "freq": {
+              "1": 1
+            },
+            "activeKey": null,
+            "bucketIdx": null,
+            "buckets": {},
+            "output": [],
+            "status": "count",
+            "note": "nums[0] = 1 → freq[1] = 1."
+          },
+          {
+            "phase": "count",
+            "idx": 1,
+            "freq": {
+              "1": 2
+            },
+            "activeKey": null,
+            "bucketIdx": null,
+            "buckets": {},
+            "output": [],
+            "status": "count",
+            "note": "nums[1] = 1 → freq[1] = 2."
+          },
+          {
+            "phase": "count",
+            "idx": 2,
+            "freq": {
+              "1": 3
+            },
+            "activeKey": null,
+            "bucketIdx": null,
+            "buckets": {},
+            "output": [],
+            "status": "count",
+            "note": "nums[2] = 1 → freq[1] = 3."
+          },
+          {
+            "phase": "count",
+            "idx": 3,
+            "freq": {
+              "1": 3,
+              "2": 1
+            },
+            "activeKey": null,
+            "bucketIdx": null,
+            "buckets": {},
+            "output": [],
+            "status": "count",
+            "note": "nums[3] = 2 → freq[2] = 1."
+          },
+          {
+            "phase": "count",
+            "idx": 4,
+            "freq": {
+              "1": 3,
+              "2": 2
+            },
+            "activeKey": null,
+            "bucketIdx": null,
+            "buckets": {},
+            "output": [],
+            "status": "count",
+            "note": "nums[4] = 2 → freq[2] = 2."
+          },
+          {
+            "phase": "count",
+            "idx": 5,
+            "freq": {
+              "1": 3,
+              "2": 2,
+              "3": 1
+            },
+            "activeKey": null,
+            "bucketIdx": null,
+            "buckets": {},
+            "output": [],
+            "status": "count",
+            "note": "nums[5] = 3 → freq[3] = 1."
+          },
+          {
+            "phase": "bucket",
+            "idx": null,
+            "freq": {
+              "1": 3,
+              "2": 2,
+              "3": 1
+            },
+            "activeKey": "1",
+            "bucketIdx": 3,
+            "buckets": {
+              "3": [
+                1
+              ]
+            },
+            "output": [],
+            "status": "bucket",
+            "note": "key 1 has frequency 3 → res[3].append(1) → bucket 3 = [1]."
+          },
+          {
+            "phase": "bucket",
+            "idx": null,
+            "freq": {
+              "1": 3,
+              "2": 2,
+              "3": 1
+            },
+            "activeKey": "2",
+            "bucketIdx": 2,
+            "buckets": {
+              "3": [
+                1
+              ],
+              "2": [
+                2
+              ]
+            },
+            "output": [],
+            "status": "bucket",
+            "note": "key 2 has frequency 2 → res[2].append(2) → bucket 2 = [2]."
+          },
+          {
+            "phase": "bucket",
+            "idx": null,
+            "freq": {
+              "1": 3,
+              "2": 2,
+              "3": 1
+            },
+            "activeKey": "3",
+            "bucketIdx": 1,
+            "buckets": {
+              "3": [
+                1
+              ],
+              "2": [
+                2
+              ],
+              "1": [
+                3
+              ]
+            },
+            "output": [],
+            "status": "bucket",
+            "note": "key 3 has frequency 1 → res[1].append(3) → bucket 1 = [3]."
+          },
+          {
+            "phase": "collect",
+            "idx": null,
+            "freq": {
+              "1": 3,
+              "2": 2,
+              "3": 1
+            },
+            "activeKey": null,
+            "bucketIdx": 6,
+            "buckets": {
+              "3": [
+                1
+              ],
+              "2": [
+                2
+              ],
+              "1": [
+                3
+              ]
+            },
+            "output": [],
+            "status": "visit",
+            "note": "Visit bucket 6 — empty, nothing to add."
+          },
+          {
+            "phase": "collect",
+            "idx": null,
+            "freq": {
+              "1": 3,
+              "2": 2,
+              "3": 1
+            },
+            "activeKey": null,
+            "bucketIdx": 5,
+            "buckets": {
+              "3": [
+                1
+              ],
+              "2": [
+                2
+              ],
+              "1": [
+                3
+              ]
+            },
+            "output": [],
+            "status": "visit",
+            "note": "Visit bucket 5 — empty, nothing to add."
+          },
+          {
+            "phase": "collect",
+            "idx": null,
+            "freq": {
+              "1": 3,
+              "2": 2,
+              "3": 1
+            },
+            "activeKey": null,
+            "bucketIdx": 4,
+            "buckets": {
+              "3": [
+                1
+              ],
+              "2": [
+                2
+              ],
+              "1": [
+                3
+              ]
+            },
+            "output": [],
+            "status": "visit",
+            "note": "Visit bucket 4 — empty, nothing to add."
+          },
+          {
+            "phase": "collect",
+            "idx": null,
+            "freq": {
+              "1": 3,
+              "2": 2,
+              "3": 1
+            },
+            "activeKey": null,
+            "bucketIdx": 3,
+            "buckets": {
+              "3": [
+                1
+              ],
+              "2": [
+                2
+              ],
+              "1": [
+                3
+              ]
+            },
+            "output": [
+              1
+            ],
+            "status": "collect",
+            "note": "Visit bucket 3 (not empty, len(out)=0 < k=2) → append [1] → out = [1]."
+          },
+          {
+            "phase": "collect",
+            "idx": null,
+            "freq": {
+              "1": 3,
+              "2": 2,
+              "3": 1
+            },
+            "activeKey": null,
+            "bucketIdx": 2,
+            "buckets": {
+              "3": [
+                1
+              ],
+              "2": [
+                2
+              ],
+              "1": [
+                3
+              ]
+            },
+            "output": [
+              1,
+              2
+            ],
+            "status": "collect",
+            "note": "Visit bucket 2 (not empty, len(out)=1 < k=2) → append [2] → out = [1, 2]."
+          },
+          {
+            "phase": "collect",
+            "idx": null,
+            "freq": {
+              "1": 3,
+              "2": 2,
+              "3": 1
+            },
+            "activeKey": null,
+            "bucketIdx": 1,
+            "buckets": {
+              "3": [
+                1
+              ],
+              "2": [
+                2
+              ],
+              "1": [
+                3
+              ]
+            },
+            "output": [
+              1,
+              2
+            ],
+            "status": "skip",
+            "note": "Visit bucket 1 — out already has 2 ≥ k = 2 items, skip."
+          },
+          {
+            "phase": "collect",
+            "idx": null,
+            "freq": {
+              "1": 3,
+              "2": 2,
+              "3": 1
+            },
+            "activeKey": null,
+            "bucketIdx": 0,
+            "buckets": {
+              "3": [
+                1
+              ],
+              "2": [
+                2
+              ],
+              "1": [
+                3
+              ]
+            },
+            "output": [
+              1,
+              2
+            ],
+            "status": "visit",
+            "note": "Visit bucket 0 — empty, nothing to add."
+          },
+          {
+            "phase": "done",
+            "idx": null,
+            "freq": {
+              "1": 3,
+              "2": 2,
+              "3": 1
+            },
+            "activeKey": null,
+            "bucketIdx": null,
+            "buckets": {
+              "3": [
+                1
+              ],
+              "2": [
+                2
+              ],
+              "1": [
+                3
+              ]
+            },
+            "output": [
+              1,
+              2
+            ],
+            "status": "done",
+            "note": "out has 2 elements — return [1, 2]."
+          }
+        ]
+      }
     }
   ],
   "roadmap": [

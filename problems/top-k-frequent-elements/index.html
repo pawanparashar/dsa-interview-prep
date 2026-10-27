@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Top K Frequent Elements — Coding Patterns</title>
+<meta name="description" content="Top K Frequent Elements (Arrays & Hashing) — pattern, walkthrough, video, and printable one-pager.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container row">
+      <div>
+        <a class="brand" href="../../index.html">Coding <span class="dot">Patterns</span></a>
+        <div class="tagline">BLIND 75 · INTERVIEW REVISION</div>
+      </div>
+      <nav>
+        <a href="https://github.com/pawanparashar/dsa-interview-prep">GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="p-head">
+      <a class="crumbs" href="../../index.html">← All 75</a>
+      <h1>#5 — Top K Frequent Elements</h1>
+      <div class="pills">
+        <span class="pill accent">Arrays & Hashing</span>
+        <span class="pill">LeetCode 347</span>
+        <span class="pill">NeetCode "Top K Elements in List"</span>
+        <span class="badge Medium">Medium</span>
+      </div>
+      <div class="p-actions">
+        <a class="linkbtn" href="top-k-frequent-elements-onepager.pdf">Download one-pager (PDF) ↓</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Problem</h2>
+      <p>Given an integer array <code>nums</code> and an integer <code>k</code>, return the <code>k</code> most frequent elements within the array. The test cases are generated such that the answer is always unique. You may return the output in any order.</p>
+      <div class="examples">
+        
+        <div>nums = [1,2,2,3,3,3], k = 2 → [2,3]</div>
+        
+        <div>nums = [7,7], k = 1 → [7]</div>
+        
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Watch the walkthrough</h2>
+      <div class="video-frame">
+        <iframe src="https://www.youtube.com/embed/phNDYf1xzco" title="Top K Frequent Elements solution walkthrough" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Core idea</h2>
+      <p><strong>Goal</strong><br>Return the k values that appear most often in an array, without sorting the whole frequency distribution.</p>
+      <p><strong>Key insight</strong><br>A value's frequency can never exceed the length of the array, so instead of sorting all (value, frequency) pairs by frequency — O(n log n) — bucket each value directly into an index equal to its frequency count. Reading the buckets from the highest index down then visits values in descending frequency order for free, in O(n) overall.</p>
+      <div class="callout">Trigger phrase: “Top / most frequent k” with no need for full sorted order → bucket sort by frequency (Hash Map + array of buckets), not a heap or a full sort.</div>
+    </div>
+
+    
+    <div class="section">
+      <h2>Step through it</h2>
+      <p class="muted">Walk the algorithm one step at a time — forward, back, or press play.</p>
+      <div class="viz" id="viz" data-trace="{&quot;mode&quot;: &quot;topk&quot;, &quot;array&quot;: [1, 1, 1, 2, 2, 3], &quot;k&quot;: 2, &quot;frames&quot;: [{&quot;phase&quot;: &quot;start&quot;, &quot;idx&quot;: null, &quot;freq&quot;: {}, &quot;activeKey&quot;: null, &quot;bucketIdx&quot;: null, &quot;buckets&quot;: {}, &quot;output&quot;: [], &quot;status&quot;: &quot;start&quot;, &quot;note&quot;: &quot;nums = [1,1,1,2,2,3], k = 2. Start counting frequencies with an empty hash map.&quot;}, {&quot;phase&quot;: &quot;count&quot;, &quot;idx&quot;: 0, &quot;freq&quot;: {&quot;1&quot;: 1}, &quot;activeKey&quot;: null, &quot;bucketIdx&quot;: null, &quot;buckets&quot;: {}, &quot;output&quot;: [], &quot;status&quot;: &quot;count&quot;, &quot;note&quot;: &quot;nums[0] = 1 \u2192 freq[1] = 1.&quot;}, {&quot;phase&quot;: &quot;count&quot;, &quot;idx&quot;: 1, &quot;freq&quot;: {&quot;1&quot;: 2}, &quot;activeKey&quot;: null, &quot;bucketIdx&quot;: null, &quot;buckets&quot;: {}, &quot;output&quot;: [], &quot;status&quot;: &quot;count&quot;, &quot;note&quot;: &quot;nums[1] = 1 \u2192 freq[1] = 2.&quot;}, {&quot;phase&quot;: &quot;count&quot;, &quot;idx&quot;: 2, &quot;freq&quot;: {&quot;1&quot;: 3}, &quot;activeKey&quot;: null, &quot;bucketIdx&quot;: null, &quot;buckets&quot;: {}, &quot;output&quot;: [], &quot;status&quot;: &quot;count&quot;, &quot;note&quot;: &quot;nums[2] = 1 \u2192 freq[1] = 3.&quot;}, {&quot;phase&quot;: &quot;count&quot;, &quot;idx&quot;: 3, &quot;freq&quot;: {&quot;1&quot;: 3, &quot;2&quot;: 1}, &quot;activeKey&quot;: null, &quot;bucketIdx&quot;: null, &quot;buckets&quot;: {}, &quot;output&quot;: [], &quot;status&quot;: &quot;count&quot;, &quot;note&quot;: &quot;nums[3] = 2 \u2192 freq[2] = 1.&quot;}, {&quot;phase&quot;: &quot;count&quot;, &quot;idx&quot;: 4, &quot;freq&quot;: {&quot;1&quot;: 3, &quot;2&quot;: 2}, &quot;activeKey&quot;: null, &quot;bucketIdx&quot;: null, &quot;buckets&quot;: {}, &quot;output&quot;: [], &quot;status&quot;: &quot;count&quot;, &quot;note&quot;: &quot;nums[4] = 2 \u2192 freq[2] = 2.&quot;}, {&quot;phase&quot;: &quot;count&quot;, &quot;idx&quot;: 5, &quot;freq&quot;: {&quot;1&quot;: 3, &quot;2&quot;: 2, &quot;3&quot;: 1}, &quot;activeKey&quot;: null, &quot;bucketIdx&quot;: null, &quot;buckets&quot;: {}, &quot;output&quot;: [], &quot;status&quot;: &quot;count&quot;, &quot;note&quot;: &quot;nums[5] = 3 \u2192 freq[3] = 1.&quot;}, {&quot;phase&quot;: &quot;bucket&quot;, &quot;idx&quot;: null, &quot;freq&quot;: {&quot;1&quot;: 3, &quot;2&quot;: 2, &quot;3&quot;: 1}, &quot;activeKey&quot;: &quot;1&quot;, &quot;bucketIdx&quot;: 3, &quot;buckets&quot;: {&quot;3&quot;: [1]}, &quot;output&quot;: [], &quot;status&quot;: &quot;bucket&quot;, &quot;note&quot;: &quot;key 1 has frequency 3 \u2192 res[3].append(1) \u2192 bucket 3 = [1].&quot;}, {&quot;phase&quot;: &quot;bucket&quot;, &quot;idx&quot;: null, &quot;freq&quot;: {&quot;1&quot;: 3, &quot;2&quot;: 2, &quot;3&quot;: 1}, &quot;activeKey&quot;: &quot;2&quot;, &quot;bucketIdx&quot;: 2, &quot;buckets&quot;: {&quot;3&quot;: [1], &quot;2&quot;: [2]}, &quot;output&quot;: [], &quot;status&quot;: &quot;bucket&quot;, &quot;note&quot;: &quot;key 2 has frequency 2 \u2192 res[2].append(2) \u2192 bucket 2 = [2].&quot;}, {&quot;phase&quot;: &quot;bucket&quot;, &quot;idx&quot;: null, &quot;freq&quot;: {&quot;1&quot;: 3, &quot;2&quot;: 2, &quot;3&quot;: 1}, &quot;activeKey&quot;: &quot;3&quot;, &quot;bucketIdx&quot;: 1, &quot;buckets&quot;: {&quot;3&quot;: [1], &quot;2&quot;: [2], &quot;1&quot;: [3]}, &quot;output&quot;: [], &quot;status&quot;: &quot;bucket&quot;, &quot;note&quot;: &quot;key 3 has frequency 1 \u2192 res[1].append(3) \u2192 bucket 1 = [3].&quot;}, {&quot;phase&quot;: &quot;collect&quot;, &quot;idx&quot;: null, &quot;freq&quot;: {&quot;1&quot;: 3, &quot;2&quot;: 2, &quot;3&quot;: 1}, &quot;activeKey&quot;: null, &quot;bucketIdx&quot;: 6, &quot;buckets&quot;: {&quot;3&quot;: [1], &quot;2&quot;: [2], &quot;1&quot;: [3]}, &quot;output&quot;: [], &quot;status&quot;: &quot;visit&quot;, &quot;note&quot;: &quot;Visit bucket 6 \u2014 empty, nothing to add.&quot;}, {&quot;phase&quot;: &quot;collect&quot;, &quot;idx&quot;: null, &quot;freq&quot;: {&quot;1&quot;: 3, &quot;2&quot;: 2, &quot;3&quot;: 1}, &quot;activeKey&quot;: null, &quot;bucketIdx&quot;: 5, &quot;buckets&quot;: {&quot;3&quot;: [1], &quot;2&quot;: [2], &quot;1&quot;: [3]}, &quot;output&quot;: [], &quot;status&quot;: &quot;visit&quot;, &quot;note&quot;: &quot;Visit bucket 5 \u2014 empty, nothing to add.&quot;}, {&quot;phase&quot;: &quot;collect&quot;, &quot;idx&quot;: null, &quot;freq&quot;: {&quot;1&quot;: 3, &quot;2&quot;: 2, &quot;3&quot;: 1}, &quot;activeKey&quot;: null, &quot;bucketIdx&quot;: 4, &quot;buckets&quot;: {&quot;3&quot;: [1], &quot;2&quot;: [2], &quot;1&quot;: [3]}, &quot;output&quot;: [], &quot;status&quot;: &quot;visit&quot;, &quot;note&quot;: &quot;Visit bucket 4 \u2014 empty, nothing to add.&quot;}, {&quot;phase&quot;: &quot;collect&quot;, &quot;idx&quot;: null, &quot;freq&quot;: {&quot;1&quot;: 3, &quot;2&quot;: 2, &quot;3&quot;: 1}, &quot;activeKey&quot;: null, &quot;bucketIdx&quot;: 3, &quot;buckets&quot;: {&quot;3&quot;: [1], &quot;2&quot;: [2], &quot;1&quot;: [3]}, &quot;output&quot;: [1], &quot;status&quot;: &quot;collect&quot;, &quot;note&quot;: &quot;Visit bucket 3 (not empty, len(out)=0 &lt; k=2) \u2192 append [1] \u2192 out = [1].&quot;}, {&quot;phase&quot;: &quot;collect&quot;, &quot;idx&quot;: null, &quot;freq&quot;: {&quot;1&quot;: 3, &quot;2&quot;: 2, &quot;3&quot;: 1}, &quot;activeKey&quot;: null, &quot;bucketIdx&quot;: 2, &quot;buckets&quot;: {&quot;3&quot;: [1], &quot;2&quot;: [2], &quot;1&quot;: [3]}, &quot;output&quot;: [1, 2], &quot;status&quot;: &quot;collect&quot;, &quot;note&quot;: &quot;Visit bucket 2 (not empty, len(out)=1 &lt; k=2) \u2192 append [2] \u2192 out = [1, 2].&quot;}, {&quot;phase&quot;: &quot;collect&quot;, &quot;idx&quot;: null, &quot;freq&quot;: {&quot;1&quot;: 3, &quot;2&quot;: 2, &quot;3&quot;: 1}, &quot;activeKey&quot;: null, &quot;bucketIdx&quot;: 1, &quot;buckets&quot;: {&quot;3&quot;: [1], &quot;2&quot;: [2], &quot;1&quot;: [3]}, &quot;output&quot;: [1, 2], &quot;status&quot;: &quot;skip&quot;, &quot;note&quot;: &quot;Visit bucket 1 \u2014 out already has 2 \u2265 k = 2 items, skip.&quot;}, {&quot;phase&quot;: &quot;collect&quot;, &quot;idx&quot;: null, &quot;freq&quot;: {&quot;1&quot;: 3, &quot;2&quot;: 2, &quot;3&quot;: 1}, &quot;activeKey&quot;: null, &quot;bucketIdx&quot;: 0, &quot;buckets&quot;: {&quot;3&quot;: [1], &quot;2&quot;: [2], &quot;1&quot;: [3]}, &quot;output&quot;: [1, 2], &quot;status&quot;: &quot;visit&quot;, &quot;note&quot;: &quot;Visit bucket 0 \u2014 empty, nothing to add.&quot;}, {&quot;phase&quot;: &quot;done&quot;, &quot;idx&quot;: null, &quot;freq&quot;: {&quot;1&quot;: 3, &quot;2&quot;: 2, &quot;3&quot;: 1}, &quot;activeKey&quot;: null, &quot;bucketIdx&quot;: null, &quot;buckets&quot;: {&quot;3&quot;: [1], &quot;2&quot;: [2], &quot;1&quot;: [3]}, &quot;output&quot;: [1, 2], &quot;status&quot;: &quot;done&quot;, &quot;note&quot;: &quot;out has 2 elements \u2014 return [1, 2].&quot;}]}">
+        <div class="viz-body" id="vizBody"></div>
+        <div class="viz-note" id="vizNote"></div>
+        <div class="viz-controls">
+          <button class="viz-btn" id="vizPrev" aria-label="Previous step">&larr; Prev</button>
+          <button class="viz-btn accent" id="vizPlay" aria-label="Play">&#9654; Play</button>
+          <button class="viz-btn" id="vizNext" aria-label="Next step">Next &rarr;</button>
+          <span class="viz-step-count" id="vizCount"></span>
+        </div>
+        <div class="viz-progress"><div class="viz-progress-fill" id="vizProgressFill"></div></div>
+      </div>
+    </div>
+    
+
+    <div class="section">
+      <h2>Walkthrough</h2>
+      
+      <p>The naive approach is to count frequencies, then sort the (value, frequency) pairs to pull off the top k — but sorting costs O(n log n) when the counting itself only needed O(n). Bucket sort avoids the sort entirely by exploiting a hard limit: no value can appear more than <code>len(nums)</code> times.</p>
+      
+      <p>First pass: build a frequency hash map the normal way, incrementing <code>freq[num]</code> for every number in <code>nums</code>.</p>
+      
+      <p>Second pass: instead of sorting by frequency, place each value directly into a bucket array at the index equal to its own frequency — <code>res[value].append(key)</code>. Because frequency is bounded by the array length, <code>res</code> only needs <code>len(nums) + 1</code> slots (index 0 through <code>len(nums)</code>) to hold every possible frequency.</p>
+      
+      <p>This bucketing step is the key trick: values that share a frequency automatically land in the same bucket, and the bucket array is naturally ordered from low frequency (index 0) to high frequency (last index) with no comparisons needed.</p>
+      
+      <p>Final pass: walk the buckets from the highest index down to 0. The first non-empty buckets encountered hold the most frequent values, so appending their contents to the output — stopping once it reaches <code>k</code> elements — directly yields the k most frequent values without ever sorting anything.</p>
+      
+    </div>
+
+    <div class="section">
+      <h2>Optimal solution</h2>
+      <p><strong>Data structure:</strong> Hash Map for counts, plus a bucket array of size <code>len(nums) + 1</code> indexed by frequency</p>
+      <ol class="steps">
+        
+        <li>Count every value's frequency into a hash map <code>freq</code> with a single pass over <code>nums</code>.</li>
+        
+        <li>Create a bucket array <code>res</code> of size <code>len(nums) + 1</code> — a value can appear at most <code>len(nums)</code> times, so every possible frequency has a slot.</li>
+        
+        <li>For each <code>(key, value)</code> pair in <code>freq</code> (<code>value</code> is the frequency), append <code>key</code> into <code>res[value]</code> — this groups all values that share the same frequency into the same bucket.</li>
+        
+        <li>Walk <code>res</code> in reverse (highest frequency first). Any non-empty bucket holds values of that frequency; append them to the output until it has <code>k</code> elements.</li>
+        
+        <li>Return the collected output.</li>
+        
+      </ol>
+      <div class="complexity">
+        <div class="box"><span class="v">O(n)</span><span class="k">Time</span></div>
+        <div class="box"><span class="v">O(n)</span><span class="k">Space</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Code</h2>
+      <pre><code><span class="kw">class</span> Solution:
+    <span class="kw">def</span> topKFrequent(<span class="kw">self</span>, nums: List[int], k: int) -&gt; List[int]:
+        freq = defaultdict(int)
+        <span class="kw">for</span> num <span class="kw">in</span> nums:
+            freq[num] += 1
+
+        res = [0] * (len(nums)+1)
+
+        <span class="kw">for</span> key,value <span class="kw">in</span> freq.items():
+            <span class="kw">if</span> res[value] == 0:
+                res[value] = [key]
+            <span class="kw">else</span>:
+                res[value].append(key)
+
+        out = []
+        <span class="kw">for</span> item <span class="kw">in</span> reversed(res):
+            <span class="kw">if</span> item != 0 <span class="kw">and</span> len(out) &lt; k:
+                <span class="kw">for</span> i <span class="kw">in</span> item:
+                    out.append(i)
+
+        <span class="kw">return</span> out</code></pre>
+    </div>
+
+    
+    <div class="section">
+      <h2>Other ways to solve it</h2>
+      
+      <div class="alt-solution">
+        <h3>Heap (heapq.nlargest)</h3>
+        <p class="muted">Count frequencies the same way, then let a heap pull the k largest in O(n log k) instead of O(n). More idiomatic Python and easy to justify, but asymptotically worse than bucket sort for this problem since frequency is bounded — mention bucket sort as the optimal approach, heap as the natural fallback.</p>
+        <pre><code><span class="kw">import</span> heapq
+
+<span class="kw">class</span> Solution:
+    <span class="kw">def</span> topKFrequent(<span class="kw">self</span>, nums: List[int], k: int) -&gt; List[int]:
+        freq = defaultdict(int)
+        <span class="kw">for</span> num <span class="kw">in</span> nums:
+            freq[num] += 1
+        <span class="kw">return</span> heapq.nlargest(k, freq.keys(), key=freq.get)</code></pre>
+        <div class="complexity">
+          <div class="box"><span class="v">O(n log k)</span><span class="k">Time</span></div>
+          <div class="box"><span class="v">O(n)</span><span class="k">Space</span></div>
+        </div>
+      </div>
+      
+      <div class="alt-solution">
+        <h3>Counter.most_common</h3>
+        <p class="muted">Python's <code>Counter</code> does the counting and gives a built-in <code>most_common(k)</code>. Shortest to write under time pressure, but it's a library call hiding the same O(n log n) sort under the hood (or a heap, depending on implementation) — good as a one-liner fallback, not a substitute for explaining the bucket-sort trick.</p>
+        <pre><code><span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+<span class="kw">class</span> Solution:
+    <span class="kw">def</span> topKFrequent(<span class="kw">self</span>, nums: List[int], k: int) -&gt; List[int]:
+        <span class="kw">return</span> [key <span class="kw">for</span> key, _ <span class="kw">in</span> Counter(nums).most_common(k)]</code></pre>
+        <div class="complexity">
+          <div class="box"><span class="v">O(n log n)</span><span class="k">Time</span></div>
+          <div class="box"><span class="v">O(n)</span><span class="k">Space</span></div>
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <div class="section">
+      <h2>Tips to remember this pattern</h2>
+      <p><strong>Mental shortcut</strong> — “Frequency can't exceed array length → bucket by frequency, read buckets top-down.”</p>
+      <p><strong>Common / related problems</strong></p>
+      <ul class="plain">
+        
+        <li>Group Anagrams</li>
+        
+        <li>Valid Anagram</li>
+        
+        <li>Contains Duplicate</li>
+        
+      </ul>
+      <div class="quote">"Frequencies are bounded by the array length, so I bucket values by frequency into a fixed-size array instead of sorting (value, frequency) pairs — that turns an O(n log n) sort into an O(n) counting pass plus an O(n) bucket scan."</div>
+    </div>
+
+    <div class="section">
+      <h2>Edge cases to consider</h2>
+      <ul class="edge-list">
+        
+        <li>k equals the number of distinct values → every bucket with any value is collected, output has exactly k elements</li>
+        
+        <li>All elements are identical, e.g. [7,7] → one bucket at the max index holding a single key, k = 1 returns that key</li>
+        
+        <li>Every element is unique → every value sits in bucket index 1; any k of them is a valid answer since the problem guarantees a unique result set</li>
+        
+        <li>Multiple keys landing in the same bucket when k falls in the middle of that bucket: the reference solution's outer check (<code>len(out) < k</code>) is tested once per bucket, so it can append an entire tied bucket even if that slightly overshoots k — worth mentioning as a trade-off versus trimming to exactly k inside the inner loop</li>
+        
+        <li>Empty nums array → freq and buckets stay empty, output is empty (k would be 0 in that case per the problem's constraints)</li>
+        
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Day-of-interview revision</h2>
+      <p class="muted">Short on time? Skim the trigger phrase, the steps above, and keep this PDF open as a fallback.</p>
+      <div class="p-actions">
+        <a class="linkbtn" href="top-k-frequent-elements-onepager.pdf">Download one-pager (PDF) ↓</a>
+        <a class="linkbtn ghost" href="../../index.html">Back to all 75 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">Built by Pawan Parashar · generated from <a href="https://github.com/pawanparashar/dsa-interview-prep">dsa-interview-prep</a></div>
+  </footer>
+
+  
+  <script>
+  (function () {
+    var root = document.getElementById('viz');
+    if (!root) return;
+    var trace = JSON.parse(root.dataset.trace);
+    var mode = trace.mode || 'array-set';
+    var frames = trace.frames;
+    var cur = 0;
+    var playing = false;
+    var timer = null;
+
+    var bodyEl = document.getElementById('vizBody');
+    var noteEl = document.getElementById('vizNote');
+    var countEl = document.getElementById('vizCount');
+    var fillEl = document.getElementById('vizProgressFill');
+    var prevBtn = document.getElementById('vizPrev');
+    var nextBtn = document.getElementById('vizNext');
+    var playBtn = document.getElementById('vizPlay');
+
+    function makeCells(container, chars) {
+      chars.split('').forEach(function (ch) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell';
+        cell.textContent = ch;
+        container.appendChild(cell);
+      });
+    }
+
+    function renderChips(container, counts, highlightKey, mismatch) {
+      container.innerHTML = '';
+      var keys = Object.keys(counts);
+      if (keys.length === 0) {
+        var empty = document.createElement('span');
+        empty.className = 'viz-set-empty';
+        empty.textContent = '(empty)';
+        container.appendChild(empty);
+        return;
+      }
+      keys.forEach(function (k) {
+        var chip = document.createElement('span');
+        chip.className = 'viz-chip';
+        if (k === highlightKey) chip.classList.add(mismatch ? 'found' : 'active');
+        chip.textContent = k + ':' + counts[k];
+        container.appendChild(chip);
+      });
+    }
+
+    var updateFrame;
+
+    if (mode === 'strings') {
+      bodyEl.innerHTML =
+        '<div class="viz-str-row"><span class="viz-str-label">s =</span><div class="viz-array" id="vizArrS"></div></div>' +
+        '<div class="viz-str-row"><span class="viz-str-label">t =</span><div class="viz-array" id="vizArrT"></div></div>' +
+        '<div class="viz-counts-row">' +
+          '<div class="viz-counts"><div class="viz-set-label">counterS =</div><div class="viz-set" id="vizChipsS"></div></div>' +
+          '<div class="viz-counts"><div class="viz-set-label">counterT =</div><div class="viz-set" id="vizChipsT"></div></div>' +
+        '</div>';
+      makeCells(document.getElementById('vizArrS'), trace.s);
+      makeCells(document.getElementById('vizArrT'), trace.t);
+      var sCells = bodyEl.querySelectorAll('#vizArrS .viz-cell');
+      var tCells = bodyEl.querySelectorAll('#vizArrT .viz-cell');
+      var chipsS = document.getElementById('vizChipsS');
+      var chipsT = document.getElementById('vizChipsT');
+
+      updateFrame = function (f) {
+        sCells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.sIdx !== null && i === f.sIdx) cell.classList.add('active');
+          else if (f.phase !== 'build' || (f.sIdx !== null && i < f.sIdx)) cell.classList.add('done');
+        });
+        tCells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.tIdx !== null && i === f.tIdx) cell.classList.add('active');
+          else if (f.phase !== 'build' || (f.tIdx !== null && i < f.tIdx)) cell.classList.add('done');
+        });
+        var mismatch = f.status === 'mismatch';
+        renderChips(chipsS, f.counterS, f.compareKey, mismatch);
+        renderChips(chipsT, f.counterT, f.compareKey, mismatch);
+      };
+    } else if (mode === 'groups') {
+      bodyEl.innerHTML =
+        '<div class="viz-array" id="vizArray"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">groups =</span></div>' +
+        '<div class="viz-groups" id="vizGroups"></div>';
+      var arrayElG = document.getElementById('vizArray');
+      trace.array.forEach(function (val) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell viz-cell-word';
+        cell.textContent = val;
+        arrayElG.appendChild(cell);
+      });
+      var cellsG = arrayElG.querySelectorAll('.viz-cell');
+      var groupsEl = document.getElementById('vizGroups');
+
+      updateFrame = function (f) {
+        cellsG.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.idx !== null && i === f.idx) {
+            cell.classList.add('active');
+          } else if ((f.idx !== null && i < f.idx) || f.status === 'done') {
+            cell.classList.add('done');
+          }
+        });
+        groupsEl.innerHTML = '';
+        var keysG = Object.keys(f.groups);
+        if (keysG.length === 0) {
+          var emptyG = document.createElement('span');
+          emptyG.className = 'viz-set-empty';
+          emptyG.textContent = '(empty)';
+          groupsEl.appendChild(emptyG);
+        } else {
+          keysG.forEach(function (k) {
+            var box = document.createElement('div');
+            box.className = 'viz-group-box';
+            if (k === f.key) box.classList.add('active');
+            var label = document.createElement('div');
+            label.className = 'viz-group-key';
+            label.textContent = 'key: ' + k;
+            box.appendChild(label);
+            var wordsWrap = document.createElement('div');
+            wordsWrap.className = 'viz-group-words';
+            f.groups[k].forEach(function (w) {
+              var chip = document.createElement('span');
+              chip.className = 'viz-chip';
+              chip.textContent = w;
+              wordsWrap.appendChild(chip);
+            });
+            box.appendChild(wordsWrap);
+            groupsEl.appendChild(box);
+          });
+        }
+      };
+    } else if (mode === 'topk') {
+      bodyEl.innerHTML =
+        '<div class="viz-array" id="vizArray"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">freq =</span><div class="viz-set" id="vizFreq"></div></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">buckets (index = frequency) =</span></div>' +
+        '<div class="viz-groups" id="vizBuckets"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">out =</span><div class="viz-set" id="vizOutput"></div></div>';
+      var arrayElT = document.getElementById('vizArray');
+      trace.array.forEach(function (val) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell';
+        cell.textContent = val;
+        arrayElT.appendChild(cell);
+      });
+      var cellsT = arrayElT.querySelectorAll('.viz-cell');
+      var freqEl = document.getElementById('vizFreq');
+      var bucketsEl = document.getElementById('vizBuckets');
+      var outputEl = document.getElementById('vizOutput');
+
+      updateFrame = function (f) {
+        cellsT.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.idx !== null && i === f.idx) {
+            cell.classList.add('active');
+          } else if ((f.idx !== null && i < f.idx) || f.phase !== 'count') {
+            cell.classList.add('done');
+          }
+        });
+        renderChips(freqEl, f.freq, f.activeKey, false);
+        bucketsEl.innerHTML = '';
+        var bucketKeys = Object.keys(f.buckets).sort(function (a, b) { return Number(b) - Number(a); });
+        if (bucketKeys.length === 0) {
+          var emptyB = document.createElement('span');
+          emptyB.className = 'viz-set-empty';
+          emptyB.textContent = '(empty)';
+          bucketsEl.appendChild(emptyB);
+        } else {
+          bucketKeys.forEach(function (bk) {
+            var box = document.createElement('div');
+            box.className = 'viz-group-box';
+            if (f.bucketIdx !== null && Number(bk) === f.bucketIdx) box.classList.add('active');
+            var label = document.createElement('div');
+            label.className = 'viz-group-key';
+            label.textContent = 'idx ' + bk;
+            box.appendChild(label);
+            var wordsWrap = document.createElement('div');
+            wordsWrap.className = 'viz-group-words';
+            f.buckets[bk].forEach(function (w) {
+              var chip = document.createElement('span');
+              chip.className = 'viz-chip';
+              chip.textContent = w;
+              wordsWrap.appendChild(chip);
+            });
+            box.appendChild(wordsWrap);
+            bucketsEl.appendChild(box);
+          });
+        }
+        outputEl.innerHTML = '';
+        if (f.output.length === 0) {
+          var emptyO = document.createElement('span');
+          emptyO.className = 'viz-set-empty';
+          emptyO.textContent = '(empty)';
+          outputEl.appendChild(emptyO);
+        } else {
+          f.output.forEach(function (v) {
+            var chip = document.createElement('span');
+            chip.className = 'viz-chip found';
+            chip.textContent = v;
+            outputEl.appendChild(chip);
+          });
+        }
+      };
+    } else {
+      bodyEl.innerHTML =
+        '<div class="viz-array" id="vizArray"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">h =</span><div class="viz-set" id="vizSet"></div></div>';
+      var arrayEl = document.getElementById('vizArray');
+      trace.array.forEach(function (val) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell';
+        cell.textContent = val;
+        arrayEl.appendChild(cell);
+      });
+      var cells = arrayEl.querySelectorAll('.viz-cell');
+      var setEl = document.getElementById('vizSet');
+
+      updateFrame = function (f) {
+        cells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'found', 'done');
+          if (f.idx !== null && i === f.idx) {
+            cell.classList.add(f.status === 'found' ? 'found' : 'active');
+          } else if (f.idx !== null && i < f.idx) {
+            cell.classList.add('done');
+          }
+        });
+        setEl.innerHTML = '';
+        if (f.set.length === 0) {
+          var empty = document.createElement('span');
+          empty.className = 'viz-set-empty';
+          empty.textContent = '(empty)';
+          setEl.appendChild(empty);
+        } else {
+          f.set.forEach(function (v) {
+            var chip = document.createElement('span');
+            chip.className = 'viz-chip';
+            chip.textContent = v;
+            setEl.appendChild(chip);
+          });
+        }
+      };
+    }
+
+    function render() {
+      var f = frames[cur];
+      updateFrame(f);
+      var flag = f.status === 'found' || f.status === 'mismatch';
+      noteEl.textContent = f.note;
+      noteEl.className = 'viz-note' + (flag ? ' found' : '');
+      countEl.textContent = 'Step ' + (cur + 1) + ' / ' + frames.length;
+      fillEl.style.width = (((cur + 1) / frames.length) * 100) + '%';
+      prevBtn.disabled = cur === 0;
+      nextBtn.disabled = cur === frames.length - 1;
+      if (cur === frames.length - 1) stopPlaying();
+    }
+
+    function goTo(i) {
+      cur = Math.max(0, Math.min(frames.length - 1, i));
+      render();
+    }
+
+    function stopPlaying() {
+      playing = false;
+      playBtn.innerHTML = '&#9654; Play';
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    function startPlaying() {
+      if (cur === frames.length - 1) cur = 0;
+      playing = true;
+      playBtn.innerHTML = '&#10074;&#10074; Pause';
+      timer = setInterval(function () {
+        if (cur >= frames.length - 1) { stopPlaying(); render(); return; }
+        goTo(cur + 1);
+      }, 1400);
+    }
+
+    prevBtn.addEventListener('click', function () { stopPlaying(); goTo(cur - 1); });
+    nextBtn.addEventListener('click', function () { stopPlaying(); goTo(cur + 1); });
+    playBtn.addEventListener('click', function () {
+      if (playing) { stopPlaying(); } else { startPlaying(); }
+    });
+
+    render();
+  })();
+  </script>
+  
+</body>
+</html>

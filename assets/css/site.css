@@ -634,3 +634,11 @@ footer a { color: var(--accent); text-decoration: none; }
   gap: 6px;
   flex-wrap: wrap;
 }
+
+/* highlighted chip variant (e.g. output / result chips in step-through visualizers) */
+.viz-chip.found {
+  background: var(--hard);
+  border-color: var(--hard);
+  color: #1b1d22;
+  font-weight: 600;
+}

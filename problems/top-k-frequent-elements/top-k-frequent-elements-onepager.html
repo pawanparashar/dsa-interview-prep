@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Top K Frequent Elements — One-pager</title>
+<style>
+  @page { size: Letter; margin: 10.64mm; }
+  :root {
+    --panel: #ffffff;
+    --panel-2: #fafaf8;
+    --border: #d8dad6;
+    --fg: #1b1d22;
+    --muted: #5d636f;
+    --accent: #0e8f86;
+    --accent-dim: #dcf1ef;
+    --code-bg: #f4f6f5;
+    --font-display: 'JetBrains Mono', monospace;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--panel);
+    color: var(--fg);
+    font-family: var(--font-body);
+  }
+  .wrap { width: 100%; }
+  .head {
+    display: block;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 7.6px;
+    margin-bottom: 10.64px;
+  }
+  .head .num { font-family: var(--font-display); color: var(--accent); font-size: 10.64px; }
+  .head h1 { font-family: var(--font-display); font-size: 16.72px; margin: 0 0 4.56px; }
+  .pills { display: block; }
+  .pill {
+    display: inline-block;
+    font-family: var(--font-mono); font-size: 7.6px; letter-spacing: 0.02em;
+    padding: 2.28px 6.08px; border-radius: 999px; border: 1px solid var(--border);
+    color: var(--muted); background: var(--panel-2); white-space: nowrap;
+    margin: 0 4.56px 3.04px 0;
+  }
+  .pill.accent { color: var(--accent); border-color: var(--accent-dim); background: var(--accent-dim); }
+  .row { display: block; margin-bottom: 7.6px; page-break-inside: avoid; }
+  .row::after { content: ""; display: table; clear: both; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 6.08px;
+    padding: 9.12px 10.64px;
+    page-break-inside: avoid;
+  }
+  .row .card { float: left; width: 48%; }
+  .row .card + .card { float: right; }
+  .card.full { clear: both; width: 100%; margin-bottom: 7.6px; }
+  .card h2 {
+    font-family: var(--font-mono); font-size: 7.98px; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--accent); margin: 0 0 6.08px;
+  }
+  .card p { margin: 0 0 4.56px; font-size: 8.74px; line-height: 1.4; }
+  .card p:last-child { margin-bottom: 0; }
+  .label { color: var(--muted); font-size: 7.6px; font-family: var(--font-mono); }
+  .examples div {
+    font-family: var(--font-mono); font-size: 7.98px; background: var(--code-bg);
+    border: 1px solid var(--border); border-radius: 3.8px; padding: 3.04px 6.08px; margin-bottom: 3.04px;
+  }
+  .callout {
+    border-left: 3px solid var(--accent); background: var(--accent-dim);
+    border-radius: 0 3.8px 3.8px 0; padding: 4.56px 7.6px; font-size: 8.36px; margin-top: 3.8px;
+  }
+  ol, ul { margin: 0; padding-left: 12.16px; font-size: 8.74px; line-height: 1.4; }
+  li { margin-bottom: 1.52px; }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 4.56px;
+    padding: 6.08px 7.6px; margin: 0; white-space: pre-wrap; word-break: break-word;
+  }
+  code { font-family: var(--font-mono); font-size: 7.6px; line-height: 1.35; color: var(--fg); }
+  .kw { color: var(--accent); font-weight: 600; }
+  .complexity { display: block; margin-top: 6.08px; }
+  .complexity::after { content: ""; display: table; clear: both; }
+  .complexity .box {
+    float: left; width: calc(50% - 3.04px); background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 3.8px; padding: 3.8px 6.08px; text-align: center;
+  }
+  .complexity .box + .box { float: right; }
+  .complexity .box .v { font-family: var(--font-mono); color: var(--accent); font-size: 10.64px; display: block; }
+  .complexity .box .k { font-size: 6.46px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .quote { font-size: 7.98px; font-style: italic; color: var(--muted); border-left: 3px solid var(--border); padding-left: 6.08px; margin-top: 4.56px; }
+  .edge-list { display: block; list-style: none; padding: 0; margin: 0; }
+  .edge-list::after { content: ""; display: table; clear: both; }
+  .edge-list li { font-size: 7.98px; width: calc(50% - 6.08px); float: left; margin-bottom: 3.04px; }
+  .edge-list li:nth-child(even) { float: right; }
+  .edge-list li::before { content: "\2023"; color: var(--accent); margin-right: 3.04px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <span class="num">#5</span>
+    <h1>Top K Frequent Elements</h1>
+    <div class="pills">
+      <span class="pill accent">Arrays & Hashing</span>
+      <span class="pill">LeetCode 347</span>
+      <span class="pill">NeetCode "Top K Elements in List"</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card">
+      <h2>Problem</h2>
+      <p>Given an integer array <code>nums</code> and an integer <code>k</code>, return the <code>k</code> most frequent elements within the array. The test cases are generated such that the answer is always unique. You may return the output in any order.</p>
+      <div class="examples">
+        
+        <div>nums = [1,2,2,3,3,3], k = 2 → [2,3]</div>
+        
+        <div>nums = [7,7], k = 1 → [7]</div>
+        
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Core idea</h2>
+      <p><span class="label">Goal</span><br>Return the k values that appear most often in an array, without sorting the whole frequency distribution.</p>
+      <p><span class="label">Key insight</span><br>A value's frequency can never exceed the length of the array, so instead of sorting all (value, frequency) pairs by frequency — O(n log n) — bucket each value directly into an index equal to its frequency count. Reading the buckets from the highest index down then visits values in descending frequency order for free, in O(n) overall.</p>
+      <div class="callout">Trigger: “Top / most frequent k” with no need for full sorted order → bucket sort by frequency (Hash Map + array of buckets), not a heap or a full sort.</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card">
+      <h2>Optimal solution</h2>
+      <p><span class="label">Data structure</span> — Hash Map for counts, plus a bucket array of size <code>len(nums) + 1</code> indexed by frequency</p>
+      <ol>
+        
+        <li>Count every value's frequency into a hash map <code>freq</code> with a single pass over <code>nums</code>.</li>
+        
+        <li>Create a bucket array <code>res</code> of size <code>len(nums) + 1</code> — a value can appear at most <code>len(nums)</code> times, so every possible frequency has a slot.</li>
+        
+        <li>For each <code>(key, value)</code> pair in <code>freq</code> (<code>value</code> is the frequency), append <code>key</code> into <code>res[value]</code> — this groups all values that share the same frequency into the same bucket.</li>
+        
+        <li>Walk <code>res</code> in reverse (highest frequency first). Any non-empty bucket holds values of that frequency; append them to the output until it has <code>k</code> elements.</li>
+        
+        <li>Return the collected output.</li>
+        
+      </ol>
+      <div class="complexity">
+        <div class="box"><span class="v">O(n)</span><span class="k">Time</span></div>
+        <div class="box"><span class="v">O(n)</span><span class="k">Space</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Code</h2>
+      <pre><code><span class="kw">class</span> Solution:
+    <span class="kw">def</span> topKFrequent(<span class="kw">self</span>, nums: List[int], k: int) -&gt; List[int]:
+        freq = defaultdict(int)
+        <span class="kw">for</span> num <span class="kw">in</span> nums:
+            freq[num] += 1
+
+        res = [0] * (len(nums)+1)
+
+        <span class="kw">for</span> key,value <span class="kw">in</span> freq.items():
+            <span class="kw">if</span> res[value] == 0:
+                res[value] = [key]
+            <span class="kw">else</span>:
+                res[value].append(key)
+
+        out = []
+        <span class="kw">for</span> item <span class="kw">in</span> reversed(res):
+            <span class="kw">if</span> item != 0 <span class="kw">and</span> len(out) &lt; k:
+                <span class="kw">for</span> i <span class="kw">in</span> item:
+                    out.append(i)
+
+        <span class="kw">return</span> out</code></pre>
+    </div>
+  </div>
+
+  <div class="card full">
+    <h2>Tips to remember</h2>
+    <p><span class="label">Mental shortcut</span> — “Frequency can't exceed array length → bucket by frequency, read buckets top-down.”</p>
+    <p><span class="label">Common / related</span> — Group Anagrams, Valid Anagram, Contains Duplicate</p>
+    <div class="quote">"Frequencies are bounded by the array length, so I bucket values by frequency into a fixed-size array instead of sorting (value, frequency) pairs — that turns an O(n log n) sort into an O(n) counting pass plus an O(n) bucket scan."</div>
+  </div>
+
+  <div class="card full">
+    <h2>Edge cases</h2>
+    <ul class="edge-list">
+      
+      <li>k equals the number of distinct values → every bucket with any value is collected, output has exactly k elements</li>
+      
+      <li>All elements are identical, e.g. [7,7] → one bucket at the max index holding a single key, k = 1 returns that key</li>
+      
+      <li>Every element is unique → every value sits in bucket index 1; any k of them is a valid answer since the problem guarantees a unique result set</li>
+      
+      <li>Multiple keys landing in the same bucket when k falls in the middle of that bucket: the reference solution's outer check (<code>len(out) < k</code>) is tested once per bucket, so it can append an entire tied bucket even if that slightly overshoots k — worth mentioning as a trade-off versus trimming to exactly k inside the inner loop</li>
+      
+      <li>Empty nums array → freq and buckets stay empty, output is empty (k would be 0 in that case per the problem's constraints)</li>
+      
+    </ul>
+  </div>
+</div>
+</body>
+</html>
