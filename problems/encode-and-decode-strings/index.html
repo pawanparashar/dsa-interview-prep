@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Encode and Decode Strings — Coding Patterns</title>
+<meta name="description" content="Encode and Decode Strings (Arrays & Hashing) — pattern, walkthrough, video, and printable one-pager.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container row">
+      <div>
+        <a class="brand" href="../../index.html">Coding <span class="dot">Patterns</span></a>
+        <div class="tagline">BLIND 75 · INTERVIEW REVISION</div>
+      </div>
+      <nav>
+        <a href="https://github.com/pawanparashar/dsa-interview-prep">GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="p-head">
+      <a class="crumbs" href="../../index.html">← All 75</a>
+      <h1>#6 — Encode and Decode Strings</h1>
+      <div class="pills">
+        <span class="pill accent">Arrays & Hashing</span>
+        <span class="pill">LeetCode 271</span>
+        <span class="pill">NeetCode "String Encode and Decode"</span>
+        <span class="badge Medium">Medium</span>
+      </div>
+      <div class="p-actions">
+        <a class="linkbtn" href="encode-and-decode-strings-onepager.pdf">Download one-pager (PDF) ↓</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Problem</h2>
+      <p>Design an algorithm to encode a list of strings into a single string, and to decode that single string back into the original list of strings. The encoding must work for any possible string, including empty strings and strings that contain any character (letters, digits, spaces, punctuation — even the delimiter characters you choose to use).</p>
+      <div class="examples">
+        
+        <div>strs = ["neet","code","love","you"] → encode → "4#neet4#code4#love3#you" → decode → ["neet","code","love","you"]</div>
+        
+        <div>strs = ["we","say",":","yes"] → encode → "2#we3#say1#:3#yes" → decode → ["we","say",":","yes"]</div>
+        
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Watch the walkthrough</h2>
+      <div class="video-frame">
+        <iframe src="https://www.youtube.com/embed/B1k_sxOSgv8" title="Encode and Decode Strings solution walkthrough" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Core idea</h2>
+      <p><strong>Goal</strong><br>Pack a list of arbitrary strings into one string, and be able to split that one string back into the exact original list — even if the strings themselves contain commas, spaces, or any delimiter you might otherwise think to use.</p>
+      <p><strong>Key insight</strong><br>A naive delimiter (comma, space, a rare symbol) breaks the moment a string contains that exact character. The fix is to stop relying on the delimiter to mark the *end* of a string and instead have each string announce its own length up front — "4#neet" says "read exactly 4 characters starting right after this '#'", so whatever those 4 characters are (including more '#'s) can never be misread as a boundary.</p>
+      <div class="callout">Trigger phrase: “Serialize / deserialize a list of strings so any string is possible” → length-prefix each string instead of trusting a delimiter (Hash Map pattern's cousin: self-describing chunks).</div>
+    </div>
+
+    
+    <div class="section">
+      <h2>Step through it</h2>
+      <p class="muted">Walk the algorithm one step at a time — forward, back, or press play.</p>
+      <div class="viz" id="viz" data-trace="{&quot;mode&quot;: &quot;codec&quot;, &quot;array&quot;: [&quot;neet&quot;, &quot;code&quot;, &quot;love&quot;, &quot;you&quot;], &quot;encoded&quot;: &quot;4#neet4#code4#love3#you&quot;, &quot;frames&quot;: [{&quot;phase&quot;: &quot;start&quot;, &quot;idx&quot;: null, &quot;encodedText&quot;: &quot;&quot;, &quot;range&quot;: null, &quot;output&quot;: [], &quot;status&quot;: &quot;start&quot;, &quot;note&quot;: &quot;strs = [\&quot;neet\&quot;,\&quot;code\&quot;,\&quot;love\&quot;,\&quot;you\&quot;]. Start encoding with an empty result string.&quot;}, {&quot;phase&quot;: &quot;encode&quot;, &quot;idx&quot;: 0, &quot;encodedText&quot;: &quot;4#neet&quot;, &quot;range&quot;: null, &quot;output&quot;: [], &quot;status&quot;: &quot;encode&quot;, &quot;note&quot;: &quot;\&quot;neet\&quot; has length 4 \u2192 append \&quot;4#neet\&quot; (length + &#x27;#&#x27; + the string itself) \u2192 res = \&quot;4#neet\&quot;.&quot;}, {&quot;phase&quot;: &quot;encode&quot;, &quot;idx&quot;: 1, &quot;encodedText&quot;: &quot;4#neet4#code&quot;, &quot;range&quot;: null, &quot;output&quot;: [], &quot;status&quot;: &quot;encode&quot;, &quot;note&quot;: &quot;\&quot;code\&quot; has length 4 \u2192 append \&quot;4#code\&quot; (length + &#x27;#&#x27; + the string itself) \u2192 res = \&quot;4#neet4#code\&quot;.&quot;}, {&quot;phase&quot;: &quot;encode&quot;, &quot;idx&quot;: 2, &quot;encodedText&quot;: &quot;4#neet4#code4#love&quot;, &quot;range&quot;: null, &quot;output&quot;: [], &quot;status&quot;: &quot;encode&quot;, &quot;note&quot;: &quot;\&quot;love\&quot; has length 4 \u2192 append \&quot;4#love\&quot; (length + &#x27;#&#x27; + the string itself) \u2192 res = \&quot;4#neet4#code4#love\&quot;.&quot;}, {&quot;phase&quot;: &quot;encode&quot;, &quot;idx&quot;: 3, &quot;encodedText&quot;: &quot;4#neet4#code4#love3#you&quot;, &quot;range&quot;: null, &quot;output&quot;: [], &quot;status&quot;: &quot;encode&quot;, &quot;note&quot;: &quot;\&quot;you\&quot; has length 3 \u2192 append \&quot;3#you\&quot; (length + &#x27;#&#x27; + the string itself) \u2192 res = \&quot;4#neet4#code4#love3#you\&quot;.&quot;}, {&quot;phase&quot;: &quot;decode&quot;, &quot;idx&quot;: null, &quot;encodedText&quot;: &quot;4#neet4#code4#love3#you&quot;, &quot;range&quot;: null, &quot;output&quot;: [], &quot;status&quot;: &quot;decode-start&quot;, &quot;note&quot;: &quot;Encoding done: \&quot;4#neet4#code4#love3#you\&quot; (23 chars). Now decode it back by reading one length-prefixed token at a time.&quot;}, {&quot;phase&quot;: &quot;decode&quot;, &quot;idx&quot;: null, &quot;encodedText&quot;: &quot;4#neet4#code4#love3#you&quot;, &quot;range&quot;: {&quot;lenStart&quot;: 0, &quot;hashPos&quot;: 1, &quot;contentStart&quot;: 2, &quot;contentEnd&quot;: 6}, &quot;output&quot;: [&quot;neet&quot;], &quot;status&quot;: &quot;decode&quot;, &quot;note&quot;: &quot;i=0: scan to &#x27;#&#x27; at index 1 \u2192 length = int(\&quot;4\&quot;) = 4. Read the next 4 chars \u2192 \&quot;neet\&quot;. out = [&#x27;neet&#x27;]. i moves to 6.&quot;}, {&quot;phase&quot;: &quot;decode&quot;, &quot;idx&quot;: null, &quot;encodedText&quot;: &quot;4#neet4#code4#love3#you&quot;, &quot;range&quot;: {&quot;lenStart&quot;: 6, &quot;hashPos&quot;: 7, &quot;contentStart&quot;: 8, &quot;contentEnd&quot;: 12}, &quot;output&quot;: [&quot;neet&quot;, &quot;code&quot;], &quot;status&quot;: &quot;decode&quot;, &quot;note&quot;: &quot;i=6: scan to &#x27;#&#x27; at index 7 \u2192 length = int(\&quot;4\&quot;) = 4. Read the next 4 chars \u2192 \&quot;code\&quot;. out = [&#x27;neet&#x27;, &#x27;code&#x27;]. i moves to 12.&quot;}, {&quot;phase&quot;: &quot;decode&quot;, &quot;idx&quot;: null, &quot;encodedText&quot;: &quot;4#neet4#code4#love3#you&quot;, &quot;range&quot;: {&quot;lenStart&quot;: 12, &quot;hashPos&quot;: 13, &quot;contentStart&quot;: 14, &quot;contentEnd&quot;: 18}, &quot;output&quot;: [&quot;neet&quot;, &quot;code&quot;, &quot;love&quot;], &quot;status&quot;: &quot;decode&quot;, &quot;note&quot;: &quot;i=12: scan to &#x27;#&#x27; at index 13 \u2192 length = int(\&quot;4\&quot;) = 4. Read the next 4 chars \u2192 \&quot;love\&quot;. out = [&#x27;neet&#x27;, &#x27;code&#x27;, &#x27;love&#x27;]. i moves to 18.&quot;}, {&quot;phase&quot;: &quot;decode&quot;, &quot;idx&quot;: null, &quot;encodedText&quot;: &quot;4#neet4#code4#love3#you&quot;, &quot;range&quot;: {&quot;lenStart&quot;: 18, &quot;hashPos&quot;: 19, &quot;contentStart&quot;: 20, &quot;contentEnd&quot;: 23}, &quot;output&quot;: [&quot;neet&quot;, &quot;code&quot;, &quot;love&quot;, &quot;you&quot;], &quot;status&quot;: &quot;decode&quot;, &quot;note&quot;: &quot;i=18: scan to &#x27;#&#x27; at index 19 \u2192 length = int(\&quot;3\&quot;) = 3. Read the next 3 chars \u2192 \&quot;you\&quot;. out = [&#x27;neet&#x27;, &#x27;code&#x27;, &#x27;love&#x27;, &#x27;you&#x27;]. i moves to 23.&quot;}, {&quot;phase&quot;: &quot;done&quot;, &quot;idx&quot;: null, &quot;encodedText&quot;: &quot;4#neet4#code4#love3#you&quot;, &quot;range&quot;: null, &quot;output&quot;: [&quot;neet&quot;, &quot;code&quot;, &quot;love&quot;, &quot;you&quot;], &quot;status&quot;: &quot;done&quot;, &quot;note&quot;: &quot;i reached the end of the encoded string \u2014 return [&#x27;neet&#x27;, &#x27;code&#x27;, &#x27;love&#x27;, &#x27;you&#x27;].&quot;}]}">
+        <div class="viz-body" id="vizBody"></div>
+        <div class="viz-note" id="vizNote"></div>
+        <div class="viz-controls">
+          <button class="viz-btn" id="vizPrev" aria-label="Previous step">&larr; Prev</button>
+          <button class="viz-btn accent" id="vizPlay" aria-label="Play">&#9654; Play</button>
+          <button class="viz-btn" id="vizNext" aria-label="Next step">Next &rarr;</button>
+          <span class="viz-step-count" id="vizCount"></span>
+        </div>
+        <div class="viz-progress"><div class="viz-progress-fill" id="vizProgressFill"></div></div>
+      </div>
+    </div>
+    
+
+    <div class="section">
+      <h2>Walkthrough</h2>
+      
+      <p>The instinctive first move is to join the strings with a delimiter like a comma or a space and split on it later — but the problem explicitly allows strings that contain any character, so any fixed delimiter can appear inside a string and corrupt the split. The fix isn't a cleverer delimiter; it's not needing one to find the *end* of a string at all.</p>
+      
+      <p>Encoding: each string is prefixed with its own length and a single '#', e.g. <code>"neet"</code> (length 4) becomes <code>"4#neet"</code>. These length-prefixed chunks are concatenated back to back with nothing extra between them — the next chunk's length digit starts immediately where the previous string's content ended.</p>
+      
+      <p>Decoding reverses this with two pointers. <code>i</code> marks the start of the current chunk's length prefix. <code>j</code> scans forward from <code>i</code> until it finds the '#' — whatever's between <code>i</code> and <code>j</code> is read as the length (<code>int(s[i:j])</code>), since digits can't contain '#'.</p>
+      
+      <p>Once the length is known, the next <code>length</code> characters starting right after the '#' are read as-is via slicing — <code>s[j:j+length]</code> — with zero scanning for a terminator. Even if those characters happen to include digits or '#' symbols, they're never misinterpreted, because the decoder isn't looking for a delimiter inside them; it already knows exactly how many characters to take.</p>
+      
+      <p><code>i</code> then jumps straight to <code>j + length</code>, past the string just extracted, and the loop repeats from there until <code>i</code> reaches the end of the encoded string — at which point every original string has been recovered in order.</p>
+      
+    </div>
+
+    <div class="section">
+      <h2>Optimal solution</h2>
+      <p><strong>Data structure:</strong> Plain string manipulation — no extra data structure needed, just a length-prefix / delimiter convention</p>
+      <ol class="steps">
+        
+        <li><strong>Encode:</strong> for each string <code>s</code> in <code>strs</code>, append <code>str(len(s)) + "#" + s</code> to the result — the string's own length, a single '#' separator, then the string itself.</li>
+        
+        <li>Concatenating these length-prefixed chunks for every string in the list produces one self-describing encoded string; return it.</li>
+        
+        <li><strong>Decode:</strong> walk the encoded string with a pointer <code>i</code> starting at 0.</li>
+        
+        <li>From <code>i</code>, scan forward with a second pointer <code>j</code> until <code>s[j] == '#'</code> — everything from <code>i</code> to <code>j</code> is the length prefix; parse it with <code>int(s[i:j])</code>.</li>
+        
+        <li>Move past the '#' (<code>j += 1</code>), then slice out exactly <code>length</code> characters: <code>s[j : j+length]</code> — that's the next original string, regardless of what characters it contains.</li>
+        
+        <li>Advance <code>i</code> to <code>j + length</code> (just past the string just read) and repeat until <code>i</code> reaches the end of the encoded string.</li>
+        
+      </ol>
+      <div class="complexity">
+        <div class="box"><span class="v">O(n) for both encode and decode, where n is the total number of characters across all strings</span><span class="k">Time</span></div>
+        <div class="box"><span class="v">O(n) for the encoded string / output list</span><span class="k">Space</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Code</h2>
+      <pre><code><span class="kw">class</span> Solution:
+
+    <span class="kw">def</span> encode(<span class="kw">self</span>, strs: List[str]) -&gt; str:
+        res = &quot;&quot;
+        <span class="kw">for</span> s <span class="kw">in</span> strs:
+            res += (str(len(s)) + &quot;#&quot; + s)
+        <span class="kw">return</span> res
+          
+
+    <span class="kw">def</span> decode(<span class="kw">self</span>, s: str) -&gt; List[str]:
+        result = []
+        i = 0
+        <span class="kw">while</span> i &lt; len(s):
+            j=i
+            <span class="kw">while</span> s[j] != &#x27;#&#x27;:
+                j += 1
+            length = int(s[i:j])
+            j += 1
+            result.append(s[j:j+ length])
+            i = j + length
+        <span class="kw">return</span> result</code></pre>
+    </div>
+
+    
+    <div class="section">
+      <h2>Other ways to solve it</h2>
+      
+      <div class="alt-solution">
+        <h3>Delimiter + escaping (not recommended, included to explain why length-prefixing wins)</h3>
+        <p class="muted">You could pick a rare delimiter (e.g. a unicode control character) and escape any occurrence of it inside the strings themselves. It works, but it's fragile — you have to get the escaping logic exactly right in both directions, and it's easy to miss an edge case under interview pressure. Length-prefixing sidesteps the whole problem, so it's worth mentioning this approach only to explain why you're not using it.</p>
+        <pre><code><span class="kw">class</span> Solution:
+    <span class="kw">def</span> encode(<span class="kw">self</span>, strs: List[str]) -&gt; str:
+        <span class="kw">return</span> chr(257).join(strs)  # a char unlikely to appear <span class="kw">in</span> real input
+
+    <span class="kw">def</span> decode(<span class="kw">self</span>, s: str) -&gt; List[str]:
+        <span class="kw">return</span> s.split(chr(257))</code></pre>
+        <div class="complexity">
+          <div class="box"><span class="v">O(n)</span><span class="k">Time</span></div>
+          <div class="box"><span class="v">O(n)</span><span class="k">Space</span></div>
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <div class="section">
+      <h2>Tips to remember this pattern</h2>
+      <p><strong>Mental shortcut</strong> — “Say how long you are before you speak — then nobody needs to guess where you stop.”</p>
+      <p><strong>Common / related problems</strong></p>
+      <ul class="plain">
+        
+        <li>Group Anagrams</li>
+        
+        <li>Longest Substring Without Repeating Characters</li>
+        
+        <li>Valid Anagram</li>
+        
+      </ul>
+      <div class="quote">"I'm avoiding a fixed delimiter entirely by length-prefixing each string — since the problem allows any character in the input, no delimiter is actually safe, but a length prefix lets the decoder read exactly the right number of characters regardless of what they are, in O(n) time with two pointers."</div>
+    </div>
+
+    <div class="section">
+      <h2>Edge cases to consider</h2>
+      <ul class="edge-list">
+        
+        <li>A string that's itself empty "" → encodes as "0#", decodes back to "" (length 0 slice) correctly</li>
+        
+        <li>Strings that contain the delimiter character '#' or digits — e.g. "a#b" or "12345" → handled correctly because the decoder only reads '#' as a delimiter when it's scanning for the length prefix, never while slicing the known-length content</li>
+        
+        <li>An empty input list [] → encodes to "" (empty string), decodes back to []</li>
+        
+        <li>A list with a single string → one length-prefixed chunk, decoded in one loop iteration</li>
+        
+        <li>Very long strings — the length prefix can be multiple digits (e.g. "123#..."), and <code>int(s[i:j])</code> parses any number of digits correctly since it stops exactly at the '#'</li>
+        
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Day-of-interview revision</h2>
+      <p class="muted">Short on time? Skim the trigger phrase, the steps above, and keep this PDF open as a fallback.</p>
+      <div class="p-actions">
+        <a class="linkbtn" href="encode-and-decode-strings-onepager.pdf">Download one-pager (PDF) ↓</a>
+        <a class="linkbtn ghost" href="../../index.html">Back to all 75 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">Built by Pawan Parashar · generated from <a href="https://github.com/pawanparashar/dsa-interview-prep">dsa-interview-prep</a></div>
+  </footer>
+
+  
+  <script>
+  (function () {
+    var root = document.getElementById('viz');
+    if (!root) return;
+    var trace = JSON.parse(root.dataset.trace);
+    var mode = trace.mode || 'array-set';
+    var frames = trace.frames;
+    var cur = 0;
+    var playing = false;
+    var timer = null;
+
+    var bodyEl = document.getElementById('vizBody');
+    var noteEl = document.getElementById('vizNote');
+    var countEl = document.getElementById('vizCount');
+    var fillEl = document.getElementById('vizProgressFill');
+    var prevBtn = document.getElementById('vizPrev');
+    var nextBtn = document.getElementById('vizNext');
+    var playBtn = document.getElementById('vizPlay');
+
+    function makeCells(container, chars) {
+      chars.split('').forEach(function (ch) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell';
+        cell.textContent = ch;
+        container.appendChild(cell);
+      });
+    }
+
+    function renderChips(container, counts, highlightKey, mismatch) {
+      container.innerHTML = '';
+      var keys = Object.keys(counts);
+      if (keys.length === 0) {
+        var empty = document.createElement('span');
+        empty.className = 'viz-set-empty';
+        empty.textContent = '(empty)';
+        container.appendChild(empty);
+        return;
+      }
+      keys.forEach(function (k) {
+        var chip = document.createElement('span');
+        chip.className = 'viz-chip';
+        if (k === highlightKey) chip.classList.add(mismatch ? 'found' : 'active');
+        chip.textContent = k + ':' + counts[k];
+        container.appendChild(chip);
+      });
+    }
+
+    var updateFrame;
+
+    if (mode === 'strings') {
+      bodyEl.innerHTML =
+        '<div class="viz-str-row"><span class="viz-str-label">s =</span><div class="viz-array" id="vizArrS"></div></div>' +
+        '<div class="viz-str-row"><span class="viz-str-label">t =</span><div class="viz-array" id="vizArrT"></div></div>' +
+        '<div class="viz-counts-row">' +
+          '<div class="viz-counts"><div class="viz-set-label">counterS =</div><div class="viz-set" id="vizChipsS"></div></div>' +
+          '<div class="viz-counts"><div class="viz-set-label">counterT =</div><div class="viz-set" id="vizChipsT"></div></div>' +
+        '</div>';
+      makeCells(document.getElementById('vizArrS'), trace.s);
+      makeCells(document.getElementById('vizArrT'), trace.t);
+      var sCells = bodyEl.querySelectorAll('#vizArrS .viz-cell');
+      var tCells = bodyEl.querySelectorAll('#vizArrT .viz-cell');
+      var chipsS = document.getElementById('vizChipsS');
+      var chipsT = document.getElementById('vizChipsT');
+
+      updateFrame = function (f) {
+        sCells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.sIdx !== null && i === f.sIdx) cell.classList.add('active');
+          else if (f.phase !== 'build' || (f.sIdx !== null && i < f.sIdx)) cell.classList.add('done');
+        });
+        tCells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.tIdx !== null && i === f.tIdx) cell.classList.add('active');
+          else if (f.phase !== 'build' || (f.tIdx !== null && i < f.tIdx)) cell.classList.add('done');
+        });
+        var mismatch = f.status === 'mismatch';
+        renderChips(chipsS, f.counterS, f.compareKey, mismatch);
+        renderChips(chipsT, f.counterT, f.compareKey, mismatch);
+      };
+    } else if (mode === 'groups') {
+      bodyEl.innerHTML =
+        '<div class="viz-array" id="vizArray"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">groups =</span></div>' +
+        '<div class="viz-groups" id="vizGroups"></div>';
+      var arrayElG = document.getElementById('vizArray');
+      trace.array.forEach(function (val) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell viz-cell-word';
+        cell.textContent = val;
+        arrayElG.appendChild(cell);
+      });
+      var cellsG = arrayElG.querySelectorAll('.viz-cell');
+      var groupsEl = document.getElementById('vizGroups');
+
+      updateFrame = function (f) {
+        cellsG.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.idx !== null && i === f.idx) {
+            cell.classList.add('active');
+          } else if ((f.idx !== null && i < f.idx) || f.status === 'done') {
+            cell.classList.add('done');
+          }
+        });
+        groupsEl.innerHTML = '';
+        var keysG = Object.keys(f.groups);
+        if (keysG.length === 0) {
+          var emptyG = document.createElement('span');
+          emptyG.className = 'viz-set-empty';
+          emptyG.textContent = '(empty)';
+          groupsEl.appendChild(emptyG);
+        } else {
+          keysG.forEach(function (k) {
+            var box = document.createElement('div');
+            box.className = 'viz-group-box';
+            if (k === f.key) box.classList.add('active');
+            var label = document.createElement('div');
+            label.className = 'viz-group-key';
+            label.textContent = 'key: ' + k;
+            box.appendChild(label);
+            var wordsWrap = document.createElement('div');
+            wordsWrap.className = 'viz-group-words';
+            f.groups[k].forEach(function (w) {
+              var chip = document.createElement('span');
+              chip.className = 'viz-chip';
+              chip.textContent = w;
+              wordsWrap.appendChild(chip);
+            });
+            box.appendChild(wordsWrap);
+            groupsEl.appendChild(box);
+          });
+        }
+      };
+    } else if (mode === 'codec') {
+      bodyEl.innerHTML =
+        '<div class="viz-set-row"><span class="viz-set-label">strs =</span></div>' +
+        '<div class="viz-array" id="vizArray"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">encoded =</span></div>' +
+        '<div class="viz-codec-text" id="vizEncodedText"></div>' +
+        '<div class="viz-array" id="vizEncodedCells"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">decoded out =</span><div class="viz-set" id="vizOutput"></div></div>';
+      var arrayElC = document.getElementById('vizArray');
+      trace.array.forEach(function (val) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell viz-cell-word';
+        cell.textContent = val;
+        arrayElC.appendChild(cell);
+      });
+      var cellsC = arrayElC.querySelectorAll('.viz-cell');
+      var encodedTextEl = document.getElementById('vizEncodedText');
+      var encodedCellsEl = document.getElementById('vizEncodedCells');
+      var outputElC = document.getElementById('vizOutput');
+      var encodedCellsBuilt = false;
+
+      updateFrame = function (f) {
+        cellsC.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.phase === 'encode' && f.idx !== null && i === f.idx) cell.classList.add('active');
+          else if (f.phase !== 'encode' || (f.idx !== null && i < f.idx)) cell.classList.add('done');
+        });
+
+        if (f.phase === 'encode' || f.phase === 'start') {
+          encodedTextEl.style.display = '';
+          encodedCellsEl.style.display = 'none';
+          encodedTextEl.innerHTML = '';
+          if (!f.encodedText) {
+            var e = document.createElement('span');
+            e.className = 'viz-set-empty';
+            e.textContent = '(empty)';
+            encodedTextEl.appendChild(e);
+          } else {
+            encodedTextEl.textContent = f.encodedText;
+          }
+          outputElC.innerHTML = '';
+          var eo = document.createElement('span');
+          eo.className = 'viz-set-empty';
+          eo.textContent = '(empty)';
+          outputElC.appendChild(eo);
+        } else {
+          encodedTextEl.style.display = 'none';
+          encodedCellsEl.style.display = '';
+          if (!encodedCellsBuilt) {
+            makeCells(encodedCellsEl, trace.encoded);
+            encodedCellsBuilt = true;
+          }
+          var eCells = encodedCellsEl.querySelectorAll('.viz-cell');
+          eCells.forEach(function (cell, idx) {
+            cell.classList.remove('active', 'found', 'done');
+            if (f.range) {
+              if (idx >= f.range.lenStart && idx <= f.range.hashPos) cell.classList.add('active');
+              else if (idx >= f.range.contentStart && idx < f.range.contentEnd) cell.classList.add('found');
+              else if (idx < f.range.lenStart) cell.classList.add('done');
+            } else if (f.phase === 'done') {
+              cell.classList.add('done');
+            }
+          });
+          outputElC.innerHTML = '';
+          if (f.output.length === 0) {
+            var eo2 = document.createElement('span');
+            eo2.className = 'viz-set-empty';
+            eo2.textContent = '(empty)';
+            outputElC.appendChild(eo2);
+          } else {
+            f.output.forEach(function (v) {
+              var chip = document.createElement('span');
+              chip.className = 'viz-chip found';
+              chip.textContent = v;
+              outputElC.appendChild(chip);
+            });
+          }
+        }
+      };
+    } else if (mode === 'topk') {
+      bodyEl.innerHTML =
+        '<div class="viz-array" id="vizArray"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">freq =</span><div class="viz-set" id="vizFreq"></div></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">buckets (index = frequency) =</span></div>' +
+        '<div class="viz-groups" id="vizBuckets"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">out =</span><div class="viz-set" id="vizOutput"></div></div>';
+      var arrayElT = document.getElementById('vizArray');
+      trace.array.forEach(function (val) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell';
+        cell.textContent = val;
+        arrayElT.appendChild(cell);
+      });
+      var cellsT = arrayElT.querySelectorAll('.viz-cell');
+      var freqEl = document.getElementById('vizFreq');
+      var bucketsEl = document.getElementById('vizBuckets');
+      var outputEl = document.getElementById('vizOutput');
+
+      updateFrame = function (f) {
+        cellsT.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.idx !== null && i === f.idx) {
+            cell.classList.add('active');
+          } else if ((f.idx !== null && i < f.idx) || f.phase !== 'count') {
+            cell.classList.add('done');
+          }
+        });
+        renderChips(freqEl, f.freq, f.activeKey, false);
+        bucketsEl.innerHTML = '';
+        var bucketKeys = Object.keys(f.buckets).sort(function (a, b) { return Number(b) - Number(a); });
+        if (bucketKeys.length === 0) {
+          var emptyB = document.createElement('span');
+          emptyB.className = 'viz-set-empty';
+          emptyB.textContent = '(empty)';
+          bucketsEl.appendChild(emptyB);
+        } else {
+          bucketKeys.forEach(function (bk) {
+            var box = document.createElement('div');
+            box.className = 'viz-group-box';
+            if (f.bucketIdx !== null && Number(bk) === f.bucketIdx) box.classList.add('active');
+            var label = document.createElement('div');
+            label.className = 'viz-group-key';
+            label.textContent = 'idx ' + bk;
+            box.appendChild(label);
+            var wordsWrap = document.createElement('div');
+            wordsWrap.className = 'viz-group-words';
+            f.buckets[bk].forEach(function (w) {
+              var chip = document.createElement('span');
+              chip.className = 'viz-chip';
+              chip.textContent = w;
+              wordsWrap.appendChild(chip);
+            });
+            box.appendChild(wordsWrap);
+            bucketsEl.appendChild(box);
+          });
+        }
+        outputEl.innerHTML = '';
+        if (f.output.length === 0) {
+          var emptyO = document.createElement('span');
+          emptyO.className = 'viz-set-empty';
+          emptyO.textContent = '(empty)';
+          outputEl.appendChild(emptyO);
+        } else {
+          f.output.forEach(function (v) {
+            var chip = document.createElement('span');
+            chip.className = 'viz-chip found';
+            chip.textContent = v;
+            outputEl.appendChild(chip);
+          });
+        }
+      };
+    } else {
+      bodyEl.innerHTML =
+        '<div class="viz-array" id="vizArray"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">h =</span><div class="viz-set" id="vizSet"></div></div>';
+      var arrayEl = document.getElementById('vizArray');
+      trace.array.forEach(function (val) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell';
+        cell.textContent = val;
+        arrayEl.appendChild(cell);
+      });
+      var cells = arrayEl.querySelectorAll('.viz-cell');
+      var setEl = document.getElementById('vizSet');
+
+      updateFrame = function (f) {
+        cells.forEach(function (cell, i) {
+          cell.classList.remove('active', 'found', 'done');
+          if (f.idx !== null && i === f.idx) {
+            cell.classList.add(f.status === 'found' ? 'found' : 'active');
+          } else if (f.idx !== null && i < f.idx) {
+            cell.classList.add('done');
+          }
+        });
+        setEl.innerHTML = '';
+        if (f.set.length === 0) {
+          var empty = document.createElement('span');
+          empty.className = 'viz-set-empty';
+          empty.textContent = '(empty)';
+          setEl.appendChild(empty);
+        } else {
+          f.set.forEach(function (v) {
+            var chip = document.createElement('span');
+            chip.className = 'viz-chip';
+            chip.textContent = v;
+            setEl.appendChild(chip);
+          });
+        }
+      };
+    }
+
+    function render() {
+      var f = frames[cur];
+      updateFrame(f);
+      var flag = f.status === 'found' || f.status === 'mismatch';
+      noteEl.textContent = f.note;
+      noteEl.className = 'viz-note' + (flag ? ' found' : '');
+      countEl.textContent = 'Step ' + (cur + 1) + ' / ' + frames.length;
+      fillEl.style.width = (((cur + 1) / frames.length) * 100) + '%';
+      prevBtn.disabled = cur === 0;
+      nextBtn.disabled = cur === frames.length - 1;
+      if (cur === frames.length - 1) stopPlaying();
+    }
+
+    function goTo(i) {
+      cur = Math.max(0, Math.min(frames.length - 1, i));
+      render();
+    }
+
+    function stopPlaying() {
+      playing = false;
+      playBtn.innerHTML = '&#9654; Play';
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    function startPlaying() {
+      if (cur === frames.length - 1) cur = 0;
+      playing = true;
+      playBtn.innerHTML = '&#10074;&#10074; Pause';
+      timer = setInterval(function () {
+        if (cur >= frames.length - 1) { stopPlaying(); render(); return; }
+        goTo(cur + 1);
+      }, 1400);
+    }
+
+    prevBtn.addEventListener('click', function () { stopPlaying(); goTo(cur - 1); });
+    nextBtn.addEventListener('click', function () { stopPlaying(); goTo(cur + 1); });
+    playBtn.addEventListener('click', function () {
+      if (playing) { stopPlaying(); } else { startPlaying(); }
+    });
+
+    render();
+  })();
+  </script>
+  
+</body>
+</html>

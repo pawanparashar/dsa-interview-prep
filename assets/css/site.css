@@ -642,3 +642,17 @@ footer a { color: var(--accent); text-decoration: none; }
   color: #1b1d22;
   font-weight: 600;
 }
+
+/* encode/decode strings mode (e.g. Encode and Decode Strings) */
+.viz-codec-text {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  padding: 10px 12px;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 14px;
+  min-height: 20px;
+  word-break: break-all;
+  line-height: 1.5;
+}

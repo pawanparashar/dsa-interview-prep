@@ -315,6 +315,85 @@
           });
         }
       };
+    } else if (mode === 'codec') {
+      bodyEl.innerHTML =
+        '<div class="viz-set-row"><span class="viz-set-label">strs =</span></div>' +
+        '<div class="viz-array" id="vizArray"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">encoded =</span></div>' +
+        '<div class="viz-codec-text" id="vizEncodedText"></div>' +
+        '<div class="viz-array" id="vizEncodedCells"></div>' +
+        '<div class="viz-set-row"><span class="viz-set-label">decoded out =</span><div class="viz-set" id="vizOutput"></div></div>';
+      var arrayElC = document.getElementById('vizArray');
+      trace.array.forEach(function (val) {
+        var cell = document.createElement('div');
+        cell.className = 'viz-cell viz-cell-word';
+        cell.textContent = val;
+        arrayElC.appendChild(cell);
+      });
+      var cellsC = arrayElC.querySelectorAll('.viz-cell');
+      var encodedTextEl = document.getElementById('vizEncodedText');
+      var encodedCellsEl = document.getElementById('vizEncodedCells');
+      var outputElC = document.getElementById('vizOutput');
+      var encodedCellsBuilt = false;
+
+      updateFrame = function (f) {
+        cellsC.forEach(function (cell, i) {
+          cell.classList.remove('active', 'done');
+          if (f.phase === 'encode' && f.idx !== null && i === f.idx) cell.classList.add('active');
+          else if (f.phase !== 'encode' || (f.idx !== null && i < f.idx)) cell.classList.add('done');
+        });
+
+        if (f.phase === 'encode' || f.phase === 'start') {
+          encodedTextEl.style.display = '';
+          encodedCellsEl.style.display = 'none';
+          encodedTextEl.innerHTML = '';
+          if (!f.encodedText) {
+            var e = document.createElement('span');
+            e.className = 'viz-set-empty';
+            e.textContent = '(empty)';
+            encodedTextEl.appendChild(e);
+          } else {
+            encodedTextEl.textContent = f.encodedText;
+          }
+          outputElC.innerHTML = '';
+          var eo = document.createElement('span');
+          eo.className = 'viz-set-empty';
+          eo.textContent = '(empty)';
+          outputElC.appendChild(eo);
+        } else {
+          encodedTextEl.style.display = 'none';
+          encodedCellsEl.style.display = '';
+          if (!encodedCellsBuilt) {
+            makeCells(encodedCellsEl, trace.encoded);
+            encodedCellsBuilt = true;
+          }
+          var eCells = encodedCellsEl.querySelectorAll('.viz-cell');
+          eCells.forEach(function (cell, idx) {
+            cell.classList.remove('active', 'found', 'done');
+            if (f.range) {
+              if (idx >= f.range.lenStart && idx <= f.range.hashPos) cell.classList.add('active');
+              else if (idx >= f.range.contentStart && idx < f.range.contentEnd) cell.classList.add('found');
+              else if (idx < f.range.lenStart) cell.classList.add('done');
+            } else if (f.phase === 'done') {
+              cell.classList.add('done');
+            }
+          });
+          outputElC.innerHTML = '';
+          if (f.output.length === 0) {
+            var eo2 = document.createElement('span');
+            eo2.className = 'viz-set-empty';
+            eo2.textContent = '(empty)';
+            outputElC.appendChild(eo2);
+          } else {
+            f.output.forEach(function (v) {
+              var chip = document.createElement('span');
+              chip.className = 'viz-chip found';
+              chip.textContent = v;
+              outputElC.appendChild(chip);
+            });
+          }
+        }
+      };
     } else if (mode === 'topk') {
       bodyEl.innerHTML =
         '<div class="viz-array" id="vizArray"></div>' +

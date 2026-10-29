@@ -1218,6 +1218,227 @@
           }
         ]
       }
+    },
+    {
+      "number": 6,
+      "slug": "encode-and-decode-strings",
+      "title": "Encode and Decode Strings",
+      "category": "Arrays & Hashing",
+      "leetcode_number": 271,
+      "neetcode_name": "String Encode and Decode",
+      "difficulty": "Medium",
+      "status": "Solved",
+      "youtube_id": "B1k_sxOSgv8",
+      "problem_statement": "Design an algorithm to encode a list of strings into a single string, and to decode that single string back into the original list of strings. The encoding must work for any possible string, including empty strings and strings that contain any character (letters, digits, spaces, punctuation — even the delimiter characters you choose to use).",
+      "examples": [
+        {
+          "input": "strs = [\"neet\",\"code\",\"love\",\"you\"]",
+          "output": "encode → \"4#neet4#code4#love3#you\" → decode → [\"neet\",\"code\",\"love\",\"you\"]"
+        },
+        {
+          "input": "strs = [\"we\",\"say\",\":\",\"yes\"]",
+          "output": "encode → \"2#we3#say1#:3#yes\" → decode → [\"we\",\"say\",\":\",\"yes\"]"
+        }
+      ],
+      "core_idea": {
+        "goal": "Pack a list of arbitrary strings into one string, and be able to split that one string back into the exact original list — even if the strings themselves contain commas, spaces, or any delimiter you might otherwise think to use.",
+        "key_insight": "A naive delimiter (comma, space, a rare symbol) breaks the moment a string contains that exact character. The fix is to stop relying on the delimiter to mark the *end* of a string and instead have each string announce its own length up front — \"4#neet\" says \"read exactly 4 characters starting right after this '#'\", so whatever those 4 characters are (including more '#'s) can never be misread as a boundary.",
+        "trigger_phrase": "“Serialize / deserialize a list of strings so any string is possible” → length-prefix each string instead of trusting a delimiter (Hash Map pattern's cousin: self-describing chunks)."
+      },
+      "optimal_solution": {
+        "data_structure": "Plain string manipulation — no extra data structure needed, just a length-prefix / delimiter convention",
+        "steps": [
+          "<strong>Encode:</strong> for each string <code>s</code> in <code>strs</code>, append <code>str(len(s)) + \"#\" + s</code> to the result — the string's own length, a single '#' separator, then the string itself.",
+          "Concatenating these length-prefixed chunks for every string in the list produces one self-describing encoded string; return it.",
+          "<strong>Decode:</strong> walk the encoded string with a pointer <code>i</code> starting at 0.",
+          "From <code>i</code>, scan forward with a second pointer <code>j</code> until <code>s[j] == '#'</code> — everything from <code>i</code> to <code>j</code> is the length prefix; parse it with <code>int(s[i:j])</code>.",
+          "Move past the '#' (<code>j += 1</code>), then slice out exactly <code>length</code> characters: <code>s[j : j+length]</code> — that's the next original string, regardless of what characters it contains.",
+          "Advance <code>i</code> to <code>j + length</code> (just past the string just read) and repeat until <code>i</code> reaches the end of the encoded string."
+        ],
+        "time_complexity": "O(n) for both encode and decode, where n is the total number of characters across all strings",
+        "space_complexity": "O(n) for the encoded string / output list"
+      },
+      "code": "class Solution:\n\n    def encode(self, strs: List[str]) -> str:\n        res = \"\"\n        for s in strs:\n            res += (str(len(s)) + \"#\" + s)\n        return res\n          \n\n    def decode(self, s: str) -> List[str]:\n        result = []\n        i = 0\n        while i < len(s):\n            j=i\n            while s[j] != '#':\n                j += 1\n            length = int(s[i:j])\n            j += 1\n            result.append(s[j:j+ length])\n            i = j + length\n        return result",
+      "walkthrough": [
+        "The instinctive first move is to join the strings with a delimiter like a comma or a space and split on it later — but the problem explicitly allows strings that contain any character, so any fixed delimiter can appear inside a string and corrupt the split. The fix isn't a cleverer delimiter; it's not needing one to find the *end* of a string at all.",
+        "Encoding: each string is prefixed with its own length and a single '#', e.g. <code>\"neet\"</code> (length 4) becomes <code>\"4#neet\"</code>. These length-prefixed chunks are concatenated back to back with nothing extra between them — the next chunk's length digit starts immediately where the previous string's content ended.",
+        "Decoding reverses this with two pointers. <code>i</code> marks the start of the current chunk's length prefix. <code>j</code> scans forward from <code>i</code> until it finds the '#' — whatever's between <code>i</code> and <code>j</code> is read as the length (<code>int(s[i:j])</code>), since digits can't contain '#'.",
+        "Once the length is known, the next <code>length</code> characters starting right after the '#' are read as-is via slicing — <code>s[j:j+length]</code> — with zero scanning for a terminator. Even if those characters happen to include digits or '#' symbols, they're never misinterpreted, because the decoder isn't looking for a delimiter inside them; it already knows exactly how many characters to take.",
+        "<code>i</code> then jumps straight to <code>j + length</code>, past the string just extracted, and the loop repeats from there until <code>i</code> reaches the end of the encoded string — at which point every original string has been recovered in order."
+      ],
+      "mental_shortcut": "“Say how long you are before you speak — then nobody needs to guess where you stop.”",
+      "related_problems": [
+        "Group Anagrams",
+        "Longest Substring Without Repeating Characters",
+        "Valid Anagram"
+      ],
+      "interview_talking_point": "I'm avoiding a fixed delimiter entirely by length-prefixing each string — since the problem allows any character in the input, no delimiter is actually safe, but a length prefix lets the decoder read exactly the right number of characters regardless of what they are, in O(n) time with two pointers.",
+      "edge_cases": [
+        "A string that's itself empty \"\" → encodes as \"0#\", decodes back to \"\" (length 0 slice) correctly",
+        "Strings that contain the delimiter character '#' or digits — e.g. \"a#b\" or \"12345\" → handled correctly because the decoder only reads '#' as a delimiter when it's scanning for the length prefix, never while slicing the known-length content",
+        "An empty input list [] → encodes to \"\" (empty string), decodes back to []",
+        "A list with a single string → one length-prefixed chunk, decoded in one loop iteration",
+        "Very long strings — the length prefix can be multiple digits (e.g. \"123#...\"), and <code>int(s[i:j])</code> parses any number of digits correctly since it stops exactly at the '#'"
+      ],
+      "alternative_solutions": [
+        {
+          "name": "Delimiter + escaping (not recommended, included to explain why length-prefixing wins)",
+          "note": "You could pick a rare delimiter (e.g. a unicode control character) and escape any occurrence of it inside the strings themselves. It works, but it's fragile — you have to get the escaping logic exactly right in both directions, and it's easy to miss an edge case under interview pressure. Length-prefixing sidesteps the whole problem, so it's worth mentioning this approach only to explain why you're not using it.",
+          "code": "class Solution:\n    def encode(self, strs: List[str]) -> str:\n        return chr(257).join(strs)  # a char unlikely to appear in real input\n\n    def decode(self, s: str) -> List[str]:\n        return s.split(chr(257))",
+          "time_complexity": "O(n)",
+          "space_complexity": "O(n)"
+        }
+      ],
+      "trace": {
+        "mode": "codec",
+        "array": [
+          "neet",
+          "code",
+          "love",
+          "you"
+        ],
+        "encoded": "4#neet4#code4#love3#you",
+        "frames": [
+          {
+            "phase": "start",
+            "idx": null,
+            "encodedText": "",
+            "range": null,
+            "output": [],
+            "status": "start",
+            "note": "strs = [\"neet\",\"code\",\"love\",\"you\"]. Start encoding with an empty result string."
+          },
+          {
+            "phase": "encode",
+            "idx": 0,
+            "encodedText": "4#neet",
+            "range": null,
+            "output": [],
+            "status": "encode",
+            "note": "\"neet\" has length 4 → append \"4#neet\" (length + '#' + the string itself) → res = \"4#neet\"."
+          },
+          {
+            "phase": "encode",
+            "idx": 1,
+            "encodedText": "4#neet4#code",
+            "range": null,
+            "output": [],
+            "status": "encode",
+            "note": "\"code\" has length 4 → append \"4#code\" (length + '#' + the string itself) → res = \"4#neet4#code\"."
+          },
+          {
+            "phase": "encode",
+            "idx": 2,
+            "encodedText": "4#neet4#code4#love",
+            "range": null,
+            "output": [],
+            "status": "encode",
+            "note": "\"love\" has length 4 → append \"4#love\" (length + '#' + the string itself) → res = \"4#neet4#code4#love\"."
+          },
+          {
+            "phase": "encode",
+            "idx": 3,
+            "encodedText": "4#neet4#code4#love3#you",
+            "range": null,
+            "output": [],
+            "status": "encode",
+            "note": "\"you\" has length 3 → append \"3#you\" (length + '#' + the string itself) → res = \"4#neet4#code4#love3#you\"."
+          },
+          {
+            "phase": "decode",
+            "idx": null,
+            "encodedText": "4#neet4#code4#love3#you",
+            "range": null,
+            "output": [],
+            "status": "decode-start",
+            "note": "Encoding done: \"4#neet4#code4#love3#you\" (23 chars). Now decode it back by reading one length-prefixed token at a time."
+          },
+          {
+            "phase": "decode",
+            "idx": null,
+            "encodedText": "4#neet4#code4#love3#you",
+            "range": {
+              "lenStart": 0,
+              "hashPos": 1,
+              "contentStart": 2,
+              "contentEnd": 6
+            },
+            "output": [
+              "neet"
+            ],
+            "status": "decode",
+            "note": "i=0: scan to '#' at index 1 → length = int(\"4\") = 4. Read the next 4 chars → \"neet\". out = ['neet']. i moves to 6."
+          },
+          {
+            "phase": "decode",
+            "idx": null,
+            "encodedText": "4#neet4#code4#love3#you",
+            "range": {
+              "lenStart": 6,
+              "hashPos": 7,
+              "contentStart": 8,
+              "contentEnd": 12
+            },
+            "output": [
+              "neet",
+              "code"
+            ],
+            "status": "decode",
+            "note": "i=6: scan to '#' at index 7 → length = int(\"4\") = 4. Read the next 4 chars → \"code\". out = ['neet', 'code']. i moves to 12."
+          },
+          {
+            "phase": "decode",
+            "idx": null,
+            "encodedText": "4#neet4#code4#love3#you",
+            "range": {
+              "lenStart": 12,
+              "hashPos": 13,
+              "contentStart": 14,
+              "contentEnd": 18
+            },
+            "output": [
+              "neet",
+              "code",
+              "love"
+            ],
+            "status": "decode",
+            "note": "i=12: scan to '#' at index 13 → length = int(\"4\") = 4. Read the next 4 chars → \"love\". out = ['neet', 'code', 'love']. i moves to 18."
+          },
+          {
+            "phase": "decode",
+            "idx": null,
+            "encodedText": "4#neet4#code4#love3#you",
+            "range": {
+              "lenStart": 18,
+              "hashPos": 19,
+              "contentStart": 20,
+              "contentEnd": 23
+            },
+            "output": [
+              "neet",
+              "code",
+              "love",
+              "you"
+            ],
+            "status": "decode",
+            "note": "i=18: scan to '#' at index 19 → length = int(\"3\") = 3. Read the next 3 chars → \"you\". out = ['neet', 'code', 'love', 'you']. i moves to 23."
+          },
+          {
+            "phase": "done",
+            "idx": null,
+            "encodedText": "4#neet4#code4#love3#you",
+            "range": null,
+            "output": [
+              "neet",
+              "code",
+              "love",
+              "you"
+            ],
+            "status": "done",
+            "note": "i reached the end of the encoded string — return ['neet', 'code', 'love', 'you']."
+          }
+        ]
+      }
     }
   ],
   "roadmap": [
